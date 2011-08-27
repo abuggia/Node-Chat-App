@@ -1,0 +1,49 @@
+
+<html>
+
+
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script type="text/javascript" src="nowjs/now.js"></script>
+</head>
+
+<style>
+body {
+  color:#666;
+}
+
+</style>
+
+<body>
+
+
+ <h2> Campus Chat App </h2>
+
+
+ <div id="chat">
+ </div>
+
+ <br>
+
+ <input type="text" id="text-input">
+ <input id="send-button" type="button" value="Send">
+
+
+
+  <script type="text/javascript">
+$(function() {
+  now.name = prompt("what's your name?", "");
+  now.receiveMessage = function(err, msg) {
+    $("<div></div>").text(name + ": " + msg).appendTo("#chat");
+  };
+
+  $("#send-button").click(function() {
+    now.distributeMessage($("#text-input").val());
+    $("#text-input").val("");
+  });
+});
+
+  </script>
+  
+</body>
+</html>
