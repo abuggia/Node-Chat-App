@@ -10,7 +10,8 @@ server = http.createServer(function(req, res) {
   });
 })
 
-server.listen(8000);
+var port = process.env.PORT || 8000
+server.listen(port);
 
 var everyone = require("now").initialize(server);
 everyone.now.distributeMessage = function(msg) {
