@@ -11,7 +11,7 @@ app.configure(function(){
 var port = process.env.PORT || 3000
 app.listen(port)
 
-var everyone = require("now").initialize(app, {"transports": ["xhr-polling"]});
+var everyone = require("now").initialize(app, {"socketio": {"transports": ["xhr-polling"]}});
 everyone.now.distributeMessage = function(msg) {
   everyone.now.receiveMessage(this.now.name, msg);
 }
