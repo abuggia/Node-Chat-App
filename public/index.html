@@ -89,8 +89,8 @@ $(function() {
 
   $whoru.onEnter(function(e) {
     now.name = $whoru.val();
-    now.receiveMessage = function(err, msg) {
-      $("<div></div>").text(now.name + ": " + msg).appendTo("#chat");
+    now.receiveMessage = function(name, msg) {
+      $("<div></div>").text(name + ": " + msg).appendTo("#chat");
     };
     $("#login-screen").hide();
     $("#chat-screen").show();
