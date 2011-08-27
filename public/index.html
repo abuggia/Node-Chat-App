@@ -29,6 +29,7 @@
        Respond is a polyfill for min/max-width media queries. Modernizr enables HTML5 elements & feature detects; 
        for optimal performance, create your own custom Modernizr build: www.modernizr.com/download/ -->
   <script src="modernizr-2.0.6.min.js"></script>
+  <script src="nowjs/now.js"></script>
 </head>
 
 <body>
@@ -46,7 +47,7 @@
  <div id="chat">
  </div>
  <br>
- <input type="text" id="text-input">
+ <input type="text" id="chat-input">
  <input id="send-button" type="button" value="Send">
 </div>
 
@@ -63,28 +64,40 @@
 //    s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  now.name = prompt("what's your name?", "");
-  now.receiveMessage = function(err, msg) {
-    $("<div></div>").text(name + ": " + msg).appendTo("#chat");
+  var $whoru = $("#who-are-you"), $chat = $("#chat-input");
+
+  $.fn.onEnter = function(fn) {
+    var keyCode = function(e) {
+      return (e.keyCode ? e.keyCode : e.which);
+    };
+
+    this.keypress(function(e) {
+      if (keyCode(e) === 13) {
+        e.preventDefault();
+        fn();
+      }
+    });
   };
 
-  $("#send-button").click(function() {
-    now.distributeMessage($("#text-input").val());
-    $("#text-input").val("");
-  });
-
-  $("#who-are-you").keypress(function(e) {
-    e.preventDefault();
-    alert("key pressed was " + keyCode);
-    if (keyCode(event) === 13) {
-      alert('Enter key was pressed.');
-    }
-  });
-
-  var keyCode = function(event) {
-    return (e.keyCode ? e.keyCode : e.which);
+  var send = function() {
+    now.distributeMessage($chat.val());
+    $chat.val("");
   };
 
+  $("#send-button").click(send)
+  $("#chat-input").onEnter(send)
+
+  $whoru.onEnter(function(e) {
+    now.name = $whoru.val();
+    now.receiveMessage = function(err, msg) {
+      $("<div></div>").text(now.name + ": " + msg).appendTo("#chat");
+    };
+    $("#login-screen").hide();
+    $("#chat-screen").show();
+    $chat.focus();
+  });
+
+  $whoru.focus();
 });
   </script>
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
