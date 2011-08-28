@@ -35,11 +35,22 @@
 <body>
 
 <div id="login-screen">
- <fieldset>
-  <img src="campus-chat-logo.png">
-   <label for="who-are-you">Who are you?</label>
-   <input type="text" id="who-are-you">
-  </fieldset>
+
+  <div class="dialogue">
+    <img src="campus-chat-logo.png">
+    <fieldset id="login-fields">
+      <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
+      <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
+      <input type="text" id="login-email">
+    </fieldset>
+    <fieldset id="registration-info" style="display:none">
+      <legend>Welcome! Before we throw you in the Bently chat, please create your account:</legend>
+      <input type="text" id="registration-info-email" disabled>
+      <input type="text" id="registration-info-handle" placeholder="chat username"><span>(don't worry, you can change this whenever you want)
+      <input type="text" id="registration-info-password" placeholder="password">
+      <button type="button">Start Chatting</button>
+    </fieldset>
+  </div>
 </div>
 
 <div id="chat-screen">
@@ -64,7 +75,7 @@
 //    s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  var $whoru = $("#who-are-you"), $chat = $("#chat-input");
+  var $loginEmail = $("#login-email"), $chat = $("#chat-input");
 
   $.fn.onEnter = function(fn) {
     var keyCode = function(e) {
@@ -87,17 +98,35 @@ $(function() {
   $("#send-button").click(send)
   $("#chat-input").onEnter(send)
 
-  $whoru.onEnter(function(e) {
-    now.name = $whoru.val();
+  $loginEmail.onEnter(function(e) {
+    $("#login-fields").hide();
+    $("#registration-info").show();
+alert(" should be showing ");
+
+  });
+
+/*
+
+    $.get('users/' + $loginEmail.val(), function(data) {
+      alert("got data: " + data);
+    }).error(function() {
+      $("#login-screen").prepend('<span class="error">Could not find user</span>');
+    });
+ 
+
+    now.name = $loginEmail.val();
     now.receiveMessage = function(name, msg) {
       $("<div></div>").text(name + ": " + msg).appendTo("#chat");
     };
+
     $("#login-screen").hide();
     $("#chat-screen").show();
     $chat.focus();
   });
 
-  $whoru.focus();
+*/
+
+  $loginEmail.focus();
 });
   </script>
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.

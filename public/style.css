@@ -220,23 +220,29 @@ h2 {
   color:#666;
 }
 
+.error {
+  color:red;
+}
+
 #login-screen {
   width:100%;
   height:100%;
 }
 
-#login-screen fieldset {
-  margin:150px auto 0 auto;
-  width:590px;
-  height:230px;
-  padding:3px;
+.dialogue {
   background:#fff;
-  padding:12px;
   border:1px solid #ccc;
   opacity:.93;
+  padding:12px;
   text-align:center;
   box-shadow: 0 0 20px rgba(0,0,0,0.7);
   border-radius:5px;
+}
+
+#login-screen .dialogue {
+  margin:150px auto 0 auto;
+  width:590px;
+  height:230px;
 }
 
 #login-screen img {

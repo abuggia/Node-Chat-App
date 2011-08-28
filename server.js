@@ -5,7 +5,6 @@ var express = require('express'),
 var mongoose = require('mongoose');
 var mongo_uri = process.env.MONGOLAB_URI || 'mongodb://localhost/db'
 
-
 mongoose.model('User', new mongoose.Schema({
   email: String,
   handle: String,
@@ -26,13 +25,13 @@ app.configure(function(){
 var port = process.env.PORT || 3000
 app.listen(port)
 
-app.get('/user/:id', function(req, res) {
+app.get('/users/:email', function(req, res) {
   User.findOne({ email: req.params.email }, function(err, result) {
-    if (err) {
+    if (!result || err) {
       res.send(404);
     } else {
       res.contentType('json');
-      res.send({ "handle" : handle });
+      res.send({ "handle" : result.handle });
      }
   });
 });
