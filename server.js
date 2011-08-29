@@ -27,8 +27,10 @@ app.listen(port)
 
 app.get('/users/:email', function(req, res) {
   User.findOne({ email: req.params.email }, function(err, result) {
-    if (!result || err) {
+    if (!result) {
       res.send(404);
+    } else if (err) {
+      res.send(500);
     } else {
       res.contentType('json');
       res.send({ "handle" : result.handle });
@@ -38,12 +40,12 @@ app.get('/users/:email', function(req, res) {
 
 app.post('/users', function(req, res) {
   var user = new User();
-  user.email = req.body.email;
+  user.email = req.body.user.email;
   user.save( function (err) {
     if (err) {
-      req.send(500);
+      res.send(500);
     } else {
-      req.send(200);
+      res.send(200);
     }
   });
 });

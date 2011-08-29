@@ -94,7 +94,6 @@ $(function() {
 
   $loginEmail.onEnter(function(e) {
     $.get('/users/' + $loginEmail.val(), function(data) {
-
       $("#registration-info-email").val($loginEmail.val());
       reg.show("#registration-info");
     }).error(function() {
