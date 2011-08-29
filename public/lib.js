@@ -1,30 +1,36 @@
 
-
-var DisplayRegister = function() {
+var ShowMe = function() {
   var $elems = {};
 
-  var get = function () { return $elems[e] };
+  var addIfNotSeen = function(e) { 
+    if (!$elems[e]) { $elems[e] = $(e) }
+    return $elems[e];
+  };
+ 
+  var notIn = function(x, list) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] === x) return false;
+    }
+    return true;
+  }
 
-  var hide = function(except) {
+  var hideAllExcept = function(except) {
     $.each($elems, function(key, $value) { 
-      if (except !== key) { 
-        $value.hide() 
+      if (notIn(key, except)) { 
+        $value.hide();
       }
     });
   };
 
   var show = function() {
-    hide();
+    hideAllExcept(arguments);
     $.each(arguments, function(index, e) {
-      if ($elems[e] === undefined) {
-        $elems[e] = $(e);
-      }
-      $elems[e].show();
+      addIfNotSeen(e).show();
     });
   };
 
-  show(arguments[0]);
-  return { 'show': show, 'get': get };
+  show.apply(this, arguments);
+  return show;
 };
 
 $.fn.onEnter = function(fn) {
@@ -40,4 +46,3 @@ $.fn.onEnter = function(fn) {
   });
 };
 
- 
