@@ -12,7 +12,7 @@
        More info: h5bp.com/b/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title></title>
+  <title>Campus Chat</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -29,7 +29,6 @@
        Respond is a polyfill for min/max-width media queries. Modernizr enables HTML5 elements & feature detects; 
        for optimal performance, create your own custom Modernizr build: www.modernizr.com/download/ -->
   <script src="modernizr-2.0.6.min.js"></script>
-  <script src="nowjs/now.js"></script>
 </head>
 
 <body>
@@ -45,11 +44,14 @@
     </fieldset>
     <fieldset id="registration-info" style="display:none">
       <legend>Welcome! Before we throw you in the Bently chat, please create your account:</legend>
-      <input type="text" id="registration-info-email" disabled>
-      <input type="text" id="registration-info-handle" placeholder="chat username"><span>(don't worry, you can change this whenever you want)
-      <input type="text" id="registration-info-password" placeholder="password">
+      <label><input type="text" id="registration-info-email" disabled></label>
+      <label><input type="text" id="registration-info-handle" placeholder="chat username">(don't worry, you can change this whenever you want)</label>
+      <label><input type="text" id="registration-info-password" placeholder="password"></label>
       <button type="button">Start Chatting</button>
     </fieldset>
+    <div id="check-email" style="display:none">
+      Thanks!  Please check your email<br>for a verification link to start chatting.
+    </div>
   </div>
 </div>
 
@@ -65,6 +67,9 @@
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  <script src="nowjs/now.js"></script>
+  <script src="lib.js"></script>
+
   <!--
   <script defer src="js/plugins.js"></script>
   -->
@@ -75,44 +80,34 @@
 //    s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  var $loginEmail = $("#login-email"), $chat = $("#chat-input");
-
-  $.fn.onEnter = function(fn) {
-    var keyCode = function(e) {
-      return (e.keyCode ? e.keyCode : e.which);
-    };
-
-    this.keypress(function(e) {
-      if (keyCode(e) === 13) {
-        e.preventDefault();
-        fn();
-      }
-    });
-  };
+  var reg = DisplayRegister("#login-fields"),
+      $loginEmail = $("#login-email"), 
+      $chat = $("#chat-input");
 
   var send = function() {
     now.distributeMessage($chat.val());
     $chat.val("");
-  };
+   };
 
   $("#send-button").click(send)
   $("#chat-input").onEnter(send)
 
   $loginEmail.onEnter(function(e) {
-    $("#login-fields").hide();
-    $("#registration-info").show();
-alert(" should be showing ");
+    $.get('/users/' + $loginEmail.val(), function(data) {
 
+      $("#registration-info-email").val($loginEmail.val());
+      reg.show("#registration-info");
+    }).error(function() {
+      $.post('/users', { user: { email: $loginEmail.val() } }, function(data) {
+        reg.show("#check-email");
+      });
+    });
   });
 
 /*
 
-    $.get('users/' + $loginEmail.val(), function(data) {
       alert("got data: " + data);
-    }).error(function() {
-      $("#login-screen").prepend('<span class="error">Could not find user</span>');
-    });
- 
+
 
     now.name = $loginEmail.val();
     now.receiveMessage = function(name, msg) {
@@ -129,6 +124,7 @@ alert(" should be showing ");
   $loginEmail.focus();
 });
   </script>
+
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7 ]>

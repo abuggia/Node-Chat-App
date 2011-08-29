@@ -36,6 +36,18 @@ app.get('/users/:email', function(req, res) {
   });
 });
 
+app.post('/users', function(req, res) {
+  var user = new User();
+  user.email = req.body.email;
+  user.save( function (err) {
+    if (err) {
+      req.send(500);
+    } else {
+      req.send(200);
+    }
+  });
+});
+
 
 /* Now JS */
 
