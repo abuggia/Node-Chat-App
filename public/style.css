@@ -219,24 +219,32 @@ td { vertical-align: top; }
   src: local('Droid Serif'), local('DroidSerif'), url('http://themes.googleusercontent.com/static/fonts/droidserif/v1/0AKsP294HTD-nvJgucYTaLrIa-7acMAeDBVuclsi6Gc.woff') format('woff');
 }
 
-body.login {
+body {
   background-image:url('bentley-university-background.jpg');
+  width:100%;
+  height:100%;
+  text-align:center;
 }
 
 h2 {
   color:#666;
 }
 
+h3 {
+  font-size:20px;
+  font-weight:normal;
+}
+
+img {
+  opacity:1;
+  margin:auto;
+}
+
 .error {
   color:red;
 }
 
-#login-screen {
-  width:100%;
-  height:100%;
-}
-
-.dialogue {
+#dialogue {
   background:#fff;
   border:1px solid #ccc;
   opacity:.93;
@@ -245,29 +253,35 @@ h2 {
   border-radius:5px;
   font-family: 'Droid Serif', serif;
   font-size:1.2em;
-}
-
-#login-screen .dialogue {
-  margin:150px auto 0 auto;
   width:590px;
   height:330px;
+  margin:150px auto 0 auto;
 }
 
-#login-screen img {
-  opacity:1;
-  margin:auto;
-}
-
-#login-screen fieldset label {
+fieldset label {
   display:block;
   margin-top:27px;
   font-size:1.2em;
 }
 
-#login-screen fieldset input {
+fieldset input {
   font-size:2em;
   border:1px solid #b4b4b4;
-  margin:auto;
+  margin-top:15px;
+}
+
+fieldset button {
+  padding:9px;
+  font-size:1.1em;
+  border:1px solid #b4b4b4;
+  font-family: 'Droid Serif', serif;
+  margin-left:14px;
+  margin-top:-8px;
+}
+
+#login-fields label {
+  margin-top:100px;
+
 }
 
 #registration-info {
@@ -289,11 +303,10 @@ h2 {
   width: 250px;
 }
 
-#chat-screen {
-  display:none;
+#check-email span {
+  display:inline-block;
+  margin-top:200px;
 }
-
-
 
 
 /* ==|== media queries ======================================================

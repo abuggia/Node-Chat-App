@@ -31,27 +31,29 @@
   <script src="modernizr-2.0.6.min.js"></script>
 </head>
 
-<body class="login">
+<body>
 
-  <div class="dialogue">
+  <div id="dialogue">
     <img src="campus-chat-logo.png">
+
     <fieldset id="login-fields">
       <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
       <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
-      <input type="text" id="login-email">
+      <input type="text" id="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
     </fieldset>
+
     <fieldset id="registration-info" style="display:none">
       <legend>Welcome! Before we throw you in the Bently chat, please create your account:</legend>
       <label><input type="text" id="registration-info-email" disabled></label>
       <label><input type="text" id="registration-info-handle" placeholder="chat username">(don't worry, you can change this whenever you want)</label>
       <label><input type="text" id="registration-info-password" placeholder="password"></label>
-      <button type="button" id="start-chatting">Start Chatting</button>
+      <button type="button" id="start-chatting-button">Start Chatting</button>
     </fieldset>
+
     <div id="check-email" style="display:none">
-      Thanks!  Please check your email<br>for a verification link to start chatting.
+      <span>Thanks!  Please check your email<br>for a verification link to start chatting.</span>
     </div>
   </div>
- </div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -68,61 +70,37 @@
 //    s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  var show = ShowMe("#login-screen", "#login-fields"),
-      $loginEmail = $("#login-email"), 
-      $chat = $("#chat-input");
+  var show = ShowMe("#login-fields"),
+      $emailInput = $("#login-email"), 
+      $loginButton = $("#login-button");
 
-  var send = function() {
-    now.distributeMessage($chat.val());
-    $chat.val("");
-   };
-
-  $("#send-button").click(send)
-  $("#chat-input").enter(send)
-
-  $loginEmail.enter(function(e) {
-    $.get('/users/' + $loginEmail.val(), function(data) {
-      $("#registration-info-email").val($loginEmail.val());
-      show("#login-screen", "#registration-info");
+  var sendEmail = function(e) {
+    $.get('/users/' + $emailInput.val(), function(data) {
+      $("#registration-info-email").val($emailInput.val());
+      show("#registration-info");
     }).error(function() {
-      $.post('/users', { user: { email: $loginEmail.val() } }, function(data) {
-        show("#login-screen", "#check-email");
-      });
+      $.post('/users', { user: { email: $emailInput.val() } }, function() { show("#check-email"); });
     });
-  });
- 
-  $("#start-chatting").click(function() {
+  };
+
+  var startChatting = function() {
     var user = {};
-    user['email'] = $loginEmail.val()
+    user['email'] = $("#registration-info-email").val()
     user['handle'] = $('#registration-info-handle').val();
     user['password'] = $('#registration-info-password').val();
 
     $.post('/users/', { user: user }, function() {
-      show("#chat-screen");
+      window.location.href = "chat.html";
     }).error(function() {
       alert("there was an error.");
     });
-  });
-  
+  };
 
-/*
+  $emailInput.enter(sendEmail).focus();
+  $loginButton.click(sendEmail);
+  $("#start-chatting-button").click(startChatting);
 
-      alert("got data: " + data);
-
-
-    now.name = $loginEmail.val();
-    now.receiveMessage = function(name, msg) {
-      $("<div></div>").text(name + ": " + msg).appendTo("#chat");
-    };
-
-    $("#login-screen").hide();
-    $("#chat-screen").show();
-    $chat.focus();
-  });
-
-*/
-
-  $loginEmail.focus();
+  show("#check-email");
 });
   </script>
 

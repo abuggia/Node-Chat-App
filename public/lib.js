@@ -59,6 +59,8 @@ var formattedTime = function() {
         fn();
       }
     });
+
+    return this;
   };
 })();
 
