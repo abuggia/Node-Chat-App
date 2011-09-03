@@ -33,16 +33,19 @@ var ShowMe = function() {
   return show;
 };
 
-$.fn.onEnter = function(fn) {
+(function() {
+
   var keyCode = function(e) {
     return (e.keyCode ? e.keyCode : e.which);
   };
 
-  this.keypress(function(e) {
-    if (keyCode(e) === 13) {
-      e.preventDefault();
-      fn();
-    }
-  });
-};
+  $.fn.enter = function(fn) {
+    this.keyup(function(e) {
+      if (keyCode(e) === 13) {
+        e.preventDefault();
+        fn();
+      }
+    });
+  };
+})();
 

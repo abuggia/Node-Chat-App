@@ -33,8 +33,6 @@
 
 <body>
 
-<div id="login-screen">
-
   <div class="dialogue">
     <img src="campus-chat-logo.png">
     <fieldset id="login-fields">
@@ -53,16 +51,7 @@
       Thanks!  Please check your email<br>for a verification link to start chatting.
     </div>
   </div>
-</div>
-
-<div id="chat-screen">
- <h2> Campus Chat App </h2>
- <div id="chat">
  </div>
- <br>
- <input type="text" id="chat-input">
- <input id="send-button" type="button" value="Send">
-</div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -90,9 +79,9 @@ $(function() {
    };
 
   $("#send-button").click(send)
-  $("#chat-input").onEnter(send)
+  $("#chat-input").enter(send)
 
-  $loginEmail.onEnter(function(e) {
+  $loginEmail.enter(function(e) {
     $.get('/users/' + $loginEmail.val(), function(data) {
       $("#registration-info-email").val($loginEmail.val());
       show("#login-screen", "#registration-info");
