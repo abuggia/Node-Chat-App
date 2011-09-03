@@ -36,13 +36,17 @@
   <div id="dialogue">
     <img src="campus-chat-logo.png">
 
+    <div id="loading">
+      ... loading ...
+    </div>
+
     <fieldset id="login-fields">
       <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
       <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
-      <input type="text" id="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
+      <input type="text" id="login-email" name="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
     </fieldset>
 
-    <fieldset id="registration-info" style="display:none">
+    <fieldset id="registration-info">
       <legend>Welcome! Before we throw you in the Bently chat, please create your account:</legend>
       <label><input type="text" id="registration-info-email" disabled></label>
       <label><input type="text" id="registration-info-handle" placeholder="chat username">(don't worry, you can change this whenever you want)</label>
@@ -50,7 +54,7 @@
       <button type="button" id="start-chatting-button">Start Chatting</button>
     </fieldset>
 
-    <div id="check-email" style="display:none">
+    <div id="check-email">
       <span>Thanks!  Please check your email<br>for a verification link to start chatting.</span>
     </div>
   </div>
@@ -70,7 +74,7 @@
 //    s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  var show = ShowMe("#login-fields"),
+  var show = ShowMe("#loading"),
       $emailInput = $("#login-email"), 
       $loginButton = $("#login-button");
 
@@ -100,7 +104,17 @@ $(function() {
   $loginButton.click(sendEmail);
   $("#start-chatting-button").click(startChatting);
 
-  show("#check-email");
+  var s = window.location.search
+  if (s) {
+    var m = s.match(/activation=([\w\d]+)$/);
+    if (m && m.length > 0) {
+      alert("found " + m[0])
+    } else {
+      window.location.href = "/404.html"
+    }
+  } else {
+    show("#login-fields");
+  }
 });
   </script>
 

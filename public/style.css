@@ -308,6 +308,14 @@ fieldset button {
   margin-top:200px;
 }
 
+#login-fields, #registration-info, #check-email {
+  display:none;
+}
+
+#loading {
+  margin-top: 100px;
+}
+
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
