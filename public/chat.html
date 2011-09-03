@@ -62,15 +62,25 @@
   -->
   <script>
 $(function() {
+  var $input = $("#enter input"), $send = $("#send");
 
   now.name = 'adam';
-  now.receiveMessage = function(name, msg) {
+  now.sub = function(name, msg) {
     $("<div></div>").text(name + ": " + msg).appendTo("#chat");
   };
 
+  var pub = function() {
+    now.pub($input.val());
+    $input.val("");
+  }
 
+  $input.enter(pub);
+  $send.click(pub);
+  $input.focus();
 });
   </script>
+
+
 
 
   <script>

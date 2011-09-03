@@ -54,8 +54,15 @@ app.post('/users', function(req, res) {
 /* Now JS */
 
 var everyone = require("now").initialize(app, {"socketio": {"transports": ["xhr-polling"]}});
-everyone.now.distributeMessage = function(msg) {
-  everyone.now.receiveMessage(this.now.name, msg);
+everyone.now.pub = function(msg) {
+  everyone.now.sub(this.now.name, msg);
 }
+
+function keepSending() {
+  everyone.now.pub("Dude", "Hey this is awesome");
+  setTimeout(keepSending, 200)
+}
+
+
 
 
