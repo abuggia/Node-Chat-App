@@ -212,85 +212,87 @@ td { vertical-align: top; }
    Author:
    ========================================================================== */
 
-@font-face {
-  font-family: 'Droid Serif';
-  font-style: normal;
-  font-weight: normal;
-  src: local('Droid Serif'), local('DroidSerif'), url('http://themes.googleusercontent.com/static/fonts/droidserif/v1/0AKsP294HTD-nvJgucYTaLrIa-7acMAeDBVuclsi6Gc.woff') format('woff');
+
+
+nav {
+  background:#ccc;
 }
 
-body.login {
-  background-image:url('bentley-university-background.jpg');
+ul#rooms li {
+  display:inline-block;
+  padding-left:8px;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:16px;
+  list-style-type:none;
+  color:#404040;
+  padding:7px;
 }
 
-h2 {
+ul#rooms li a {
+  display:inline-block;
+  text-decoration:none;
+  font-family:verdana;
   color:#666;
+  font-size:14px;
+  margin-left:20px;
+  padding-left:10px;
+  padding-right:10px;
+
 }
 
-.error {
-  color:red;
+ul#rooms li.active {
+  background:#fff;
 }
 
-#login-screen {
+html {
+  height:100%;
+}
+
+body {
+  height:100%;
+}
+
+#content {
   width:100%;
   height:100%;
 }
 
-.dialogue {
-  background:#fff;
-  border:1px solid #ccc;
-  opacity:.93;
+#chat {
+  width:80%;
+  float:left;
+}
+
+#users {
+  float:right;
+  background:#ddd;
+  height:100%;
+  width:20%;
+}
+
+#enter {
+  position:absolute;
+  bottom:0;
+  padding:0;
+  background:#dedede;
+  width:80%;
+  border:1px solid #999;
+}
+
+#enter input {
+  background:#dedede;
+  border:0;
   padding:12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.7);
-  border-radius:5px;
-  font-family: 'Droid Serif', serif;
-  font-size:1.2em;
+  font-size:14px;
+  width:80%;
 }
 
-#login-screen .dialogue {
-  margin:150px auto 0 auto;
-  width:590px;
-  height:330px;
-}
-
-#login-screen img {
-  opacity:1;
-  margin:auto;
-}
-
-#login-screen fieldset label {
-  display:block;
-  margin-top:27px;
-  font-size:1.2em;
-}
-
-#login-screen fieldset input {
-  font-size:2em;
-  border:1px solid #b4b4b4;
-  margin:auto;
-}
-
-#registration-info {
-  margin-top:25px;
-  font-size:1em;
-}
-
-#registration-info label {
-  display:list-item;
-  font-size:.8em ! important;
-  color:#999;
-}
-
-#registration-info-email {
-  width:300px;
-}
-
-#registration-info-handle, #registration-info-password {
-  width: 250px;
-}
-
-#chat-screen {
-  display:none;
+#enter button {
+  border: 1px solid #b4b4b4;
+  border-radius: 4px;
+  float:right;
+  padding:5px 12px;
+  margin-right:20px;
+  margin-top:6px;
 }
 
 

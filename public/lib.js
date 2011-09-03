@@ -33,6 +33,17 @@ var ShowMe = function() {
   return show;
 };
 
+var fn = function() {
+  return function() { arguments[0].call(this, [].splice(arguments, 1, arguments.length)); }
+};
+
+var setTime = function(elem) {
+  var d = new Date();
+  var hours = (d.getHours() > 12) ? (d.getHours() - 12) : d.getHours();
+  var minutes = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
+  elem.innerText(hours + ":" + minutes + ":" + d.getSeconds());
+};
+
 (function() {
 
   var keyCode = function(e) {
