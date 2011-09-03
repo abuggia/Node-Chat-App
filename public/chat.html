@@ -41,16 +41,16 @@
 
  <div id="content">
    <div id="chat">
-     <div id="dialogue">fine</div>
-     <div id="enter">
-       <input type="text">
-       <button type="button">Send</button>
-     </div>
+     <div class="dialogue"></div>
    </div>
    <div id="users">ok</div>
  </div>
 
-
+ <div id="enter">
+   <input type="text">
+   <button type="button">Send</button>
+ </div>
+ 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
@@ -62,18 +62,24 @@
   -->
   <script>
 $(function() {
-  var $input = $("#enter input"), $send = $("#send");
+  var $input = $("#enter input"), $send = $("#send"), $d = $("#chat .dialogue");
 
   now.name = 'adam';
   now.sub = function(name, msg) {
-    $("<div></div>").text(name + ": " + msg).appendTo("#chat");
+    var $chat = $('<div><span class="time"></span><span class="name">' + name + '</span><span class="text">' + msg + '</span></div>');
+    $chat.appendTo($d);
+    setTimeout(fn(addMeta, $chat))
   };
+
+ var addMeta = function($chat) {
+    $chat.find(".time").text(formattedTime);
+  }
 
   var pub = function() {
     now.pub($input.val());
     $input.val("");
   }
-
+ 
   $input.enter(pub);
   $send.click(pub);
   $input.focus();

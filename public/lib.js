@@ -34,14 +34,16 @@ var ShowMe = function() {
 };
 
 var fn = function() {
-  return function() { arguments[0].call(this, [].splice(arguments, 1, arguments.length)); }
+  var args = arguments
+  var rest = [].splice.call(args, 1, args.length - 1)
+  return function() { args[0].apply(this, rest); }
 };
 
-var setTime = function(elem) {
+var formattedTime = function() {
   var d = new Date();
   var hours = (d.getHours() > 12) ? (d.getHours() - 12) : d.getHours();
   var minutes = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-  elem.innerText(hours + ":" + minutes + ":" + d.getSeconds());
+  return hours + ":" + minutes + ":" + d.getSeconds();
 };
 
 (function() {
