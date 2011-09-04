@@ -15,6 +15,7 @@ app.configure(function(){
 app.listen((process.env.PORT || 3000))
 
 // Routing
+==========
 app.get('/users/:email', function(req, res) {
   User.findOne({ email: req.params.email }, function(err, result) {
     if (!result) {
@@ -32,12 +33,11 @@ app.post('/users', function(req, res) {
   var user = new User();
   user.email = req.body.user.email;
 
-  email.send(user.email, "Thanks for signing up", "Welcome.  Click on the link below.");
-
   user.save( function (err) {
     if (err) {
       res.send(500);
     } else {
+      email.send(process.env.MONITORING_EMAIL, "New user signed up" + user.email, " cool ");
       res.send(200);
     }
   });

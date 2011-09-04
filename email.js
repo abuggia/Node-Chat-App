@@ -1,27 +1,28 @@
   
-var mailer = require("mailer");
+var nodemailer = require('nodemailer');
 
-var setTransmissionInfo = function(options) {
-  options.authentication = "login";
-  options.host = process.CC_SMTP_HOST;
-  options.username = process.CC_SMTP_USERNAME;
-  options.password = process.CC_SMTP_PASSWORD;
-  options.ssl = true;
-  return options;
+nodemailer.SMTP = {
+  host: process.env.CC_SMTP_HOST,
+  port: 587,
+  use_authentication: true,
+  user: process.env.CC_SMTP_USERNAME,
+  pass: process.env.CC_SMTP_PASSWORD
 }
 
 var send = function(to, subject, msg) {
-  var options = setTransmissionInfo({});
-  options.from = process.CC_EMAIL_FROM;
-  options.domain = process.CC_EMAIL_FROM_DOMAIN;
-  options.port = "25";
-
+  var options = {};
+  options.sender = process.env.CC_EMAIL_FROM;
   options.to = to;
   options.subject = subject;
   options.body = msg;
 
-  mailer.send(options);
-  console.log("Sent email to " + to);
+  nodemailer.send_mail(options,  function(error, success){
+    if (success) {
+      console.log('Message sent successfully to ' + to);
+    } else {
+      console.log('Error sending email: ' + error);
+    }
+  });
 }
  
 exports.send = send

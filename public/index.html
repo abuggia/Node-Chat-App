@@ -36,10 +36,6 @@
   <div id="dialogue">
     <img src="campus-chat-logo.png">
 
-    <div id="loading">
-      ... loading ...
-    </div>
-
     <fieldset id="login-fields">
       <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
       <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
@@ -57,6 +53,16 @@
     <div id="check-email">
       <span>Thanks!  Please check your email<br>for a verification link to start chatting.</span>
     </div>
+
+    <div id="new-campus">
+      <span>Ah, it doesn't look like we have opened a chat for your campus yet.</span>
+      <ul>
+        <li><input type="checkbox" id="vote-to-open"> Submit my vote to open a chat for my campus </li>
+        <li><input type="checkbox" id=""> Send me an email when a chat for my campus opens</li>
+      </ul>
+      <button>Vote!</button>
+    </div>
+
   </div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
@@ -105,7 +111,7 @@ $(function() {
   $("#start-chatting-button").click(startChatting);
 
   var s = window.location.search
-  if (s) {
+  if (false) {
     var m = s.match(/activation=([\w\d]+)$/);
     if (m && m.length > 0) {
       alert("found " + m[0])

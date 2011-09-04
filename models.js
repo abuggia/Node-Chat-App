@@ -8,8 +8,12 @@ mongoose.model('User', new mongoose.Schema({
   password: String
 }));
 
-var db = mongoose.connect(mongo_uri);
 
+
+var acceptedDomains = ['bently.edu', 'alumni.tufts.edu']
+
+
+var db = mongoose.connect(mongo_uri);
 var User = mongoose.model('User');
 
 exports.User = User

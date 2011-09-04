@@ -265,7 +265,9 @@ fieldset label {
 }
 
 fieldset input {
-  font-size:2em;
+  font-family: 'Droid Serif', serif;
+  font-size:1.5em;
+  padding:6px;
   border:1px solid #b4b4b4;
   margin-top:15px;
 }
@@ -308,7 +310,7 @@ fieldset button {
   margin-top:200px;
 }
 
-#login-fields, #registration-info, #check-email {
+#login-fields, #registration-info, #check-email, #new-campus {
   display:none;
 }
 
@@ -316,6 +318,9 @@ fieldset button {
   margin-top: 100px;
 }
 
+#new-campus {
+
+}
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
