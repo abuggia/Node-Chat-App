@@ -9,7 +9,8 @@ var User = new mongoose.Schema({
   email: mongoose.SchemaTypes.Email,
   handle: String,
   salt: String,
-  password: String
+  password: String,
+  activation_code: String
 });
 
 User.methods.hashed = function(msg) {

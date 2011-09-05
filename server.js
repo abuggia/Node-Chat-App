@@ -29,8 +29,8 @@ app.get('/users/:email', function(req, res) {
   });
 });
 
-app.get('/user', function(req, res) {
-  User.findOne({ email: req.params.activation_code }, function(err, user) {
+app.get('/user/activate/:activation_code', function(req, res) {
+  User.findOne({ activation_code: req.params.activation_code }, function(err, user) {
     if (!user) {
       res.send(404);
     } else if (err) {
@@ -52,7 +52,8 @@ app.post('/users', function(req, res) {
       res.send(500);
     } else {
       email.send(process.env.MONITORING_EMAIL, "New user signed up: " + user.email, " cool ");
-      email.send(user.email, "CampusChat signup", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code);
+      email.send(user.email, "CampusChat signup 2", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code);
+      console.log("shoudl have sent both");
       res.send(200);
     }
   });
