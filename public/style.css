@@ -219,11 +219,28 @@ td { vertical-align: top; }
   src: local('Droid Serif'), local('DroidSerif'), url('http://themes.googleusercontent.com/static/fonts/droidserif/v1/0AKsP294HTD-nvJgucYTaLrIa-7acMAeDBVuclsi6Gc.woff') format('woff');
 }
 
+
+html {
+  background: url('bentley-university-background.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  /*
+  'cover' for IE
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
+ -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='myBackground.jpg', sizingMethod='scale')";
+ */
+}
+
 body {
-  background-image:url('bentley-university-background.jpg');
+  background-image:;
   width:100%;
   height:100%;
   text-align:center;
+  font-family: 'Droid Serif', serif;
+  text-shadow: 0 .1em #ccc;
 }
 
 h2 {
@@ -251,7 +268,6 @@ img {
   padding:12px;
   box-shadow: 0 0 20px rgba(0,0,0,0.7);
   border-radius:5px;
-  font-family: 'Droid Serif', serif;
   font-size:1.2em;
   width:590px;
   height:330px;
@@ -281,9 +297,13 @@ fieldset button {
   margin-top:-8px;
 }
 
-#login-fields label {
-  margin-top:100px;
-
+#login-fields .message {
+  margin:40px auto 40px auto;
+  background:#ffb2b2;
+  border-radius:4px;
+  width:300px;
+  opacity:0;
+  padding:10px;
 }
 
 #registration-info {

@@ -38,6 +38,7 @@
 
     <fieldset id="login-fields">
       <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
+      <div class="message">Invalid email address</div>
       <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
       <input type="text" id="login-email" name="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
     </fieldset>
@@ -82,10 +83,18 @@
 $(function() {
   var show = ShowMe("#loading"),
       $emailInput = $("#login-email"), 
-      $loginButton = $("#login-button");
+      $loginButton = $("#login-button"),
+      emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
   var sendEmail = function(e) {
-    $.get('/users/' + $emailInput.val(), function(data) {
+    var email = $emailInput.val();
+    
+    if (!emailPattern.test(email)) {
+      $("#login-fields .message").text("Invalid Email").animate({'opacity': 1}, "fast");
+      return
+    }
+
+    $.get('/users/' + email, function(data) {
       $("#registration-info-email").val($emailInput.val());
       show("#registration-info");
     }).error(function() {

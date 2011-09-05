@@ -15,7 +15,7 @@ app.configure(function(){
 app.listen((process.env.PORT || 3000))
 
 // Routing
-==========
+// =======
 app.get('/users/:email', function(req, res) {
   User.findOne({ email: req.params.email }, function(err, result) {
     if (!result) {

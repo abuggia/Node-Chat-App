@@ -1,9 +1,11 @@
 
-var mongoose = require('mongoose');
-var mongo_uri = process.env.MONGOLAB_URI || 'mongodb://localhost/db'
+var mongoose = require('mongoose'),
+    mongo_uri = process.env.MONGOLAB_URI || 'mongodb://localhost/db'; 
+
+require("mongoose-types").loadTypes(mongoose, 'email');
 
 mongoose.model('User', new mongoose.Schema({
-  email: String,
+  email: mongoose.SchemaTypes.Email,
   handle: String,
   password: String
 }));
