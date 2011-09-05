@@ -261,6 +261,10 @@ img {
   color:red;
 }
 
+input.disabled {
+  background:#ccc;
+}
+
 #dialogue {
   background:#fff;
   border:1px solid #ccc;
@@ -293,6 +297,7 @@ fieldset button {
   font-size:1.1em;
   border:1px solid #b4b4b4;
   font-family: 'Droid Serif', serif;
+  color:#4b4b4b;
   margin-left:14px;
   margin-top:-8px;
 }
@@ -307,22 +312,37 @@ fieldset button {
 }
 
 #registration-info {
-  margin-top:25px;
-  font-size:1em;
+  margin-top:8px;
+  font-size:.9em;
+  text-align:left;
 }
 
-#registration-info label {
-  display:list-item;
+#registration-info li {
+  list-style-type:none;
+}
+
+#registration-info li span {
   font-size:.8em ! important;
   color:#999;
+  display:inline-block;
+  padding:4px;
 }
 
 #registration-info-email {
-  width:300px;
+  width:360px;
 }
 
 #registration-info-handle, #registration-info-password {
-  width: 250px;
+  width:190px;
+}
+
+#registration-info label {
+  white-space:nowrap; 
+}
+
+#registration-info button {
+  margin-top:9px;
+  margin-left:0;
 }
 
 #check-email span {
