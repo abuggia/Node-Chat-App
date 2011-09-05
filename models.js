@@ -26,11 +26,11 @@ User.methods.isCorrectPassword = function(password) {
   return this.password === this.hashed(password);
 };
 
-User.statics.authenticate = function(email, password, next) {
-  User.findOne({ email: email }, function(err, user) {
-    if (!user) return next(new Error('cannot find user'));
-    if (user.isCorrectPassword(password)) return (null, user);
-    next(new Error('invalid password'));
+User.statics.authenticate = function(email, password, fn) {
+  this.findOne({ email: email }, function(err, user) {
+    if (!user) return fn(new Error('cannot find user'));
+    if (user.isCorrectPassword(password)) return fn(null, user);
+    fn(new Error('invalid password'));
   });
 };
 

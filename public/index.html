@@ -34,7 +34,7 @@
       <legend>Welcome! Before we throw you in the<br>Bently chat, please create your account:</legend>
       <li><input type="text" id="registration-info-email" disabled class="disabled"/></li>
       <li><input type="text" id="registration-info-handle" placeholder="chat username"/><span>(don't worry, you can change<br> this whenever you want)</span></li>
-      <li><input type="text" id="registration-info-password" placeholder="password"/></li>
+      <li><input type="password" id="registration-info-password" placeholder="password"/></li>
       <li><button type="button" class="start-chatting-button">Start Chatting</button></li>
     </fieldset>
 
@@ -78,8 +78,10 @@ $(function() {
       $emailInput = $("#login-email"), 
       $loginButton = $("#login-button"),
       $passwordInput = $("#password-input"),
+      $regInfoEmail = $("#registration-info-email");
+      $regInfoHandle = $("#registration-info-handle");
+      $regInfoPassword = $("#registration-info-password");
       emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
 
   var chat = function(email, password) { 
     $.post('/session', {email: email, password: password}, function() {
@@ -114,11 +116,9 @@ $(function() {
   };
 
   var startChatting = function() {
-    var user = {};
-    user['email'] = $("#registration-info-email").val()
-    user['handle'] = $('#registration-info-handle').val();
-    user['password'] = $('#registration-info-password').val();
+    var user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() };
 
+    console.log('posting to user');
     $.post('/user/' + user.email, { user: user }, function() {
       chat(user.email, user.password);
     }).error(function() {
@@ -129,6 +129,9 @@ $(function() {
   $emailInput.enter(sendEmail).focus();
   $loginButton.click(sendEmail);
   $("#registration-info .start-chatting-button").click(startChatting);
+  $regInfoEmail.enter(startChatting);
+  $regInfoHandle.enter(startChatting);
+  $regInfoPassword.enter(startChatting);
 
   var s = window.location.search
   if (s) {

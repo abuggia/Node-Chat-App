@@ -68,12 +68,8 @@ $(function() {
   now.sub = function(name, msg) {
     var $chat = $('<div><span class="time"></span><span class="name">' + name + '</span><span class="text">' + msg + '</span></div>');
     $chat.appendTo($d);
-    setTimeout(fn(addMeta, $chat))
-  };
-
-  var addMeta = function($chat) {
     $chat.find(".time").text(formattedTime);
-  }
+  };
 
   var pub = function() {
     now.pub($input.val());

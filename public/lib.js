@@ -33,17 +33,13 @@ var ShowMe = function() {
   return show;
 };
 
-var fn = function() {
-  var args = arguments
-  var rest = [].splice.call(args, 1, args.length - 1)
-  return function() { args[0].apply(this, rest); }
+var twoDigits = function(num) {
+  return num < 10 ? '0' + num : num;
 };
 
 var formattedTime = function() {
-  var d = new Date();
-  var hours = (d.getHours() > 12) ? (d.getHours() - 12) : d.getHours();
-  var minutes = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-  return hours + ":" + minutes + ":" + d.getSeconds();
+  var d = new Date(), h = d.getHours(), hours = (h > 12) ? (h - 12) : h;
+  return hours + ":" + twoDigits(d.getMinutes()) + ":" + twoDigits(d.getSeconds())
 };
 
 (function() {
