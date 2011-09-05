@@ -330,7 +330,7 @@ fieldset button {
   margin-top:200px;
 }
 
-#login-fields, #registration-info, #check-email, #new-campus {
+#login-fields, #registration-info, #check-email, #new-campus, #enter-password {
   display:none;
 }
 

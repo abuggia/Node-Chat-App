@@ -1,4 +1,3 @@
-
 var express = require('express'),
     app = express.createServer(),
     email = require('./email'),
@@ -8,32 +7,34 @@ var express = require('express'),
 app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session( { secret: 'H26DFuLKfgde5DFklkRD347BG34' } ));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
 
-app.listen((process.env.PORT || 3000))
-
 // Routing
 // =======
 app.get('/users/:email', function(req, res) {
-  User.findOne({ email: req.params.email }, function(err, result) {
-    if (!result) {
+  User.findOne({ email: req.params.email }, function(err, user) {
+    if (!user) {
       res.send(404);
     } else if (err) {
       res.send(500);
     } else {
       res.contentType('json');
-      res.send({ "handle" : result.handle });
-     }
+      res.send(user);
+    }
   });
 });
 
 app.post('/users', function(req, res) {
   var user = new User();
   user.email = req.body.user.email;
+  user.handle = req.body.user.email;
+  user.setPassword(req.body.user.password);
 
-  user.save( function (err) {
+  user.save(function (err) {
     if (err) {
       res.send(500);
     } else {
@@ -42,6 +43,19 @@ app.post('/users', function(req, res) {
     }
   });
 });
+
+app.post('/session', function(req, res) {
+  User.authenticate(req.body.email, req.body.password, function(err, user) {
+    if (err) {
+      res.send(401);
+    } else {
+      req.session.user = user
+      res.send(200);
+    }
+  });
+});
+
+app.listen((process.env.PORT || 3000));
 
 
 // Chat via NowJS

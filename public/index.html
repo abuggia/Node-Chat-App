@@ -48,7 +48,13 @@
       <label><input type="text" id="registration-info-email" disabled></label>
       <label><input type="text" id="registration-info-handle" placeholder="chat username">(don't worry, you can change this whenever you want)</label>
       <label><input type="text" id="registration-info-password" placeholder="password"></label>
-      <button type="button" id="start-chatting-button">Start Chatting</button>
+      <button type="button" class="start-chatting-button">Start Chatting</button>
+    </fieldset>
+
+    <fieldset id="enter-password">
+      <label>Welcome <span class="welcome-name"></span>.  Please enter your password</label>
+      <input type="text" id="password-input" placeholder="password"></label>
+      <button type="button" class="start-chatting-button">Start Chatting</button>
     </fieldset>
 
     <div id="check-email">
@@ -84,19 +90,38 @@ $(function() {
   var show = ShowMe("#loading"),
       $emailInput = $("#login-email"), 
       $loginButton = $("#login-button"),
+      $passwordInput = $("#password-input"),
       emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+
+  var chat = function(email, password) { 
+    $.post('/session', {email: email, password: password}, function() {
+      window.location.href = "chat.html";
+    }).error(function() {
+      alert('there was an error');
+    });
+  };
 
   var sendEmail = function(e) {
     var email = $emailInput.val();
     
     if (!emailPattern.test(email)) {
-      $("#login-fields .message").text("Invalid Email").animate({'opacity': 1}, "fast");
-      return
+      return $("#login-fields .message").text("Invalid Email").animate({'opacity': 1}, "fast");
     }
 
-    $.get('/users/' + email, function(data) {
-      $("#registration-info-email").val($emailInput.val());
-      show("#registration-info");
+    $.get('/users/' + email, function(user) {
+      if (!user.handle) {
+        $("#registration-info-email").val($emailInput.val());
+        show("#registration-info");
+      } else {
+        var chatWithPassword = function() { 
+          chat(user.email, $passwordInput.val());
+        };
+
+        $("#enter-password .start-chatting-button").click(chatWithPassword);
+        $passwordInput.enter(chatWithPassword);
+        show("#enter-password");
+      }
     }).error(function() {
       $.post('/users', { user: { email: $emailInput.val() } }, function() { show("#check-email"); });
     });
@@ -109,7 +134,7 @@ $(function() {
     user['password'] = $('#registration-info-password').val();
 
     $.post('/users/', { user: user }, function() {
-      window.location.href = "chat.html";
+      chat(user.email, user.password);
     }).error(function() {
       alert("there was an error.");
     });
@@ -117,7 +142,7 @@ $(function() {
 
   $emailInput.enter(sendEmail).focus();
   $loginButton.click(sendEmail);
-  $("#start-chatting-button").click(startChatting);
+  $("#registration-info .start-chatting-button").click(startChatting);
 
   var s = window.location.search
   if (false) {
