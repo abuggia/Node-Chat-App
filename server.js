@@ -2,6 +2,7 @@ var express = require('express'),
     app = express.createServer(),
     email = require('./email'),
     models = require('./models'),
+    utils = require('./utils')
     User = models.User;
 
 app.configure(function(){
@@ -28,18 +29,47 @@ app.get('/users/:email', function(req, res) {
   });
 });
 
+app.get('/user', function(req, res) {
+  User.findOne({ email: req.params.activation_code }, function(err, user) {
+    if (!user) {
+      res.send(404);
+    } else if (err) {
+      res.send(500);
+    } else {
+      res.contentType('json');
+      res.send(user);
+    }
+  });
+});
+
 app.post('/users', function(req, res) {
   var user = new User();
   user.email = req.body.user.email;
-  user.handle = req.body.user.email;
-  user.setPassword(req.body.user.password);
+  user.activation_code = utils.randomString(12);
 
   user.save(function (err) {
     if (err) {
       res.send(500);
     } else {
-      email.send(process.env.MONITORING_EMAIL, "New user signed up" + user.email, " cool ");
+      email.send(process.env.MONITORING_EMAIL, "New user signed up: " + user.email, " cool ");
+      email.send(user.email, "CampusChat signup", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code);
       res.send(200);
+    }
+  });
+});
+
+app.post('/user/:email', function(req, res) {
+  User.findOne({ email: req.params.email }, function(err, user) {
+    if (!user) {
+      res.send(404);
+    } else if (err) {
+      res.send(500);
+    } else {
+      user.handle = req.body.user.email;
+      user.setPassword(req.body.user.password);
+      user.save(function(err) {
+        res.send((err ? 500 : 200));
+      });
     }
   });
 });

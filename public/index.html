@@ -111,9 +111,8 @@ $(function() {
 
     $.get('/users/' + email, function(user) {
       if (!user.handle) {
-        $("#registration-info-email").val($emailInput.val());
-        show("#registration-info");
-      } else {
+        show("#check-email");
+     } else {
         var chatWithPassword = function() { 
           chat(user.email, $passwordInput.val());
         };
@@ -133,7 +132,7 @@ $(function() {
     user['handle'] = $('#registration-info-handle').val();
     user['password'] = $('#registration-info-password').val();
 
-    $.post('/users/', { user: user }, function() {
+    $.post('/user/' + user.email, { user: user }, function() {
       chat(user.email, user.password);
     }).error(function() {
       alert("there was an error.");
@@ -144,12 +143,16 @@ $(function() {
   $loginButton.click(sendEmail);
   $("#registration-info .start-chatting-button").click(startChatting);
 
-
   var s = window.location.search
-  if (false) {
-    var m = s.match(/activation=([\w\d]+)$/);
+  if (s) {
+    var m = s.match(/activation_code=([\w\d]+)$/);
     if (m && m.length > 0) {
-      alert("found " + m[0])
+      $.get('/user?activation_code=' + m[1], function(user) {
+        $("#registration-info-email").val(user.email);
+        show("#registration-info");
+      }).error(function() {
+        alert("invalid activation code.");
+      });
     } else {
       window.location.href = "/404.html"
     }
@@ -158,7 +161,7 @@ $(function() {
   }
 
 
-  show("#registration-info");
+//  show("#registration-info");
 });
   </script>
 
