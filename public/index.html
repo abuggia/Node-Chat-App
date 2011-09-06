@@ -39,8 +39,9 @@
     </fieldset>
 
     <fieldset id="enter-password">
+      <div class="message">Invalid password</div>
       <label>Welcome <span class="welcome-name"></span>.  Please enter your password</label>
-      <input type="text" id="password-input" placeholder="password"></label>
+      <input type="password" id="password-input" placeholder="password"></label>
       <button type="button" class="start-chatting-button">Start Chatting</button>
     </fieldset>
 
@@ -78,16 +79,16 @@ $(function() {
       $emailInput = $("#login-email"), 
       $loginButton = $("#login-button"),
       $passwordInput = $("#password-input"),
-      $regInfoEmail = $("#registration-info-email");
-      $regInfoHandle = $("#registration-info-handle");
-      $regInfoPassword = $("#registration-info-password");
+      $regInfoEmail = $("#registration-info-email"),
+      $regInfoHandle = $("#registration-info-handle"),
+      $regInfoPassword = $("#registration-info-password"),
       emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
   var chat = function(email, password) { 
     $.post('/session', {email: email, password: password}, function() {
       window.location.href = "chat.html";
     }).error(function() {
-      alert('there was an error');
+      $("#enter-password .message").animate({'opacity': 1}, "fast");
     });
   };
 
@@ -100,15 +101,16 @@ $(function() {
 
     $.get('/users/' + email, function(user) {
       if (!user.handle) {
-        show("#check-email");
-     } else {
+         show("#check-email");
+      } else {
         var chatWithPassword = function() { 
           chat(user.email, $passwordInput.val());
         };
-
+        $("#enter-password .welcome-name").text(user.email);
         $("#enter-password .start-chatting-button").click(chatWithPassword);
         $passwordInput.enter(chatWithPassword);
         show("#enter-password");
+        $passwordInput.focus();
       }
     }).error(function() {
       $.post('/users', { user: { email: $emailInput.val() } }, function() { show("#check-email"); });
@@ -117,12 +119,10 @@ $(function() {
 
   var startChatting = function() {
     var user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() };
-
-    console.log('posting to user');
     $.post('/user/' + user.email, { user: user }, function() {
       chat(user.email, user.password);
     }).error(function() {
-      alert("there was an error.");
+      alert("there was an error");
     });
   };
 
@@ -148,10 +148,12 @@ $(function() {
     }
   } else {
     show("#login-fields");
+    $("#login-fields input[type=text]").focus();
   }
 
 
-//  show("#registration-info");
+//        show("#enter-password");
+
 });
   </script>
 
