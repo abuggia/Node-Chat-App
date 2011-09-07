@@ -350,11 +350,16 @@ fieldset button {
   margin-top:200px;
 }
 
+#non-edu-message span {
+  display:inline-block;
+  margin-top:100px;
+}
+
 #enter-password label {
   margin-top:70px;
 }
 
-#login-fields, #registration-info, #check-email, #new-campus, #enter-password {
+#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message {
   display:none;
 }
 

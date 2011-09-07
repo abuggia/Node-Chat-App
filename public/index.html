@@ -58,6 +58,10 @@
       <button>Vote!</button>
     </div>
 
+    <div id="non-edu-message">
+      <span>Please use your .edu email address to verify that you're a current student</span>
+    </div>
+
   </div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
@@ -113,7 +117,17 @@ $(function() {
         $passwordInput.focus();
       }
     }).error(function() {
-      $.post('/users', { user: { email: $emailInput.val() } }, function() { show("#check-email"); });
+      $.post('/users', { user: { email: $emailInput.val() } }, function() { 
+        show("#check-email"); 
+      }).error(function(xhr) {
+        if (xhr.status === 420) {
+          show("#new-campus");
+        } else if (xhr.status === 403) {
+          show("#non-edu-message");
+        } else {
+          alert("there was an error");
+        }
+      });
     });
   };
 

@@ -50,7 +50,15 @@ app.post('/users', function(req, res) {
 
   user.save(function (err) {
     if (err) {
-      res.send(500);
+      if (err === Errors.CampusNotReadyYet) {
+        res.send(420);
+
+      } else if (err === Errors.NotEduAddress) {
+        res.send(403);
+
+      } else {
+        res.send(500);
+      }
     } else {
       email.send(process.env.MONITORING_EMAIL, "New user signed up: " + user.email, " cool ");
       email.send(user.email, "CampusChat signup 2", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code);
