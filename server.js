@@ -4,6 +4,7 @@ var express = require('express'),
     models = require('./models'),
     utils = require('./utils')
     User = models.User;
+    Errors = models.Errors;
 
 app.configure(function(){
   app.use(express.methodOverride());
@@ -96,11 +97,9 @@ everyone.now.pub = function(msg) {
   everyone.now.sub(this.now.name, msg);
 }
 
-function keepSending() {
-  everyone.now.pub("Hey this is awesome");
-  setTimeout(keepSending, 200)
-}
-
-
-
+everyone.now.eachUser = function(fn) {
+  everyone.getUsers(function (users) {
+    for (var i = 0; i < users.length; i++) fn(users[i]);
+  });
+};
 
