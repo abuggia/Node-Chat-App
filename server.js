@@ -4,7 +4,8 @@ var express = require('express'),
     models = require('./models'),
     utils = require('./utils')
     User = models.User;
-    Errors = models.Errors;
+    Errors = models.Errors,
+    subdomainPattern = new RegExp("\\w+\." + process.env.ROOT_URL);
 
 app.configure(function(){
   app.use(express.methodOverride());
@@ -14,6 +15,16 @@ app.configure(function(){
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
+
+// Redirect subdomains to root for SEO
+app.all("*", function(req, res, next){ 
+  if(subdomainPattern .test(req.headers.host)) {
+    res.writeHead(302, { 'Location': 'http://' + process.env.ROOT_URL });
+    res.end();
+  } else {
+    next(); 
+  }
+}); 
 
 // Routing
 // =======

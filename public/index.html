@@ -99,7 +99,9 @@ $(function() {
   var sendEmail = function(e) {
     var email = $emailInput.val();
     
-    if (!emailPattern.test(email)) {
+    if (email === '') {
+      return;
+    } else if (!emailPattern.test(email)) {
       return $("#login-fields .message").text("Invalid email address.").animate({'opacity': 1}, "fast");
     }
 
