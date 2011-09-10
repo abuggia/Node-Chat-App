@@ -74,7 +74,12 @@ User.pre('save', function(next) {
 
 mongoose.model('User', User);
 
-var db = mongoose.connect(mongo_uri);
+var db = mongoose.connect(mongo_uri, function(err) {
+  if (err) {
+    console.log("PROBLEM CONNECTING TO MONGO: " + err);
+  }
+});
+
 exports.User = mongoose.model('User');
 exports.Errors = Errors;
 
