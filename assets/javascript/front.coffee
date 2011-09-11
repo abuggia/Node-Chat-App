@@ -30,7 +30,10 @@ $ ->
 
     $.get "/user/#{email}", (user) ->
       if user.voted
-        show "#already-voted"
+        $.get "/votes/#{email}", (data) ->
+          $("#already-voted .replace-others-for-domain").text "Once a school reaches 100 votes, we'll open the chat. So far, #{data.count} others also want to open a chat for your school."
+        .complete ->
+          show "#already-voted"
       else
         show "#new-campus"
 
@@ -76,7 +79,12 @@ $ ->
   $("#vote-button").click ->
     user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
     $.post "/vote/#{user.email}", user, ->
-      show "#vote-recorded"
+      $.get "/votes/#{user.email}", (data) ->
+        if data.count > 1
+          $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
+      .complete ->
+       show "#vote-recorded"
+          
     .error ->
       doError "Could not record vote"
 

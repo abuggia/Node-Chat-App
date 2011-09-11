@@ -33,6 +33,7 @@ app.get '/users/activate/:activation_code', UserView.activate
 app.post '/users', UserView.save
 app.post '/users/:email', UserView.update
 app.post '/vote/:email', UserView.vote
+app.get '/votes/:email', UserView.voteCount
 app.post '/session', UserView.login
 
 module.exports = app

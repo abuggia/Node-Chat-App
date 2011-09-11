@@ -60,6 +60,14 @@ class UserView
     user.save (err) ->
       res.send (err ? 500 : 200)
 
+  voteCount: (req, res) ->
+    User.count { school: req.user.school, vote_open_on_campus: true }, (err, count) ->
+      if err?
+        res 500
+      else
+        res.json { school: req.user.school, count: count }
+
+
   login: (req, res) ->
     User.authenticate req.body.email, req.body.password, (err, user) ->
       if err
