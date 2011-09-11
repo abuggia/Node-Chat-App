@@ -390,18 +390,15 @@ fieldset button {
   margin-top: 100px;
 }
 
-#vote-recorded ul {
+#vote-recorded ul, #already-voted ul {
   margin-top:50px;
   margin-left:0;
   padding-left:0;
 }
 
-#vote-recorded ul li {
+#vote-recorded ul li, #already-voted ul, li {
   margin-left:0;
   padding:14px;
-}
-
-#vote-recorded ul li {
   list-style:none;
 }
 
