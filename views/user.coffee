@@ -33,7 +33,6 @@ class UserView
     user.email = req.body.user.email
 
     user.save (err) ->
-
       if errors.defined err
         res.send err.code
       else if err
