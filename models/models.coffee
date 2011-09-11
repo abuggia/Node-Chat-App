@@ -1,6 +1,6 @@
 _ = require('underscore')
 mongoose = require('mongoose')
-mongo_uri = (process.env.MONGOHQ_URL || process.env.MONGO_URI)
+mongo_uri = process.env.MONGO_URI
 errors = require('./../errors.coffee')
 wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
@@ -58,6 +58,7 @@ User.pre 'save', (next) ->
 mongoose.model 'User', User
 
 db = mongoose.connect mongo_uri, (err) ->
+  console.log "Trying to connect to mongo with uri: " + mongo_uri
   if err
     console.log "PROBLEM CONNECTING TO MONGO: " + err
 
