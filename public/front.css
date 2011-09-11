@@ -244,12 +244,13 @@ body {
 }
 
 h2 {
-  color:#666;
+  color:#626262;
 }
 
 h3 {
-  font-size:20px;
+  font-size:26px;
   font-weight:normal;
+  margin:15px;
 }
 
 img {
@@ -286,24 +287,27 @@ fieldset label {
 
 fieldset input {
   font-family: 'Droid Serif', serif;
-  font-size:1.5em;
+  font-size:29px;
   padding:6px;
-  border:1px solid #b4b4b4;
+  border:1px solid #b7b7b7;
   margin-top:15px;
+  color:#626262;
+
 }
 
 fieldset button {
   padding:9px;
-  font-size:1.1em;
-  border:1px solid #b4b4b4;
+  font-size:24px;
+  border:1px solid #bbb;
+  background-color:#d2d2d2;
   font-family: 'Droid Serif', serif;
-  color:#4b4b4b;
+  color:#454545;
   margin-left:14px;
-  margin-top:-8px;
+  margin-top:-9px;
 }
 
 #login-fields .message, #enter-password .message {
-  margin:28px auto 28px auto;
+  margin:15px auto 15px auto;
   background:#ffb2b2;
   border-radius:4px;
   width:300px;
@@ -354,7 +358,7 @@ fieldset button {
 
 #non-edu-message span {
   display:inline-block;
-  margin-top:100px;
+  margin-top:80px;
 }
 
 #new-campus ul {
