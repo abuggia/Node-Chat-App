@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var $emailInput, $loginButton, $passwordInput, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, m, s, sendEmail, show, startChatting;
+    var $emailInput, $loginButton, $passwordInput, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, m, s, sendEmail, show;
     show = ShowMe("#loading");
     $emailInput = $("#login-email");
     $loginButton = $("#login-button");
@@ -53,45 +53,39 @@
                 show "#enter-password"
                 $passwordInput.focus()
               */
-      }).error(function() {
-        return $.post('/users', {
-          user: {
-            email: $emailInput.val()
-          }
-        }, function(data) {
-          return show("#new-campus");
-        }).error(function(xhr) {
-          switch (xhr.status) {
-            case 420:
-              return show("#new-campus");
-            case 403:
-              return $("#login-fields").showError("Please use your .edu email address to verify that you're a student");
-            default:
-              return doError("there was an error");
-          }
-        });
-      });
-    };
-    startChatting = function() {
-      var user;
-      user = {
-        email: $emailInput.val(),
-        handle: $regInfoHandle.val(),
-        password: $regInfoPassword.val()
-      };
-      return $.post('/user/' + user.email, {
-        user: user
-      }, function() {
-        return chat(user.email, user.password);
-      }).error(function() {
-        return doError("there was an error");
+      }).error(function(xhr) {
+        if (xhr.status === 404) {
+          return $.post('/users', {
+            user: {
+              email: $emailInput.val()
+            }
+          }, function(data) {
+            return show("#new-campus");
+          }).error(function(xhr) {
+            switch (xhr.status) {
+              case 420:
+                return show("#new-campus");
+              case 403:
+                return $("#login-fields").showError("Please use your .edu email address to verify that you're a student");
+              default:
+                return doError("there was an error");
+            }
+          });
+        } else {
+          return doError("Could not find user");
+          /*
+              startChatting = ->
+              user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
+              $.post '/user/' + user.email, { user: user }, ->
+                chat user.email, user.password
+              .error ->
+                doError "there was an error"
+                */
+        }
       });
     };
     $emailInput.enter(sendEmail).focus();
     $loginButton.click(sendEmail);
-    $("#registration-info .start-chatting-button").click(startChatting);
-    $regInfoHandle.enter(startChatting);
-    $regInfoPassword.enter(startChatting);
     $("#vote-button").click(function() {
       var user;
       user = {

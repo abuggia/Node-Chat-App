@@ -37,20 +37,20 @@ User.statics.authenticate = (email, password, fn) ->
     else fn(new Error('invalid password'))
 
 User.methods.isEmailExistsError = (err) ->
-  /E11000/.match(err.message) and /email/.match(err.message)
+  err and /E11000/.test(err.message) and /email/.test(err.message)
 
 acceptList = (users) -> (user) -> _(users).any(user)
 emailDomains = {
   'campusch.at': -> true
   #'bentley.edu': (user) -> wordUnderscoreWordPattern.test user
-  'alumni.tufts.edu': (user) -> if process.env.INLUDE_TUFTS_ALUMNI acceptList(process.env.TUFTS_USERS.split(','))(user) else false
+  'alumni.tufts.edu': (user) -> if process.env.TUFTS_ALUMNI? then acceptList(process.env.TUFTS_ALUMNI.split(','))(user) else false
 }
 
 User.pre 'save', (next) ->
   [name, domain] = this.email.split '@'
 
   if emailDomains[domain]
-    if emailDomains[domain](name) then next() else next Errors.Forbidden
+    if emailDomains[domain](name) then next() else next(new errors.Forbidden())
   else if eduPattern.test(domain)
     next()
   else
