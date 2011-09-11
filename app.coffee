@@ -7,9 +7,11 @@ app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-  app.use express.session({ secret : "H26DFuLKfgde5DFklkRD347BG34" })
+  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
   app.use app.router
   app.use express.static(__dirname + "/public")
+  app.use express.errorHandler({ dumpExceptions: true, showStack: true })
+
 
 # Redirect subdomains to root for SEO
 app.all "*", (req, res, next) -> 
@@ -25,15 +27,4 @@ app.post '/users', UserView.save
 app.post '/user/:email', UserView.update
 app.post '/session', UserView.login
 
-app.listen((process.env.PORT || 3000));
-
-# Chat via NowJS
-everyone = require("now").initialize app, { "socketio": { "transports": ["xhr-polling"] } }
-everyone.now.pub = (msg) ->
-  everyone.now.sub this.now.name, msg
-
-everyone.now.eachUser = (fn) ->
-  everyone.getUsers (users) ->
-    fn(user) for user in users
-
-
+module.exports = app
