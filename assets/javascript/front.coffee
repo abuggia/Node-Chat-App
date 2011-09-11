@@ -31,7 +31,6 @@ $ ->
     $.get "/user/#{email}", (user) ->
       if user.voted
         show "#already-voted"
-
       else
         show "#new-campus"
 
@@ -100,6 +99,4 @@ $ ->
 
     #$("#vote-recorded .replace-others-for-domain").text("47 others want a Campus Chat for harvard.edu")
     #show "#vote-recorded"
-
-
 
