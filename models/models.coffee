@@ -21,6 +21,7 @@ User = new mongoose.Schema {
   vote_open_on_campus: Boolean
   vote_email_me: Boolean
   voted: Boolean
+  school: String
 }
 
 User.methods.hashed = (msg) ->
@@ -46,20 +47,27 @@ emailDomains = {
   'alumni.tufts.edu': (user) -> if process.env.TUFTS_ALUMNI? then acceptList(process.env.TUFTS_ALUMNI.split(','))(user) else false
 }
 
-User.pre 'save', (next) ->
-  [name, domain] = this.email.split '@'
+User.pre 'save', (next) -> 
+  if not this.activation_code?
+    this.activation_code = randomString(12)
+  next()
 
-  if emailDomains[domain]
-    if emailDomains[domain](name) then next() else next(new errors.Forbidden())
-  else if eduPattern.test(domain)
+User.pre 'save', (next) -> 
+  this.activation_code = randomString(12)
+  [name, domain] = this.email.split '@'
+  this.school = domain
+  next()
+
+User.pre 'save', (next) ->
+  s = this.school
+
+  if emailDomains[s]
+    if emailDomains[s](name) then next() else next(new errors.Forbidden())
+  else if eduPattern.test(s)
     next()
   else
     next(new errors.Forbidden())
 
-
-User.pre 'save', (next) -> 
-  this.activation_code = randomString(12)
-  next()
 
 mongoose.model 'User', User
 

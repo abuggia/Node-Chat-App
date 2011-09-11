@@ -38,7 +38,11 @@
       }
       return $.get("/user/" + email, function(user) {
         if (user.voted) {
-          return show("#already-voted");
+          return $.get("/votes/" + email, function(data) {
+            return $("#already-voted .replace-others-for-domain").text("Once a school reaches 100 votes, we'll open the chat. So far, " + data.count + " others also want to open a chat for your school.");
+          }).complete(function() {
+            return show("#already-voted");
+          });
         } else {
           return show("#new-campus");
         }
@@ -94,7 +98,13 @@
         vote_email_me: $("#vote-to-email").is(":checked")
       };
       return $.post("/vote/" + user.email, user, function() {
-        return show("#vote-recorded");
+        return $.get("/votes/" + user.email, function(data) {
+          if (data.count > 1) {
+            return $("#vote-recorded .replace-others-for-domain").text("" + data.count + " others want a Campus Chat for " + data.school);
+          }
+        }).complete(function() {
+          return show("#vote-recorded");
+        });
       }).error(function() {
         return doError("Could not record vote");
       });
