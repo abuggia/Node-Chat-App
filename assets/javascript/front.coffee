@@ -3,10 +3,11 @@ $ ->
   $emailInput = $ "#login-email"
   $loginButton = $ "#login-button"
   $passwordInput = $ "#password-input"
-  $regInfoEmail = $ "#registration-info-email"
   $regInfoHandle = $ "#registration-info-handle"
   $regInfoPassword = $ "#registration-info-password"
   emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+  doError = (message)-> alert "There was an error:\n\n#{message}"
+
 
   $.fn.showError = (message) ->
     this.find('.message').text(message).animate {'opacity': 1}, "fast"
@@ -39,30 +40,36 @@ $ ->
         $passwordInput.focus()
 
     .error ->
-      $.post '/users', { user: { email: $emailInput.val() } }, ->
-        show "#check-email"
+
+      $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
+        show "#new-campus"
       .error (xhr) ->
         if  xhr.status is 420
           show "#new-campus"
         else if xhr.status is 403
           $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
-
         else
-          alert "there was an error"
+          doError "there was an error"
 
   startChatting = ->
-    user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
+    user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
     $.post '/user/' + user.email, { user: user }, ->
       chat user.email, user.password
     .error ->
-      alert "there was an error"
+      doError "there was an error"
 
   $emailInput.enter(sendEmail).focus()
   $loginButton.click sendEmail
   $("#registration-info .start-chatting-button").click startChatting
-  $regInfoEmail.enter startChatting
   $regInfoHandle.enter startChatting
   $regInfoPassword.enter startChatting
+  $("#vote-button").click ->
+    user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
+    $.post "/vote/#{user.email}", user, ->
+      show "#vote-recorded"
+    .error ->
+      doError "Could not record vote"
+
 
   s = window.location.search
   if s
@@ -72,7 +79,7 @@ $ ->
         $("#registration-info-email").val user.email
         show "#registration-info"
       .error ->
-        alert "invalid activation code."
+        doError "invalid activation code."
     else
       window.location.href = "/404.html"
  

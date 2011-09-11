@@ -1,0 +1,3 @@
+
+coffee -c test/user.coffee && expresso test/user.js
+

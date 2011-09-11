@@ -1,4 +1,4 @@
-
+#!/usr/bin/ruby
 
 vars = []
 File.open('prod.config').each do |line|
