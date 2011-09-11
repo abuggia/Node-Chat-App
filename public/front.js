@@ -36,20 +36,23 @@
         $emailInput.val('');
         return $("#login-fields").showError("Invalid email address");
       }
-      return $.get("/users/" + email, function(user) {
-        var chatWithPassword;
-        if (!user.handle) {
-          return show("#check-email");
+      return $.get("/user/" + email, function(user) {
+        if (user.voted) {
+          return show("#already-voted");
         } else {
-          chatWithPassword = function() {
-            return chat(user.email, $passwordInput.val());
-          };
-          $("#enter-password .welcome-name").text(user.email);
-          $("#enter-password .start-chatting-button").click(chatWithPassword);
-          $passwordInput.enter(chatWithPassword);
-          show("#enter-password");
-          return $passwordInput.focus();
+          return show("#new-campus");
         }
+        /*
+              if !user.handle
+                show "#check-email"
+              else
+                chatWithPassword = () -> chat user.email, $passwordInput.val()
+                $("#enter-password .welcome-name").text user.email
+                $("#enter-password .start-chatting-button").click chatWithPassword
+                $passwordInput.enter chatWithPassword
+                show "#enter-password"
+                $passwordInput.focus()
+              */
       }).error(function() {
         return $.post('/users', {
           user: {
@@ -58,12 +61,13 @@
         }, function(data) {
           return show("#new-campus");
         }).error(function(xhr) {
-          if (xhr.status === 420) {
-            return show("#new-campus");
-          } else if (xhr.status === 403) {
-            return $("#login-fields").showError("Please use your .edu email address to verify that you're a student");
-          } else {
-            return doError("there was an error");
+          switch (xhr.status) {
+            case 420:
+              return show("#new-campus");
+            case 403:
+              return $("#login-fields").showError("Please use your .edu email address to verify that you're a student");
+            default:
+              return doError("there was an error");
           }
         });
       });

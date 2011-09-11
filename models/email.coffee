@@ -18,5 +18,8 @@ send = (to, subject, msg) ->
       console.log 'Message sent successfully to ' + to
     else
       console.log 'Error sending email: ' + error
+
+
+#        email.send user.email, "CampusChat signup 2", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code
  
 exports.send = send

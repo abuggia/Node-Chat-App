@@ -23,7 +23,9 @@ app.all "*", (req, res, next) ->
     next()
 
 app.param 'email', UserView.load
-app.error (err, req, res, next) -> res.send(if errors.defined err then err.code else 500)
+app.error (err, req, res, next) -> 
+  res.send(if errors.defined err then err.code else 500)
+  next()
 
 app.get '/user/:email', UserView.get
 app.get '/users/activate/:activation_code', UserView.activate

@@ -28,7 +28,14 @@ $ ->
       $emailInput.val ''
       return $("#login-fields").showError "Invalid email address"
 
-    $.get "/users/#{email}", (user) ->
+    $.get "/user/#{email}", (user) ->
+      if user.voted
+        show "#already-voted"
+
+      else
+        show "#new-campus"
+        
+      ###
       if !user.handle
         show "#check-email"
       else
@@ -38,18 +45,17 @@ $ ->
         $passwordInput.enter chatWithPassword
         show "#enter-password"
         $passwordInput.focus()
+      ###
 
     .error ->
 
       $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
         show "#new-campus"
       .error (xhr) ->
-        if  xhr.status is 420
-          show "#new-campus"
-        else if xhr.status is 403
-          $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
-        else
-          doError "there was an error"
+        switch xhr.status
+          when 420 then show "#new-campus"
+          when 403 then $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
+          else doError "there was an error"
 
   startChatting = ->
     user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }

@@ -20,6 +20,7 @@ User = new mongoose.Schema {
   login_allowed: { type: Boolean, default: true }
   vote_open_on_campus: Boolean
   vote_email_me: Boolean
+  voted: Boolean
 }
 
 User.methods.hashed = (msg) ->
@@ -35,10 +36,13 @@ User.statics.authenticate = (email, password, fn) ->
     else if this.password is this.hashed(password) then fn(null, user)
     else fn(new Error('invalid password'))
 
+User.methods.isEmailExistsError = (err) ->
+  /E11000/.match(err.message) and /email/.match(err.message)
+
 acceptList = (users) -> (user) -> _(users).any(user)
 emailDomains = {
   'campusch.at': -> true
-  'bentley.edu': (user) -> wordUnderscoreWordPattern.test user
+  #'bentley.edu': (user) -> wordUnderscoreWordPattern.test user
   'alumni.tufts.edu': (user) -> if process.env.INLUDE_TUFTS_ALUMNI acceptList(process.env.TUFTS_USERS.split(','))(user) else false
 }
 
@@ -47,8 +51,10 @@ User.pre 'save', (next) ->
 
   if emailDomains[domain]
     if emailDomains[domain](name) then next() else next Errors.Forbidden
+  else if eduPattern.test(domain)
+    next()
   else
-    next(if eduPattern.test(domain) then new errors.NotReady() else new errors.Forbidden())
+    next(new errors.Forbidden())
 
 
 User.pre 'save', (next) -> 

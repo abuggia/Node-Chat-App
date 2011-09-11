@@ -382,7 +382,7 @@ fieldset button {
   margin-top:70px;
 }
 
-#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message, #vote-recorded {
+#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message, #vote-recorded, #already-voted {
   display:none;
 }
 
