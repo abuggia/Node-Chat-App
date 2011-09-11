@@ -1,9 +1,10 @@
 #bcrypt = require('bcrypt')
 models = require('../models/models.coffee')
 User = models.User
-Errors = models.Errors 
 errors = require('./../errors.coffee')
 crypto = require('crypto');
+
+util = require('util')
 
 class UserView
 
@@ -14,6 +15,8 @@ class UserView
       if err? then next(err)
       if not user then next(errors.NotFound)
       else
+        user.password = undefined
+        user.salt = undefined
         req.user = user
         next()
 
@@ -33,14 +36,18 @@ class UserView
     user.email = req.body.user.email
 
     user.save (err) ->
+
+      if user.isEmailExistsError(err)
+        res.send new errors.Conflict().code
       if errors.defined err
         res.send err.code
       else if err
         res.send 500
       else
-        email.send process.env.MONITORING_EMAIL, "New user signed up: " + user.email, " cool "
-        email.send user.email, "CampusChat signup 2", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code
-        res.send 200
+        email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
+
+        # Send 'NotReady'
+        res.send new errors.NotReady
 
   update: (req, res) ->
     user = req.user
@@ -53,6 +60,7 @@ class UserView
     user = req.user
     user.vote_open_on_campus = req.body.user.vote_open_on_campus 
     user.vote_email_me = req.body.user.vote_email_me
+    user.voted = true
     user.save (err) ->
       res.send (err ? 500 : 200)
 
