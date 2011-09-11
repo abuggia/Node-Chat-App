@@ -80,5 +80,8 @@ $ ->
     show "#login-fields"
     $("#login-fields input[type=text]").focus()
 
+    #$("#vote-recorded .replace-others-for-domain").text("47 others want a Campus Chat for harvard.edu")
+    #show "#vote-recorded"
 
-  $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
+
+
