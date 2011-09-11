@@ -51,7 +51,7 @@ User.pre 'save', (next) ->
   if emailDomains[domain]
     if emailDomains[domain](name) then next() else next Errors.InvalidEmailAddressForDomain
   else
-    next if eduPattern.test(domain) then Errors.CampusNotReadyYet else Errors.NotEduAddress
+    next(if eduPattern.test(domain) then Errors.CampusNotReadyYet else Errors.NotEduAddress)
 
 
 User.pre 'save', (next) -> this.activation_code = randomString(12)
@@ -63,6 +63,5 @@ db = mongoose.connect mongo_uri, (err) ->
     console.log "PROBLEM CONNECTING TO MONGO: " + err
 
 module.exports.User = mongoose.model('User')
-module.exports.Errors = Errors;
-
+module.exports.Errors = Errors
 

@@ -31,7 +31,7 @@ class UserView
     user.save (err) ->
       switch err
         when Errors.CampusNotReadyYet then res.send 420
-        when Errors.NotEduAddresst then res.send 403
+        when Errors.NotEduAddress then res.send 403
         when undefined
           email.send process.env.MONITORING_EMAIL, "New user signed up: " + user.email, " cool "
           email.send user.email, "CampusChat signup 2", "Thank you for signing up with campus chat.  Use the link below to activate you account.\n\nhttp://" + process.env.ROOT_URL + "?activation_code=" + user.activation_code
@@ -58,7 +58,7 @@ class UserView
       else
         req.session.user = user
         res.send 200
-
+    
 
 module.exports = new UserView
 
