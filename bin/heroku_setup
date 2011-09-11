@@ -1,0 +1,11 @@
+
+heroku create --stack cedar
+
+remote remove heroku
+git remote add heroku git@heroku.com:hollow-leaf-66.git
+
+heroku ps:scale web=1
+heroku addons:add custom_domains
+heroku domains:add campusch.at
+heroku addons:add custom_domains:wildcard
+heroku domains:add *.campusch.at

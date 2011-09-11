@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 vars = []
-File.open('prod.config').each do |line|
+File.open('config/prod.config').each do |line|
   key, val = line.chomp.split('=')
   next unless val
 
