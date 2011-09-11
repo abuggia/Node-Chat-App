@@ -24,14 +24,14 @@
     <img src="campus-chat-logo.png">
 
     <fieldset id="login-fields">
-      <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
+      <hgroup class="tagline"><h3>Chat with ppl at Bentley.  All at once.</h3></hgroup>
       <div class="message"></div>
-      <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
+      <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bentley University</label>
       <input type="text" id="login-email" name="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
     </fieldset>
 
     <fieldset id="registration-info">
-      <legend>Welcome! Before we throw you in the<br>Bently chat, please create your account:</legend>
+      <legend>Welcome! Before we throw you in the<br>Bentley chat, please create your account:</legend>
       <li><input type="text" id="registration-info-email" disabled class="disabled"/></li>
       <li><input type="text" id="registration-info-handle" placeholder="chat username"/><span>(don't worry, you can change<br> this whenever you want)</span></li>
       <li><input type="password" id="registration-info-password" placeholder="password"/></li>
@@ -49,15 +49,32 @@
       <span>Thanks!  Please check your email<br>for a verification link to start chatting.</span>
     </div>
 
-    <div id="new-campus">
+    <fieldset id="new-campus">
+      <hgroup class="tagline"><h3>Chat with ppl at Bentley.  All at once.</h3></hgroup>
       <span>Ah, it doesn't look like we have opened a chat for your campus yet.</span>
       <ul>
         <li><input type="checkbox" id="vote-to-open"> Submit my vote to open a chat for my campus </li>
         <li><input type="checkbox" id=""> Send me an email when a chat for my campus opens</li>
       </ul>
       <button type="button">Vote!</button>
-    </div>
+    </fieldset>
 
+    <div id="vote-recorded">
+      <hgroup class="tagline"><h3>Chat with ppl at Bentley.  All at once.</h3></hgroup>
+      <ul>
+        <li>Sweet!  We've recorded your vote.</li>
+        <li class="replace-others-for-domain"></li>
+        <li>
+          Recruit your friends to help via 
+          <a id="facebook-link" href="http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=Chat%20about%20anything%20with%20everyone%20at%20Campus%20Chat">
+            Facebook</a>
+          and 
+          <a id="twitter-link" href="http://twitter.com/intent/tweet?text=46%20others%20and%20I%20want%20to%20have%20a%20chat%20opened%20for%20my%20campus,%20submit%20your%20vote%20by%20logging%20in%20at%20http://campusch.at%20@campusch_at">
+          Twitter</a>!
+        </li>
+      </ul>
+    </div>
+ 
   </div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->

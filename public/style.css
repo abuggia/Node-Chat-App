@@ -302,13 +302,15 @@ fieldset button {
   margin-top:-8px;
 }
 
-#login-fields .message, #enter-password .message{
-  margin:40px auto 40px auto;
+#login-fields .message, #enter-password .message {
+  margin:28px auto 28px auto;
   background:#ffb2b2;
   border-radius:4px;
   width:300px;
   opacity:0;
   padding:10px;
+  height:38px;
+  ertical-align:middle;
 }
 
 #registration-info {
@@ -356,23 +358,31 @@ fieldset button {
 }
 
 #new-campus ul {
+  margin-top:22px;
   text-align:left;
 }
 
 #new-campus span {
   display: inline-block;
-  margin-top: 80px;
+  margin-top: 33px;
 }
 
 #new-campus li {
   list-style-type: none;
+  margin-left:18px;
+  padding:4px;
+}
+
+#new-campus li input {
+  font-size:200%;
+  margin:6px;
 }
 
 #enter-password label {
   margin-top:70px;
 }
 
-#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message {
+#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message, #vote-recorded {
   display:none;
 }
 
@@ -380,9 +390,29 @@ fieldset button {
   margin-top: 100px;
 }
 
-#new-campus {
-
+#vote-recorded ul {
+  margin-top:50px;
+  margin-left:0;
+  padding-left:0;
 }
+
+#vote-recorded ul li {
+  margin-left:0;
+  padding:14px;
+}
+
+#vote-recorded ul li {
+  list-style:none;
+}
+
+#facebook-link, #facebook-link:visited {
+  color:#0006ea;
+}
+
+#twitter-link, #twitter-link:visited {
+  color:#00c7d3;
+}
+
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
