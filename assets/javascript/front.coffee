@@ -34,7 +34,7 @@ $ ->
 
       else
         show "#new-campus"
-        
+
       ###
       if !user.handle
         show "#check-email"
