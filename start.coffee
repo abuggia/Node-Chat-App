@@ -1,6 +1,9 @@
 app = require('./app.coffee')
 
-app.listen((process.env.PORT || 3000));
+port = (process.env.PORT || 3000)
+app.listen(port);
+
+console.log "Listening on #{port}"
 
 # Chat via NowJS
 everyone = require("now").initialize app, { "socketio": { "transports": ["xhr-polling"] } }
