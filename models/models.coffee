@@ -1,6 +1,6 @@
 _ = require('underscore')
 mongoose = require('mongoose')
-mongo_uri = process.env.MONGO_URI
+mongo_uri = (process.env.MONGOHQ_URL || process.env.MONGO_URI)
 errors = require('./../errors.coffee')
 wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
