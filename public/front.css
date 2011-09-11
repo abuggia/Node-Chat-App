@@ -292,7 +292,10 @@ fieldset input {
   border:1px solid #b7b7b7;
   margin-top:15px;
   color:#626262;
+}
 
+#login-email {
+  width:400px;
 }
 
 fieldset button {
