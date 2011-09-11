@@ -9,6 +9,6 @@
     "nodemailer": "0.2.2",
     "mongoose-types": "1.0.3",
     "coffee-script": "1.1.2",
-    "underscore": "1.1.7" 
+    "underscore": "1.1.7"
  }
 }
