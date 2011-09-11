@@ -1,19 +1,17 @@
-#bcrypt = require('bcrypt')
 models = require('../models/models.coffee')
-User = models.User
+email = require('../models/email.coffee')
 errors = require('./../errors.coffee')
 crypto = require('crypto');
-
-util = require('util')
+log = console.log
+User = models.User
 
 class UserView
-
   constructor: () ->
 
   load: (req, res, next, email) ->
     User.findOne { email: email }, (err, user) ->
       if err? then next(err)
-      if not user then next(errors.NotFound)
+      if not user? then next(new errors.NotFound())
       else
         user.password = undefined
         user.salt = undefined
@@ -45,8 +43,6 @@ class UserView
         res.send 500
       else
         email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
-
-        # Send 'NotReady'
         res.send new errors.NotReady
 
   update: (req, res) ->

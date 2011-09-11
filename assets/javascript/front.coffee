@@ -47,28 +47,33 @@ $ ->
         $passwordInput.focus()
       ###
 
-    .error ->
+    .error (xhr)->
+      if xhr.status is 404
+        $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
+          show "#new-campus"
+        .error (xhr) ->
+          switch xhr.status
+            when 420 then show "#new-campus"
+            when 403 then $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
+            else doError "there was an error"
+      else
+        doError "Could not find user"
 
-      $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
-        show "#new-campus"
-      .error (xhr) ->
-        switch xhr.status
-          when 420 then show "#new-campus"
-          when 403 then $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
-          else doError "there was an error"
 
-  startChatting = ->
+        ###
+    startChatting = ->
     user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
     $.post '/user/' + user.email, { user: user }, ->
       chat user.email, user.password
     .error ->
       doError "there was an error"
+      ###
 
   $emailInput.enter(sendEmail).focus()
   $loginButton.click sendEmail
-  $("#registration-info .start-chatting-button").click startChatting
-  $regInfoHandle.enter startChatting
-  $regInfoPassword.enter startChatting
+  #$("#registration-info .start-chatting-button").click startChatting
+  #$regInfoHandle.enter startChatting
+  #$regInfoPassword.enter startChatting
   $("#vote-button").click ->
     user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
     $.post "/vote/#{user.email}", user, ->

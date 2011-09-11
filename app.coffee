@@ -11,8 +11,13 @@ app.configure ->
   app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
   app.use app.router
   app.use express.static(__dirname + "/public")
-  app.use express.errorHandler({ dumpExceptions: true, showStack: true })
 
+app.error (err, req, res, next) -> 
+  if errors.defined err 
+    res.send err.code
+  else
+    console.log "CC ERROR: #{err}"
+    res.send 500
 
 # Redirect subdomains to root for SEO
 app.all "*", (req, res, next) -> 
@@ -23,10 +28,6 @@ app.all "*", (req, res, next) ->
     next()
 
 app.param 'email', UserView.load
-app.error (err, req, res, next) -> 
-  res.send(if errors.defined err then err.code else 500)
-  next()
-
 app.get '/user/:email', UserView.get
 app.get '/users/activate/:activation_code', UserView.activate
 app.post '/users', UserView.save
