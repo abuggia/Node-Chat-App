@@ -1,3 +1,4 @@
+app = require('./app.coffee')
 
 app.listen((process.env.PORT || 3000));
 

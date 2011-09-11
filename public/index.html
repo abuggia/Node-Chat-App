@@ -25,7 +25,7 @@
 
     <fieldset id="login-fields">
       <hgroup class="tagline"><h3>Chat with ppl at Bently.  All at once.</h3></hgroup>
-      <div class="message">Invalid email address</div>
+      <div class="message"></div>
       <label for="login-email">Login below with your .edu email to<br>start chatting with students at Bently University</label>
       <input type="text" id="login-email" name="login-email" placeholder="your@email.edu"><button id="login-button" type="button">Log in</button>
     </fieldset>
@@ -39,7 +39,7 @@
     </fieldset>
 
     <fieldset id="enter-password">
-      <div class="message">Invalid password</div>
+      <div class="message"></div>
       <label>Welcome <span class="welcome-name"></span>.  Please enter your password</label>
       <input type="password" id="password-input" placeholder="password"></label>
       <button type="button" class="start-chatting-button">Start Chatting</button>
@@ -58,10 +58,6 @@
       <button type="button">Vote!</button>
     </div>
 
-    <div id="non-edu-message">
-      <span>Please use your .edu email address to verify that you're a current student</span>
-    </div>
-
   </div>
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
@@ -69,107 +65,8 @@
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
   <script src="lib.js"></script>
 
-  <!--
-  <script defer src="js/plugins.js"></script>
-  -->
-  <script>
-var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
-
-$(function() {
-  var show = ShowMe("#loading"),
-      $emailInput = $("#login-email"), 
-      $loginButton = $("#login-button"),
-      $passwordInput = $("#password-input"),
-      $regInfoEmail = $("#registration-info-email"),
-      $regInfoHandle = $("#registration-info-handle"),
-      $regInfoPassword = $("#registration-info-password"),
-      emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-  var chat = function(email, password) { 
-    $.post('/session', {email: email, password: password}, function() {
-      window.location.href = "chat.html";
-    }).error(function() {
-      $("#enter-password .message").animate({'opacity': 1}, "fast");
-    });
-  };
-
-  var sendEmail = function(e) {
-    var email = $emailInput.val();
-    
-    if (email === '') {
-      return;
-    } else if (!emailPattern.test(email)) {
-      return $("#login-fields .message").text("Invalid email address.").animate({'opacity': 1}, "fast");
-    }
-
-    $.get('/users/' + email, function(user) {
-      if (!user.handle) {
-         show("#check-email");
-      } else {
-        var chatWithPassword = function() { 
-          chat(user.email, $passwordInput.val());
-        };
-        $("#enter-password .welcome-name").text(user.email);
-        $("#enter-password .start-chatting-button").click(chatWithPassword);
-        $passwordInput.enter(chatWithPassword);
-        show("#enter-password");
-        $passwordInput.focus();
-      }
-    }).error(function() {
-      $.post('/users', { user: { email: $emailInput.val() } }, function() { 
-        show("#check-email"); 
-      }).error(function(xhr) {
-        if (xhr.status === 420) {
-          show("#new-campus");
-        } else if (xhr.status === 403) {
-          show("#non-edu-message");
-        } else {
-          alert("there was an error");
-        }
-      });
-    });
-  };
-
-  var startChatting = function() {
-    var user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() };
-    $.post('/user/' + user.email, { user: user }, function() {
-      chat(user.email, user.password);
-    }).error(function() {
-      alert("there was an error");
-    });
-  };
-
-  $emailInput.enter(sendEmail).focus();
-  $loginButton.click(sendEmail);
-  $("#registration-info .start-chatting-button").click(startChatting);
-  $regInfoEmail.enter(startChatting);
-  $regInfoHandle.enter(startChatting);
-  $regInfoPassword.enter(startChatting);
-
-  var s = window.location.search
-  if (s) {
-    var m = s.match(/activation_code=([\w\d]+)$/);
-    if (m && m.length > 0) {
-      $.get('/user/activate/' + m[1], function(user) {
-        $("#registration-info-email").val(user.email);
-        show("#registration-info");
-      }).error(function() {
-        alert("invalid activation code.");
-      });
-    } else {
-      window.location.href = "/404.html"
-    }
-  } else {
-    show("#login-fields");
-    $("#login-fields input[type=text]").focus();
-  }
-
-
-//        show("#enter-password");
-
-//          show("#new-campus");
-});
-  </script>
+  <script defer src="front.js"></script>
+  <script>var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));</script>
 
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->

@@ -11,6 +11,7 @@ nodemailer.SMTP = {
 
 from = process.env.CC_EMAIL_FROM
 
+
 send = (to, subject, msg) ->
   nodemailer.send_mail {sender: from, to: to, subject: subject, body: msg}, (err, success) ->
     if success
