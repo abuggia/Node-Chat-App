@@ -39,7 +39,12 @@
       return $.get("/user/" + email, function(user) {
         if (user.voted) {
           return $.get("/votes/" + email, function(data) {
-            return $("#already-voted .replace-others-for-domain").text("Once a school reaches 100 votes, we'll open the chat. So far, " + data.count + " others also want to open a chat for your school.");
+            var message;
+            message = "Once a school reaches 100 votes, we'll open the chat.  ";
+            if (data.count > 1) {
+              message += "So far, " + data.count + " others also want to open a chat for your school.";
+            }
+            return $("#already-voted .replace-others-for-domain").text(message);
           }).complete(function() {
             return show("#already-voted");
           });

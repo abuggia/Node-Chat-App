@@ -59,11 +59,7 @@ User.pre 'save', (next) ->
   next()
 
 User.pre 'save', (next) ->
-  [name, domain] = this.email.split '@'
-
-  if emailDomains[domain]
-    if emailDomains[domain](name) then next() else next(new errors.Forbidden())
-  else if eduPattern.test(domain)
+  if eduPattern.test(this.email)
     next()
   else
     next(new errors.Forbidden())
