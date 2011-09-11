@@ -58,8 +58,8 @@ class UserView
 
   vote: (req, res) ->
     user = req.user
-    user.vote_open_on_campus = req.body.user.vote_open_on_campus 
-    user.vote_email_me = req.body.user.vote_email_me
+    user.vote_open_on_campus = req.body.vote_open_on_campus 
+    user.vote_email_me = req.body.vote_email_me
     user.voted = true
     user.save (err) ->
       res.send (err ? 500 : 200)
