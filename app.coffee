@@ -2,6 +2,7 @@ express = require("express")
 app = express.createServer() 
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 UserView = require('./views/user.coffee')
+errors = require('./errors.coffee')
 
 app.configure ->
   app.use express.methodOverride()
@@ -21,10 +22,14 @@ app.all "*", (req, res, next) ->
   else
     next()
 
-app.get '/users/:email', UserView.get
-app.get '/user/activate/:activation_code', UserView.activate
+app.param 'email', UserView.load
+app.error (err, req, res, next) -> res.send(if errors.defined err then err.code else 500)
+
+app.get '/user/:email', UserView.get
+app.get '/users/activate/:activation_code', UserView.activate
 app.post '/users', UserView.save
-app.post '/user/:email', UserView.update
+app.post '/users/:email', UserView.update
+app.post '/vote/:email', UserView.vote
 app.post '/session', UserView.login
 
 module.exports = app
