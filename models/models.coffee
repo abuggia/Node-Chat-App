@@ -6,8 +6,7 @@ wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
 email = require("./email.coffee") 
 chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-randomString = (length) -> [ chars.charAt(Math.floor(Math.random() * (chars.length - 1))) for [1..length] ].join ''
-
+randomString = (length) -> [ chars.charAt(Math.floor(Math.random() * (chars.length - 1))) for [1..length] ].join('')
 
 require("mongoose-types").loadTypes mongoose, 'email'
 
@@ -68,7 +67,7 @@ User.pre 'save', (next) ->
 mongoose.model 'User', User
 
 db = mongoose.connect mongo_uri, (err) ->
-  console.log "Trying to connect to mongo with uri: " + mongo_uri
+  console.log "Trying to connect to mongo"
   if err
     console.log "PROBLEM CONNECTING TO MONGO: " + err
 
