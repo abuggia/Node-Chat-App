@@ -248,9 +248,10 @@ h2 {
 }
 
 h3 {
-  font-size:26px;
+  font-size:20px;
   font-weight:normal;
   margin:15px 0 15px 0;
+  text-shadow: 0 .1em #dedede;
 }
 
 img {
@@ -267,10 +268,10 @@ input.disabled {
 }
 
 #dialogue {
-  background:#fff;
+  background: url('transparent-white-bg.png') repeat;
   border:1px solid #ccc;
   opacity:.93;
-  padding:12px;
+  padding:18px 12px 12px 12px;
   box-shadow: 0 0 20px rgba(0,0,0,0.7);
   border-radius:5px;
   font-size:1.2em;
@@ -279,15 +280,20 @@ input.disabled {
   margin:150px auto 0 auto;
 }
 
+
 fieldset label {
   display:block;
   margin-top:15px;
-  font-size:1.2em;
+  font-size:18px;
+}
+
+fieldset ul label {
+  display:inline;
 }
 
 fieldset input {
   font-family: 'Droid Serif', serif;
-  font-size:29px;
+  font-size:23px;
   padding:6px;
   border:1px solid #b7b7b7;
   margin-top:15px;
@@ -295,29 +301,33 @@ fieldset input {
 }
 
 #login-email {
-  width:400px;
+  width:293px;
 }
 
 fieldset button {
-  padding:9px;
-  font-size:24px;
+  padding:6px;
   border:1px solid #bbb;
   background-color:#d2d2d2;
   font-family: 'Droid Serif', serif;
   color:#454545;
   margin-left:14px;
   margin-top:-9px;
+  font-weight:700;
+  font-size:23px;
+}
+
+fieldset button:hover {
+  background:#c2c2c2;
 }
 
 #login-fields .message, #enter-password .message {
-  margin:15px auto 15px auto;
+  margin:23px auto 23px auto;
   background:#ffb2b2;
   border-radius:4px;
   width:300px;
   opacity:0;
   padding:10px;
   height:38px;
-  ertical-align:middle;
 }
 
 #registration-info {
