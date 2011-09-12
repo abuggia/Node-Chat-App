@@ -1,0 +1,8 @@
+
+> git remote -v
+github	git@github.com:abuggia/Node-Chat-App.git (fetch)
+github	git@github.com:abuggia/Node-Chat-App.git (push)
+prod	git@heroku.com:campuschat.git (fetch)
+prod	git@heroku.com:campuschat.git (push)
+test	git@heroku.com:campuschat-test.git (fetch)
+test	git@heroku.com:campuschat-test.git (push)

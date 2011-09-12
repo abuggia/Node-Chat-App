@@ -1,0 +1,3 @@
+
+
+coffee -w -o public/ -c assets/javascript/ 
