@@ -2,6 +2,7 @@ express = require("express")
 app = express.createServer() 
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 UserView = require('./views/user.coffee')
+ChatView = require('./views/chat.coffee')(app)
 errors = require('./errors.coffee')
 
 app.configure ->
@@ -11,6 +12,8 @@ app.configure ->
   app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
   app.use app.router
   app.use express.static(__dirname + "/public")
+  app.set("view engine", "html");
+  app.register(".html", require("jqtpl").express);
 
 app.error (err, req, res, next) -> 
   if errors.defined err 
@@ -28,12 +31,13 @@ app.all "*", (req, res, next) ->
     next()
 
 app.param 'email', UserView.load
-app.get '/user/:email', UserView.get
-app.get '/users/activate/:activation_code', UserView.activate
-app.post '/users', UserView.save
-app.post '/users/:email', UserView.update
-app.post '/vote/:email', UserView.vote
-app.get '/votes/:email', UserView.voteCount
-app.post '/session', UserView.login
+app.get '/api/user/:email', UserView.get
+app.get '/api/users/activate/:activation_code', UserView.activate
+app.post '/api/users', UserView.save
+app.post '/api/sers/:email', UserView.update
+app.post '/api/vote/:email', UserView.vote
+app.get '/api/votes/:email', UserView.voteCount
+app.post '/api/session', UserView.login
+app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 
 module.exports = app

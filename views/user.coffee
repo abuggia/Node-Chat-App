@@ -19,7 +19,8 @@ class UserView
         next()
 
   get: (req, res) -> 
-    res.json req.user
+    u = req.user
+    res.json { email: u.email, active: u.active, room: u.start_room } 
     
   activate: (req, res) ->
     User.findOne { activation_code: req.params.activation_code }, (err, user) ->
@@ -66,7 +67,6 @@ class UserView
         res 500
       else
         res.json { school: req.user.school, count: count }
-
 
   login: (req, res) ->
     User.authenticate req.body.email, req.body.password, (err, user) ->

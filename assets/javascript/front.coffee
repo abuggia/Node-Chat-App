@@ -13,7 +13,7 @@ $ ->
     this.find('.message').text(message).animate {'opacity': 1}, "fast"
 
   chat = (email, password) ->
-    $.post '/session', { email: email, password: password }, ->
+    $.post '/api/session', { email: email, password: password }, ->
       window.location.href = "chat.html";
     .error ->
       $passwordInput.val ''
@@ -28,9 +28,9 @@ $ ->
       $emailInput.val ''
       return $("#login-fields").showError "Invalid email address"
 
-    $.get "/user/#{email}", (user) ->
+    $.get "/api/user/#{email}", (user) ->
       if user.voted
-        $.get "/votes/#{email}", (data) ->
+        $.get "/api/votes/#{email}", (data) ->
           message = "Once a school reaches 100 votes, we'll open the chat.  "
           if data.count > 1
             message += "So far, #{data.count} others also want to open a chat for your school."
@@ -54,7 +54,7 @@ $ ->
 
     .error (xhr)->
       if xhr.status is 404
-        $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
+        $.post '/api/users', { user: { email: $emailInput.val() } }, (data) ->
           show "#new-campus"
         .error (xhr) ->
           switch xhr.status
@@ -81,8 +81,8 @@ $ ->
   #$regInfoPassword.enter startChatting
   $("#vote-button").click ->
     user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
-    $.post "/vote/#{user.email}", user, ->
-      $.get "/votes/#{user.email}", (data) ->
+    $.post "/api/vote/#{user.email}", user, ->
+      $.get "/api/votes/#{user.email}", (data) ->
         if data.count > 1
           $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
       .complete ->
@@ -96,7 +96,7 @@ $ ->
   if s
     m = s.match /activation_code=([\w\d]+)$/
     if m?.length > 0
-      $.get '/user/activate/' + m[1], (user) -> 
+      $.get '/api/user/activate/' + m[1], (user) -> 
         $("#registration-info-email").val user.email
         show "#registration-info"
       .error ->

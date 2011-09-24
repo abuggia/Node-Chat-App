@@ -17,7 +17,7 @@
       }, "fast");
     };
     chat = function(email, password) {
-      return $.post('/session', {
+      return $.post('/api/session', {
         email: email,
         password: password
       }, function() {
@@ -36,9 +36,9 @@
         $emailInput.val('');
         return $("#login-fields").showError("Invalid email address");
       }
-      return $.get("/user/" + email, function(user) {
+      return $.get("/api/user/" + email, function(user) {
         if (user.voted) {
-          return $.get("/votes/" + email, function(data) {
+          return $.get("/api/votes/" + email, function(data) {
             var message;
             message = "Once a school reaches 100 votes, we'll open the chat.  ";
             if (data.count > 1) {
@@ -64,7 +64,7 @@
               */
       }).error(function(xhr) {
         if (xhr.status === 404) {
-          return $.post('/users', {
+          return $.post('/api/users', {
             user: {
               email: $emailInput.val()
             }
@@ -102,8 +102,8 @@
         vote_open_on_campus: $("#vote-to-open").is(":checked"),
         vote_email_me: $("#vote-to-email").is(":checked")
       };
-      return $.post("/vote/" + user.email, user, function() {
-        return $.get("/votes/" + user.email, function(data) {
+      return $.post("/api/vote/" + user.email, user, function() {
+        return $.get("/api/votes/" + user.email, function(data) {
           if (data.count > 1) {
             return $("#vote-recorded .replace-others-for-domain").text("" + data.count + " others want a Campus Chat for " + data.school);
           }
@@ -118,7 +118,7 @@
     if (s) {
       m = s.match(/activation_code=([\w\d]+)$/);
       if ((m != null ? m.length : void 0) > 0) {
-        return $.get('/user/activate/' + m[1], function(user) {
+        return $.get('/api/user/activate/' + m[1], function(user) {
           $("#registration-info-email").val(user.email);
           return show("#registration-info");
         }).error(function() {

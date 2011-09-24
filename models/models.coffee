@@ -5,7 +5,7 @@ errors = require('./../errors.coffee')
 wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
 email = require("./email.coffee") 
-chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz"
 lastPos = chars.length - 1
 randomString = (length) -> ( chars.charAt(Math.floor(Math.random() * lastPos)) for [1..length] ).join('')
 
@@ -17,11 +17,13 @@ User = new mongoose.Schema {
   salt: String
   password: String
   activation_code: String
+  state: String
   login_allowed: { type: Boolean, default: true }
   vote_open_on_campus: Boolean
   vote_email_me: Boolean
   voted: Boolean
   school: String
+  start_room: String
 }
 
 User.methods.hashed = (msg) ->
@@ -30,6 +32,8 @@ User.methods.hashed = (msg) ->
 User.methods.setPassword = (password) ->
   this.salt = utils.randomString(8);
   this.password = this.hashed(password)
+
+User.methods.active = -> this.state is 'active'
 
 User.statics.authenticate = (email, password, fn) ->
   this.findOne { email: email }, (err, user) ->
@@ -64,8 +68,14 @@ User.pre 'save', (next) ->
   else
     next(new errors.Forbidden())
 
-
 mongoose.model 'User', User
+
+School = new mongoose.Schema {
+  name: { type: String, required: true, index: { unique: true } }
+  short: { type: String, required: true, index: { unique: true } }
+  domain: String
+  room: String
+}
 
 db = mongoose.connect mongo_uri, (err) ->
   console.log "Trying to connect to mongo"
