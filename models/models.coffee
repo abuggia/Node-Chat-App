@@ -6,7 +6,8 @@ wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
 email = require("./email.coffee") 
 chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-randomString = (length) -> [ chars.charAt(Math.floor(Math.random() * (chars.length - 1))) for [1..length] ].join('')
+lastPos = chars.length - 1
+randomString = (length) -> ( chars.charAt(Math.floor(Math.random() * lastPos)) for [1..length] ).join('')
 
 require("mongoose-types").loadTypes mongoose, 'email'
 
