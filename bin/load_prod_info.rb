@@ -2,6 +2,8 @@
 
 vars = []
 File.open('config/prod.config').each do |line|
+  next if line =~ /^#/
+
   key, val = line.chomp.split('=')
   next unless val
 
