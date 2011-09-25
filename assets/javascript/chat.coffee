@@ -6,7 +6,7 @@ window.initChat = (room, user) ->
 
   now.name = user.handle
   now.sub = (name, msg) ->
-    $chat = $ '<div><span class="time"></span><span class="name">' + name + '</span><span class="text">' + msg + '</span></div>'
+    $chat = $ '<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>'
     $chat.appendTo $d
     $chat.find(".time").text formattedTime
 

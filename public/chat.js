@@ -8,7 +8,7 @@
     now.name = user.handle;
     now.sub = function(name, msg) {
       var $chat;
-      $chat = $('<div><span class="time"></span><span class="name">' + name + '</span><span class="text">' + msg + '</span></div>');
+      $chat = $('<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>');
       $chat.appendTo($d);
       return $chat.find(".time").text(formattedTime);
     };

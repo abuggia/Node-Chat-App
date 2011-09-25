@@ -270,13 +270,23 @@ body {
 
 #chat .dialogue .time {
   display:inline-block;
-  width:60px;
+  width:50px;
   color:#999;
 }
 
 #chat .dialogue .name {
   display:inline-block;
-  width:70px;
+  width:auto;
+  padding:4px;
+}
+
+#chat a {
+  text-decoration:none;
+  font-weight:700;
+}
+
+#chat a:visited {
+  color:#00E;
 }
 
 #users {
