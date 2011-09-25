@@ -1,10 +1,11 @@
 (function() {
   $(function() {
-    var $emailInput, $loginButton, $passwordInput, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, m, s, sendEmail, show;
+    var $emailInput, $loginButton, $passwordInput, $regInfoEmail, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, m, s, saveRegistration, sendEmail, show;
     show = ShowMe("#loading");
     $emailInput = $("#login-email");
     $loginButton = $("#login-button");
     $passwordInput = $("#password-input");
+    $regInfoEmail = $("#registration-info-email");
     $regInfoHandle = $("#registration-info-handle");
     $regInfoPassword = $("#registration-info-password");
     emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -20,11 +21,26 @@
       return $.post('/api/session', {
         email: email,
         password: password
-      }, function() {
-        return window.location.href = "chat.html";
+      }, function(user) {
+        return $.get('/' + user.start_room);
       }).error(function() {
         $passwordInput.val('');
         return $("#enter-password").showError("Wrong password");
+      });
+    };
+    saveRegistration = function() {
+      var user;
+      user = {
+        email: $regInfoEmail.val(),
+        handle: $regInfoHandle.val(),
+        password: $regInfoPassword.val()
+      };
+      return $.post('/api/users/' + user.email, {
+        user: user
+      }, function() {
+        return chat(user.email, user.password);
+      }).error(function() {
+        return doError("there was an error saving registration info");
       });
     };
     sendEmail = function(e) {
@@ -37,7 +53,9 @@
         return $("#login-fields").showError("Invalid email address");
       }
       return $.get("/api/user/" + email, function(user) {
-        if (user.voted) {
+        if (user.active) {
+          return show("#enter-password");
+        } else if (user.voted) {
           return $.get("/api/votes/" + email, function(data) {
             var message;
             message = "Once a school reaches 100 votes, we'll open the chat.  ";
@@ -51,17 +69,6 @@
         } else {
           return show("#new-campus");
         }
-        /*
-              if !user.handle
-                show "#check-email"
-              else
-                chatWithPassword = () -> chat user.email, $passwordInput.val()
-                $("#enter-password .welcome-name").text user.email
-                $("#enter-password .start-chatting-button").click chatWithPassword
-                $passwordInput.enter chatWithPassword
-                show "#enter-password"
-                $passwordInput.focus()
-              */
       }).error(function(xhr) {
         if (xhr.status === 404) {
           return $.post('/api/users', {
@@ -82,19 +89,9 @@
           });
         } else {
           return doError("Could not find user");
-          /*
-              startChatting = ->
-              user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
-              $.post '/user/' + user.email, { user: user }, ->
-                chat user.email, user.password
-              .error ->
-                doError "there was an error"
-                */
         }
       });
     };
-    $emailInput.enter(sendEmail).focus();
-    $loginButton.click(sendEmail);
     $("#vote-button").click(function() {
       var user;
       user = {
@@ -118,18 +115,21 @@
     if (s) {
       m = s.match(/activation_code=([\w\d]+)$/);
       if ((m != null ? m.length : void 0) > 0) {
-        return $.get('/api/user/activate/' + m[1], function(user) {
+        $.get('/api/users/activate/' + m[1], function(user) {
           $("#registration-info-email").val(user.email);
           return show("#registration-info");
         }).error(function() {
           return doError("invalid activation code.");
         });
       } else {
-        return window.location.href = "/404.html";
+        window.location.href = "/404.html";
       }
     } else {
       show("#login-fields");
-      return $("#login-fields input[type=text]").focus();
+      $("#login-fields input[type=text]").focus();
     }
+    $("#registration-info .start-chatting-button").click(saveRegistration);
+    $emailInput.enter(sendEmail).focus();
+    return $loginButton.click(sendEmail);
   });
 }).call(this);

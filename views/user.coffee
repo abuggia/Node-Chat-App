@@ -19,8 +19,7 @@ class UserView
         next()
 
   get: (req, res) -> 
-    u = req.user
-    res.json { email: u.email, active: u.active, room: u.start_room } 
+    res.json req.user.safe_json
     
   activate: (req, res) ->
     User.findOne { activation_code: req.params.activation_code }, (err, user) ->
@@ -74,7 +73,7 @@ class UserView
         res.send 401
       else
         req.session.user = user
-        res.send 200
+        res.json user.safe_json()
     
 
 module.exports = new UserView

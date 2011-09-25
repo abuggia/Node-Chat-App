@@ -19,7 +19,8 @@ app.error (err, req, res, next) ->
   if errors.defined err 
     res.send err.code
   else
-    console.log "CC ERROR: #{err}"
+    console.error "CC ERROR: #{err}"
+    console.error err.stack
     res.send 500
 
 # Redirect subdomains to root for SEO
@@ -34,7 +35,7 @@ app.param 'email', UserView.load
 app.get '/api/user/:email', UserView.get
 app.get '/api/users/activate/:activation_code', UserView.activate
 app.post '/api/users', UserView.save
-app.post '/api/sers/:email', UserView.update
+app.post '/api/users/:email', UserView.update
 app.post '/api/vote/:email', UserView.vote
 app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login

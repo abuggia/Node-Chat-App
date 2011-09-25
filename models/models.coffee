@@ -5,9 +5,12 @@ errors = require('./../errors.coffee')
 wordUnderscoreWordPattern = /\w+_\w+/
 eduPattern = /\.edu$/
 email = require("./email.coffee") 
+crypto = require("crypto")
 chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz"
 lastPos = chars.length - 1
 randomString = (length) -> ( chars.charAt(Math.floor(Math.random() * lastPos)) for [1..length] ).join('')
+hashed = (msg, salt) -> 
+  crypto.createHmac('sha256', salt).update(msg).digest('hex')
 
 require("mongoose-types").loadTypes mongoose, 'email'
 
@@ -26,19 +29,19 @@ User = new mongoose.Schema {
   start_room: String
 }
 
-User.methods.hashed = (msg) ->
-  return crypto.createHmac('sha256', this.salt).update(msg).digest('hex')
-
 User.methods.setPassword = (password) ->
-  this.salt = utils.randomString(8);
-  this.password = this.hashed(password)
+  this.salt = randomString(8);
+  this.password = hashed(password, this.salt)
 
 User.methods.active = -> this.state is 'active'
+
+User.methods.safe_json = -> 
+  { email: this.email, active: this.active, start_room: this.start_room, voted: this.voted } 
 
 User.statics.authenticate = (email, password, fn) ->
   this.findOne { email: email }, (err, user) ->
     if !user then fn(new Error('cannot find user'))
-    else if this.password is this.hashed(password) then fn(null, user)
+    else if user.password is hashed(password, user.salt) then fn(null, user)
     else fn(new Error('invalid password'))
 
 User.methods.isEmailExistsError = (err) ->
@@ -57,7 +60,6 @@ User.pre 'save', (next) ->
   next()
 
 User.pre 'save', (next) -> 
-  this.activation_code = randomString(12)
   [name, domain] = this.email.split '@'
   this.school = domain
   next()
