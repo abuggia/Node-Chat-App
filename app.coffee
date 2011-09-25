@@ -41,4 +41,23 @@ app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 
+
+# Chat via NowJS
+nowjs = require("now")
+everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
+everyone.now.pub = (msg) ->
+  console.log ">(chat): #{msg}"
+  everyone.now.sub this.now.name, msg
+
+everyone.now.eachUserInRoom = (room, fn) ->
+  nowjs.getGroup(room).getUsers (clientIds) -> 
+    for clientId in clientIds
+      console.log " getting client for clientId #{clientId}"
+      nowjs.getClient clientId, () -> fn({name: this.now.name})
+
+everyone.now.joinRoom = (room) ->
+  nowjs.getGroup(room).addUser(this.user.clientId)
+
+
+
 module.exports = app
