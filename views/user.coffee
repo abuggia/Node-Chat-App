@@ -19,7 +19,7 @@ class UserView
         next()
 
   get: (req, res) -> 
-    res.json req.user.safe_json
+    res.json req.user.safe_json()
     
   activate: (req, res) ->
     User.findOne { activation_code: req.params.activation_code }, (err, user) ->
@@ -49,6 +49,7 @@ class UserView
     user = req.user
     user.handle = req.body.user.email
     user.setPassword req.body.user.password
+    user.state = 'active'
     user.save (err) ->
        res.send(err ? 500 : 200)
 

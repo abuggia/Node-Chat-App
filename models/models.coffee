@@ -36,7 +36,7 @@ User.methods.setPassword = (password) ->
 User.methods.active = -> this.state is 'active'
 
 User.methods.safe_json = -> 
-  { email: this.email, active: this.active, start_room: this.start_room, voted: this.voted } 
+  { email: this.email, active: this.active(), start_room: this.start_room, voted: this.voted } 
 
 User.statics.authenticate = (email, password, fn) ->
   this.findOne { email: email }, (err, user) ->
@@ -46,6 +46,9 @@ User.statics.authenticate = (email, password, fn) ->
 
 User.methods.isEmailExistsError = (err) ->
   err and /E11000/.test(err.message) and /email/.test(err.message)
+
+User.methods.canAccessRoom = (room) ->
+  room is this.start_room
 
 acceptList = (users) -> (user) -> _(users).any(user)
 emailDomains = {

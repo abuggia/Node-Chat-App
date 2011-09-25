@@ -14,10 +14,10 @@ $ ->
 
   chat = (email, password) ->
     $.post '/api/session', { email: email, password: password }, (user) ->
-      $.get '/' + user.start_room
+      window.location.href = '/' + user.start_room
     .error ->
       $passwordInput.val ''
-      $("#enter-password").showError "Wrong password"
+      $("#enter-password").showError "Incorrect Password"
 
   saveRegistration = ->
     user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
@@ -38,6 +38,7 @@ $ ->
     $.get "/api/user/#{email}", (user) ->
       if user.active
         show "#enter-password"
+        $passwordInput.focus()
 
       else if user.voted
         $.get "/api/votes/#{email}", (data) ->
@@ -96,4 +97,6 @@ $ ->
   $("#registration-info .start-chatting-button").click saveRegistration 
   $emailInput.enter(sendEmail).focus()
   $loginButton.click sendEmail
+  $("#enter-password .start-chatting-button").click -> chat($emailInput.val(), $passwordInput.val())
+  $passwordInput.enter -> chat($emailInput.val(), $passwordInput.val())
  

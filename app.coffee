@@ -2,7 +2,7 @@ express = require("express")
 app = express.createServer() 
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 UserView = require('./views/user.coffee')
-ChatView = require('./views/chat.coffee')(app)
+ChatView = require('./views/chat.coffee')
 errors = require('./errors.coffee')
 
 app.configure ->

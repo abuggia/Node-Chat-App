@@ -22,10 +22,10 @@
         email: email,
         password: password
       }, function(user) {
-        return $.get('/' + user.start_room);
+        return window.location.href = '/' + user.start_room;
       }).error(function() {
         $passwordInput.val('');
-        return $("#enter-password").showError("Wrong password");
+        return $("#enter-password").showError("Incorrect Password");
       });
     };
     saveRegistration = function() {
@@ -54,7 +54,8 @@
       }
       return $.get("/api/user/" + email, function(user) {
         if (user.active) {
-          return show("#enter-password");
+          show("#enter-password");
+          return $passwordInput.focus();
         } else if (user.voted) {
           return $.get("/api/votes/" + email, function(data) {
             var message;
@@ -130,6 +131,12 @@
     }
     $("#registration-info .start-chatting-button").click(saveRegistration);
     $emailInput.enter(sendEmail).focus();
-    return $loginButton.click(sendEmail);
+    $loginButton.click(sendEmail);
+    $("#enter-password .start-chatting-button").click(function() {
+      return chat($emailInput.val(), $passwordInput.val());
+    });
+    return $passwordInput.enter(function() {
+      return chat($emailInput.val(), $passwordInput.val());
+    });
   });
 }).call(this);

@@ -1,17 +1,17 @@
 
 
 class ChatView
-  constructor: (@app) ->
+  constructor: ->
 
   loadRoom: (req, res) ->
     room = req.params[0]
     user = req.session.user
 
-    if not user.canAccessRoom
+    if room is not user.start_room
       res.send 403
     else
-      req.session.currentRoom = room
-      @app.render "public/chat.html", { room: room } 
+      req.session.current_room = room
+      res.render "../public/chat.html", { room: room, layout: false } 
 
 
-module.exports = (app) -> new ChatView(app)
+module.exports = new ChatView
