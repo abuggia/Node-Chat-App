@@ -62,7 +62,7 @@
       return $c.find(".time").text(formattedTime());
     };
     pub = function() {
-      now.pub($input.val());
+      now.pub(user.email, $input.val());
       return $input.val("");
     };
     $input.enter(pub);

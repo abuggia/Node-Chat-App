@@ -82,10 +82,19 @@ School = new mongoose.Schema {
   room: String
 }
 
+Chat = new mongoose.Schema {
+  user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
+  text: { type: String, required: true }
+  tags: { type: Array, index: { unique: false } }
+}
+
+mongoose.model 'Chat', Chat
+
 db = mongoose.connect mongo_uri, (err) ->
   console.log "Trying to connect to mongo"
   if err
     console.log "PROBLEM CONNECTING TO MONGO: " + err
 
 module.exports.User = mongoose.model('User')
+module.exports.Chat = mongoose.model('Chat')
 

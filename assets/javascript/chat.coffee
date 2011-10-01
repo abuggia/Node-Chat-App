@@ -50,7 +50,7 @@ window.initChat = (room, user) ->
   # Set handlers
   # ------------
   pub = ->
-    now.pub $input.val()
+    now.pub user.email, $input.val()
     $input.val ""
  
   $input.enter pub
