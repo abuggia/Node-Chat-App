@@ -215,10 +215,10 @@ td { vertical-align: top; }
 
 
 nav {
-  background:#ccc;
+  background:#ddd;
 }
 
-ul#rooms li {
+ul#tabs li {
   display:inline-block;
   padding-left:8px;
   font-family:Arial, Helvetica, sans-serif;
@@ -228,7 +228,7 @@ ul#rooms li {
   padding:7px;
 }
 
-ul#rooms li a {
+ul#tabs li a {
   display:inline-block;
   text-decoration:none;
   font-family:verdana;
@@ -237,10 +237,9 @@ ul#rooms li a {
   margin-left:20px;
   padding-left:10px;
   padding-right:10px;
-
 }
 
-ul#rooms li.active {
+ul#tabs li.active {
   background:#fff;
 }
 
@@ -266,6 +265,7 @@ body {
 
 #chat .dialogue {
   padding:16px;
+  display:none;
 }
 
 #chat .dialogue .time {
@@ -289,11 +289,39 @@ body {
   color:#00E;
 }
 
-#users {
+#side-panel {
   float:right;
   background:#ddd;
   height:100%;
   width:20%;
+  margin:0;
+  padding:6px;
+}
+
+#side-panel ul {
+  margin:0;
+  padding:0;
+}
+
+#side-panel ul li {
+  list-style-type:none;
+  font-family:Arial;
+  font-weight:bold;
+  margin:0;
+}
+
+#side-panel ul li a {
+  display:inline-block;
+  text-decoration:none;
+  color:#666;
+  background:#eee;
+  width:95%;
+  padding:4px;
+  margin:1px;
+}
+
+#side-panel ul li a:hover {
+  color:#999;
 }
 
 #enter {

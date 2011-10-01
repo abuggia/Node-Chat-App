@@ -42,19 +42,21 @@ app.post '/api/session', UserView.login
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 
 processMessage = (msg) ->
-  msg = msg.replace(/#\w+/gi, "<a href=\"#\" class=\"hash\">$&</a>".toLowerCase())
+  msg = msg.replace(/#\w+/gi, "<a href=\"#\" class=\"hashtag\">$&</a>".toLowerCase())
   msg.replace(/http\:\/\/[^\s"']+/gi, "<a href=\"$&\" class=\"hash\">$&</a>")
 
 # Chat via NowJS
 nowjs = require("now")
 everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
 everyone.now.pub = (msg) ->
-  everyone.now.sub this.now.name, processMessage(msg)
+  msg = processMessage(msg)
+  console.log "now subing #{msg}"
+  everyone.now.sub this.now.name, msg
 
 everyone.now.eachUserInRoom = (room, fn) ->
   nowjs.getGroup(room).getUsers (clientIds) -> 
     for clientId in clientIds
-      nowjs.getClient clientId, () -> fn({name: this.now.name})
+      nowjs.getClient clientId, () -> fn({name: this.now.name, email: this.now.email})
 
 everyone.now.joinRoom = (room) ->
   nowjs.getGroup(room).addUser(this.user.clientId)
