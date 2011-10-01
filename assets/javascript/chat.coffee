@@ -2,69 +2,59 @@ class Rooms
   constructor: (first)->
     @names = { first: 1 }
     @currentRoomNum = 1
-    @roomIndex = 1
+    @numRooms = 1
 
-  currentRoomClass: ->
-    "room-#{@currentRoomNum}"
-
-  hasRoom: (name) ->
-    @names[name]?
-
-  addRoom: (name) ->
-    @names[name] = @roomIndex++
-
+  hasRoom: (name) -> @names[name]?
+  addRoom: (name) -> @names[name] = ++@numRooms
+  switchRoom: (name) -> @currentRoomNum = @names[name]
 
 window.initChat = (room, user) ->
   $input = $ "#enter input"
-  $send = $ "#send"
-  $d = $ "#chat .dialogue"
   $users = $ "#users"
   $chat = $ "#chat"
   $tabs = $ "#tabs"
   rooms = new Rooms room
-  $("#chat .#{rooms.currentRoomClass()}").show()
 
+  $roomDialogue = -> $chat.find(".room-#{rooms.currentRoomNum}")
+  $roomTab = -> $tabs.find(".room-#{rooms.currentRoomNum}")
 
-  now.name = user.handle
-  now.email = user.email
-  now.sub = (name, msg) ->
-    $chat = $ '<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>'
+  addRoom = (room) ->
+    rooms.addRoom room
+    $tabs.append "<li class=\"room-#{rooms.numRooms}\">#{room}<li>"
+    $("<div class=\"room-#{rooms.numRooms}\"></div>").hide().appendTo($chat)
 
-    $d = $("#chat .#{rooms.currentRoomClass()}")
-    
-    $chat.appendTo $d
-    console.log "appended to " + $d
-    $chat.find(".time").text formattedTime
+  goToRoom = (room) ->
+    addRoom(room) if not rooms.hasRoom(room)
 
-  pub = ->
-    now.pub $input.val()
-    $input.val ""
- 
-  $input.enter pub
-  $send.click pub
-  $input.focus()
+    $roomDialogue().hide() 
+    $roomTab().removeClass("active")
+    rooms.switchRoom room
+    $roomDialogue().show()
+    $roomTab().addClass("active")
 
+  # Set up now
+  # ----------
   now.ready ->
     now.joinRoom(room)
     now.eachUserInRoom room, (user) ->
       $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
 
-  encodeId = (id) ->
-    id = '' + id
-    id = id.replace('#', '__hash__') 
-    id = id.replace('@', '__at__') 
+  now.name = user.handle
+  now.email = user.email
+  now.sub = (name, msg) ->
+    $c = $('<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>')
+    $c.appendTo $roomDialogue()
+    $c.find(".time").text formattedTime()
 
-  addRoom = (room) ->
-    num = _.keys(rooms).length
-    $tabs.append "<li class=\"room-#{num}\">#{room}<li>"
-    $dialogue = $("<div class=\"room-#{num}\"></div>").hide().appendTo($chat)
-    rooms[room] = num
 
-  goToRoom = (room) ->
-    alert(" going to room: " + room)
-    if not rooms[room]
-      addRoom room
-
+  # Set handlers
+  # ------------
+  pub = ->
+    now.pub $input.val()
+    $input.val ""
+ 
+  $input.enter pub
+  $("#send").click pub
 
   $chat.delegate "a.hashtag", "click", (e) ->
     e.preventDefault()
@@ -74,4 +64,4 @@ window.initChat = (room, user) ->
     e.preventDefault()
     goToRoom this.innerText
 
-
+  $input.focus()
