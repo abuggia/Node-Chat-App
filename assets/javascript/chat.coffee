@@ -13,14 +13,23 @@ window.initChat = (room, user) ->
   $users = $ "#users"
   $chat = $ "#chat"
   $tabs = $ "#tabs"
+  eu = window.encodeURIComponent
+  org = room
   rooms = new Rooms room
 
   $roomDialogue = -> $chat.find(".room-#{rooms.currentRoomNum}")
   $roomTab = -> $tabs.find(".room-#{rooms.currentRoomNum}")
 
+  addChat = (name, text, time) ->
+    $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
+
+  addChats = (chats) ->
+    $.each chats, (index, chat) -> 
+      addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)))
+
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"room-#{rooms.numRooms}\">#{room}<li>"
+    $tabs.append "<li class=\"room-#{rooms.numRooms}\">#{room}<a href=\"#\">x<li>"
     $("<div class=\"room-#{rooms.numRooms}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
@@ -29,28 +38,26 @@ window.initChat = (room, user) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
     rooms.switchRoom room
-    $roomDialogue().show()
     $roomTab().addClass("active")
+    $roomDialogue().show()
+    console.log "/api/org/#{eu(org)}/room/#{eu(room)}/chats" 
+    $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
 
   # Set up now
   # ----------
   now.ready ->
     now.joinRoom(room)
-    now.eachUserInRoom room, (user) ->
-      $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
+    $.get "/api/org/#{eu(org)}/chats", (chats) -> addChats(chats)
+    now.eachUserInRoom room, (user) -> $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
 
   now.name = user.handle
   now.email = user.email
-  now.sub = (name, msg) ->
-    $c = $('<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>')
-    $c.appendTo $roomDialogue()
-    $c.find(".time").text formattedTime()
-
+  now.sub = (name, text) -> addChat(name, text, formattedTime())
 
   # Set handlers
   # ------------
   pub = ->
-    now.pub user.email, $input.val()
+    now.pub org, user.email, $input.val()
     $input.val ""
  
   $input.enter pub

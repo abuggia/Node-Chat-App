@@ -84,9 +84,14 @@ School = new mongoose.Schema {
 
 Chat = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
+  org:  { type: String, required: true, index: { unique: false, sparse: true } }
   text: { type: String, required: true }
   tags: { type: Array, index: { unique: false } }
+  created_at: { type: Date, default: Date.now }
 }
+
+Chat.statics.forOrg = (org, numRecords) -> 
+  this.find({}).select('text', 'user', 'created_at').where('org', org).asc('created_at').limit(numRecords)
 
 mongoose.model 'Chat', Chat
 

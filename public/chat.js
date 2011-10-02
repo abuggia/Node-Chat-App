@@ -20,11 +20,13 @@
     return Rooms;
   })();
   window.initChat = function(room, user) {
-    var $chat, $input, $roomDialogue, $roomTab, $tabs, $users, addRoom, goToRoom, pub, rooms;
+    var $chat, $input, $roomDialogue, $roomTab, $tabs, $users, addChat, addChats, addRoom, eu, goToRoom, org, pub, rooms;
     $input = $("#enter input");
     $users = $("#users");
     $chat = $("#chat");
     $tabs = $("#tabs");
+    eu = window.encodeURIComponent;
+    org = room;
     rooms = new Rooms(room);
     $roomDialogue = function() {
       return $chat.find(".room-" + rooms.currentRoomNum);
@@ -32,9 +34,17 @@
     $roomTab = function() {
       return $tabs.find(".room-" + rooms.currentRoomNum);
     };
+    addChat = function(name, text, time) {
+      return $("<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>").appendTo($roomDialogue());
+    };
+    addChats = function(chats) {
+      return $.each(chats, function(index, chat) {
+        return addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)));
+      });
+    };
     addRoom = function(room) {
       rooms.addRoom(room);
-      $tabs.append("<li class=\"room-" + rooms.numRooms + "\">" + room + "<li>");
+      $tabs.append("<li class=\"room-" + rooms.numRooms + "\">" + room + "<a href=\"#\">x<li>");
       return $("<div class=\"room-" + rooms.numRooms + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
@@ -44,25 +54,29 @@
       $roomDialogue().hide();
       $roomTab().removeClass("active");
       rooms.switchRoom(room);
+      $roomTab().addClass("active");
       $roomDialogue().show();
-      return $roomTab().addClass("active");
+      console.log("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats");
+      return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
+        return addChats(chats);
+      });
     };
     now.ready(function() {
       now.joinRoom(room);
+      $.get("/api/org/" + (eu(org)) + "/chats", function(chats) {
+        return addChats(chats);
+      });
       return now.eachUserInRoom(room, function(user) {
         return $("<li><a href=\"#\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users);
       });
     });
     now.name = user.handle;
     now.email = user.email;
-    now.sub = function(name, msg) {
-      var $c;
-      $c = $('<div><span class="time"></span><span class="name"><a href="#">' + name + '</a></span><span class="text">' + msg + '</span></div>');
-      $c.appendTo($roomDialogue());
-      return $c.find(".time").text(formattedTime());
+    now.sub = function(name, text) {
+      return addChat(name, text, formattedTime());
     };
     pub = function() {
-      now.pub(user.email, $input.val());
+      now.pub(org, user.email, $input.val());
       return $input.val("");
     };
     $input.enter(pub);

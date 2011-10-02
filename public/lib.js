@@ -37,9 +37,13 @@ var twoDigits = function(num) {
   return num < 10 ? '0' + num : num;
 };
 
-var formattedTime = function() {
-  var d = new Date(), h = d.getHours(), hours = (h > 12) ? (h - 12) : h;
+var formatTime = function(d) {
+  var h = d.getHours(), hours = (h > 12) ? (h - 12) : h;
   return hours + ":" + twoDigits(d.getMinutes()) + ":" + twoDigits(d.getSeconds())
+};
+
+var formattedTime = function() {
+  return formatTime(new Date());
 };
 
 (function() {

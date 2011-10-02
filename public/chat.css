@@ -294,12 +294,15 @@ body {
   height:100%;
   width:20%;
   margin:0;
-  padding:6px;
+  padding:0;
 }
 
 #side-panel ul {
   margin:0;
-  padding:0;
+  padding-top:6px;
+  padding-right:4px;
+  padding-bottom:6px;
+  padding-left:9px;
 }
 
 #side-panel ul li {
