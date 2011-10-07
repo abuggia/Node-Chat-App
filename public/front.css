@@ -270,7 +270,6 @@ input.disabled {
 #dialogue {
   background: url('transparent-white-bg.png') repeat;
   border:1px solid #ccc;
-  opacity:.93;
   padding:18px 12px 12px 12px;
   box-shadow: 0 0 20px rgba(0,0,0,0.7);
   border-radius:5px;

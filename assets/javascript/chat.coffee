@@ -1,12 +1,22 @@
 class Rooms
   constructor: (first)->
-    @names = { first: 1 }
-    @currentRoomNum = 1
-    @numRooms = 1
+    @ids = { first: 1 }
+    @_names = _(@names).chain 
+    @current = first
+    @last = 1
 
-  hasRoom: (name) -> @names[name]?
-  addRoom: (name) -> @names[name] = ++@numRooms
-  switchRoom: (name) -> @currentRoomNum = @names[name]
+  hasRoom: (name) -> @ids[name]?
+  addRoom: (name) -> @ids[name] = ++@last
+  switchRoom: (name) -> @current = name
+  currentClass: -> this.domClass(@current)
+  currentSelector: -> '.' + this.currentClass()
+  domClass: (room): -> "room-#{@ids[@currentRoom]}" 
+
+  #prevRoomName: (num) -> this.roomName(this.prevRoomNum(num))
+  #prevRoomNum: (num) -> @_name.values.reject( (n) -> n >= num ).max.value
+  #roomName: (num) -> @_name.key.find((name) -> @name[name] is n).value
+ 
+ 
 
 window.initChat = (room, user) ->
   $input = $ "#enter input"
@@ -17,8 +27,8 @@ window.initChat = (room, user) ->
   org = room
   rooms = new Rooms room
 
-  $roomDialogue = -> $chat.find(".room-#{rooms.currentRoomNum}")
-  $roomTab = -> $tabs.find(".room-#{rooms.currentRoomNum}")
+  $roomDialogue = -> $chat.find rooms.currentSelector
+  $roomTab = -> $tabs.find rooms.currentSelector
 
   addChat = (name, text, time) ->
     $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
@@ -29,8 +39,8 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"room-#{rooms.numRooms}\">#{room}<a href=\"#\">x<li>"
-    $("<div class=\"room-#{rooms.numRooms}\"></div>").hide().appendTo($chat)
+    $tabs.append "<li class=\"#{room.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
+    $("<div class=\"dialogue room-#{room.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
     addRoom(room) if not rooms.hasRoom(room)
@@ -42,6 +52,15 @@ window.initChat = (room, user) ->
     $roomDialogue().show()
     console.log "/api/org/#{eu(org)}/room/#{eu(room)}/chats" 
     $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
+
+  closeRoom = (room) ->
+    $tab = $tabs.find("room-#{num}");
+    if $tab.hasClass 'active'
+      goToRoom(rooms.prevRoom(num))
+
+    $tab.remove()
+    $chat.find(".room-#{num}").remove()
+
 
   # Set up now
   # ----------
@@ -63,12 +82,20 @@ window.initChat = (room, user) ->
   $input.enter pub
   $("#send").click pub
 
-  $chat.delegate "a.hashtag", "click", (e) ->
+  $chat.delegate 'a.hashtag', 'click', (e) ->
     e.preventDefault()
     goToRoom this.innerText
 
-  $chat.delegate ".name a", "click", (e) ->
+  $chat.delegate '.name a', 'click', (e) ->
     e.preventDefault()
     goToRoom this.innerText
+
+  $tabs.delegate 'li a.close', 'click', (e) ->
+    e.preventDefault()
+    closeRoom $(this).data("room")
+
+
 
   $input.focus()
+
+
