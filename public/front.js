@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var $emailInput, $loginButton, $passwordInput, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, m, s, sendEmail, show;
+    var $emailInput, $loginButton, $passwordInput, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, invites_template, main, render_invites_template, sendEmail, show;
     show = ShowMe("#loading");
     $emailInput = $("#login-email");
     $loginButton = $("#login-button");
@@ -44,7 +44,8 @@
             if (data.count > 1) {
               message += "So far, " + data.count + " others also want to open a chat for your school.";
             }
-            return $("#already-voted .replace-others-for-domain").text(message);
+            $("#already-voted .replace-others-for-domain").text(message);
+            return render_invites_template(data.count);
           }).complete(function() {
             return show("#already-voted");
           });
@@ -82,54 +83,68 @@
           });
         } else {
           return doError("Could not find user");
-          /*
-              startChatting = ->
-              user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
-              $.post '/user/' + user.email, { user: user }, ->
-                chat user.email, user.password
-              .error ->
-                doError "there was an error"
-                */
         }
       });
     };
-    $emailInput.enter(sendEmail).focus();
-    $loginButton.click(sendEmail);
-    $("#vote-button").click(function() {
-      var user;
-      user = {
-        email: $emailInput.val(),
-        vote_open_on_campus: $("#vote-to-open").is(":checked"),
-        vote_email_me: $("#vote-to-email").is(":checked")
-      };
-      return $.post("/vote/" + user.email, user, function() {
-        return $.get("/votes/" + user.email, function(data) {
-          if (data.count > 1) {
-            return $("#vote-recorded .replace-others-for-domain").text("" + data.count + " others want a Campus Chat for " + data.school);
-          }
-        }).complete(function() {
-          return show("#vote-recorded");
-        });
-      }).error(function() {
-        return doError("Could not record vote");
-      });
-    });
-    s = window.location.search;
-    if (s) {
-      m = s.match(/activation_code=([\w\d]+)$/);
-      if ((m != null ? m.length : void 0) > 0) {
-        return $.get('/user/activate/' + m[1], function(user) {
-          $("#registration-info-email").val(user.email);
-          return show("#registration-info");
+    render_invites_template = function(votes) {
+      var text;
+      text = "" + votes + " others and I want to have a chat opened for my campus, submit your vote by logging in at http://campusch.at @campusch_at";
+      text = escape(text);
+      return $(".invite_links").html(invites_template(text));
+    };
+    invites_template = function(text) {
+      return "Invite your friends to vote via     <a target='_blank' id='facebook-link' href='http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=" + text + "'>      Facebook</a>    and     <a target='_blank' id='twitter-link' href='http://twitter.com/intent/tweet?text=" + text + "'>    Twitter</a>!";
+    };
+    /*
+        startChatting = ->
+        user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
+        $.post '/user/' + user.email, { user: user }, ->
+          chat user.email, user.password
+        .error ->
+          doError "there was an error"
+      */
+    main = function() {
+      var m, s;
+      $emailInput.enter(sendEmail).focus();
+      $loginButton.click(sendEmail);
+      $("#vote-button").click(function() {
+        var user;
+        user = {
+          email: $emailInput.val(),
+          vote_open_on_campus: $("#vote-to-open").is(":checked"),
+          vote_email_me: $("#vote-to-email").is(":checked")
+        };
+        return $.post("/vote/" + user.email, user, function() {
+          return $.get("/votes/" + user.email, function(data) {
+            if (data.count > 1) {
+              $("#vote-recorded .replace-others-for-domain").text("" + data.count + " others want a Campus Chat for " + data.school);
+            }
+            return render_invites_template(data.count);
+          }).complete(function() {
+            return show("#vote-recorded");
+          });
         }).error(function() {
-          return doError("invalid activation code.");
+          return doError("Could not record vote");
         });
+      });
+      s = window.location.search;
+      if (s) {
+        m = s.match(/activation_code=([\w\d]+)$/);
+        if ((m != null ? m.length : void 0) > 0) {
+          return $.get('/user/activate/' + m[1], function(user) {
+            $("#registration-info-email").val(user.email);
+            return show("#registration-info");
+          }).error(function() {
+            return doError("invalid activation code.");
+          });
+        } else {
+          return window.location.href = "/404.html";
+        }
       } else {
-        return window.location.href = "/404.html";
+        show("#login-fields");
+        return $("#login-fields input[type=text]").focus();
       }
-    } else {
-      show("#login-fields");
-      return $("#login-fields input[type=text]").focus();
-    }
+    };
+    return main();
   });
 }).call(this);
