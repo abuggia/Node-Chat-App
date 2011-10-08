@@ -45,7 +45,10 @@ $ ->
           message = "Once a school reaches 100 votes, we'll open the chat.  "
           if data.count > 1
             message += "So far, #{data.count} others also want to open a chat for your school."
-          $("#already-voted .replace-others-for-domain").text message
+            
+          $("#already-voted .replace-others-for-domain").text message 
+          render_invites_template data.count
+          
         .complete ->
           show "#already-voted"
       else
@@ -63,18 +66,36 @@ $ ->
       else
         doError "Could not find user"
 
+  
+  render_invites_template = (votes) ->
+    text = "#{votes} others and I want to have a chat opened for my campus, submit your vote by logging in at http://campusch.at @campusch_at"
+    text = escape text
+    $(".invite_links").html invites_template(text)
 
-  $("#vote-button").click ->
-    user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
-    $.post "/api/vote/#{user.email}", user, ->
-      $.get "/api/votes/#{user.email}", (data) ->
-        if data.count > 1
-          $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
-      .complete ->
-        show "#vote-recorded"
+  # TODO: move in a real template file (moustache, handlebars, haml-js or whatever)
+  invites_template = (text) ->
+    "Invite your friends to vote via 
+    <a target='_blank' id='facebook-link' href='http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=#{text}'>
+      Facebook</a>
+    and 
+    <a target='_blank' id='twitter-link' href='http://twitter.com/intent/tweet?text=#{text}'>
+    Twitter</a>!"
+
+  main = ->
+    $emailInput.enter(sendEmail).focus()
+    $loginButton.click sendEmail
+    $("#vote-button").click ->
+      user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
+      $.post "/api/vote/#{user.email}", user, ->
+        $.get "/api/votes/#{user.email}", (data) ->
+          if data.count > 1
+            $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
+            render_invites_template data.count
+        .complete ->
+          show "#vote-recorded"
           
-    .error ->
-      doError "Could not record vote"
+      .error ->
+        doError "Could not record vote"
 
 
   s = window.location.search
@@ -88,11 +109,13 @@ $ ->
         doError "invalid activation code."
     else
       window.location.href = "/404.html"
- 
+
   else
     show "#login-fields"
     $("#login-fields input[type=text]").focus()
 
+
+  main()
 
   $("#registration-info .start-chatting-button").click saveRegistration 
   $emailInput.enter(sendEmail).focus()

@@ -1,7 +1,5 @@
-
 node_modules
 *.swp
 dev.config
 prod.config
-
-
+mongod.lock
