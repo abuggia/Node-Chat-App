@@ -6,9 +6,8 @@ $ ->
   $regInfoHandle = $ "#registration-info-handle"
   $regInfoPassword = $ "#registration-info-password"
   emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-  doError = (message)-> alert "There was an error:\n\n#{message}"
-
-
+  doError = (message) -> alert "There was an error:\n\n#{message}"
+  
   $.fn.showError = (message) ->
     this.find('.message').text(message).animate {'opacity': 1}, "fast"
 
@@ -34,7 +33,10 @@ $ ->
           message = "Once a school reaches 100 votes, we'll open the chat.  "
           if data.count > 1
             message += "So far, #{data.count} others also want to open a chat for your school."
-          $("#already-voted .replace-others-for-domain").text message
+            
+          $("#already-voted .replace-others-for-domain").text message 
+          render_invites_template data.count
+          
         .complete ->
           show "#already-voted"
       else
@@ -51,7 +53,7 @@ $ ->
         show "#enter-password"
         $passwordInput.focus()
       ###
-
+    
     .error (xhr)->
       if xhr.status is 404
         $.post '/users', { user: { email: $emailInput.val() } }, (data) ->
@@ -64,50 +66,70 @@ $ ->
       else
         doError "Could not find user"
 
+  
+  render_invites_template = (votes) ->
+    text = "#{votes} others and I want to have a chat opened for my campus, submit your vote by logging in at http://campusch.at @campusch_at"
+    text = escape text
+    $(".invite_links").html invites_template(text)
 
-        ###
+  # TODO: move in a real template file (moustache, handlebars, haml-js or whatever)
+  invites_template = (text) ->
+    "Invite your friends to vote via 
+    <a target='_blank' id='facebook-link' href='http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=#{text}'>
+      Facebook</a>
+    and 
+    <a target='_blank' id='twitter-link' href='http://twitter.com/intent/tweet?text=#{text}'>
+    Twitter</a>!"
+
+  ###
     startChatting = ->
     user = { email: $emailInput.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
     $.post '/user/' + user.email, { user: user }, ->
       chat user.email, user.password
     .error ->
       doError "there was an error"
-      ###
+  ###
+  
+  main = ->
 
-  $emailInput.enter(sendEmail).focus()
-  $loginButton.click sendEmail
-  #$("#registration-info .start-chatting-button").click startChatting
-  #$regInfoHandle.enter startChatting
-  #$regInfoPassword.enter startChatting
-  $("#vote-button").click ->
-    user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
-    $.post "/vote/#{user.email}", user, ->
-      $.get "/votes/#{user.email}", (data) ->
-        if data.count > 1
-          $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
-      .complete ->
-        show "#vote-recorded"
+    $emailInput.enter(sendEmail).focus()
+    $loginButton.click sendEmail
+    #$("#registration-info .start-chatting-button").click startChatting
+    #$regInfoHandle.enter startChatting
+    #$regInfoPassword.enter startChatting
+    $("#vote-button").click ->
+      user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
+      $.post "/vote/#{user.email}", user, ->
+        $.get "/votes/#{user.email}", (data) ->
+          if data.count > 1
+            $("#vote-recorded .replace-others-for-domain").text "#{data.count} others want a Campus Chat for #{data.school}"
+          render_invites_template data.count
+        .complete ->
+          show "#vote-recorded"
           
-    .error ->
-      doError "Could not record vote"
-
-
-  s = window.location.search
-  if s
-    m = s.match /activation_code=([\w\d]+)$/
-    if m?.length > 0
-      $.get '/user/activate/' + m[1], (user) -> 
-        $("#registration-info-email").val user.email
-        show "#registration-info"
       .error ->
-        doError "invalid activation code."
-    else
-      window.location.href = "/404.html"
- 
-  else
-    show "#login-fields"
-    $("#login-fields input[type=text]").focus()
+        doError "Could not record vote"
 
-    #$("#vote-recorded .replace-others-for-domain").text("47 others want a Campus Chat for harvard.edu")
-    #show "#vote-recorded"
+
+    s = window.location.search
+    if s
+      m = s.match /activation_code=([\w\d]+)$/
+      if m?.length > 0
+        $.get '/user/activate/' + m[1], (user) -> 
+          $("#registration-info-email").val user.email
+          show "#registration-info"
+        .error ->
+          doError "invalid activation code."
+      else
+        window.location.href = "/404.html"
+ 
+    else
+      show "#login-fields"
+      $("#login-fields input[type=text]").focus()
+
+      #$("#vote-recorded .replace-others-for-domain").text("47 others want a Campus Chat for harvard.edu")
+      #show "#vote-recorded"
+
+  
+  main()
 
