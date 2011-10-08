@@ -1,7 +1,7 @@
 class Rooms
   constructor: (first)->
-    @ids = { first: 1 }
-    @_names = _(@names).chain 
+    @ids = {}
+    @ids[first] = 1
     @current = first
     @last = 1
 
@@ -10,13 +10,8 @@ class Rooms
   switchRoom: (name) -> @current = name
   currentClass: -> this.domClass(@current)
   currentSelector: -> '.' + this.currentClass()
-  domClass: (room): -> "room-#{@ids[@currentRoom]}" 
+  domClass: (room) -> "room-#{ @ids[room] }" 
 
-  #prevRoomName: (num) -> this.roomName(this.prevRoomNum(num))
-  #prevRoomNum: (num) -> @_name.values.reject( (n) -> n >= num ).max.value
-  #roomName: (num) -> @_name.key.find((name) -> @name[name] is n).value
- 
- 
 
 window.initChat = (room, user) ->
   $input = $ "#enter input"
@@ -27,10 +22,11 @@ window.initChat = (room, user) ->
   org = room
   rooms = new Rooms room
 
-  $roomDialogue = -> $chat.find rooms.currentSelector
-  $roomTab = -> $tabs.find rooms.currentSelector
+  $roomDialogue = -> $chat.find rooms.currentSelector()
+  $roomTab = -> $tabs.find rooms.currentSelector()
 
   addChat = (name, text, time) ->
+    console.log " Appending to #{$roomDialogue().selector}"
     $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
 
   addChats = (chats) ->
@@ -39,8 +35,8 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"#{room.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
-    $("<div class=\"dialogue room-#{room.domClass room}\"></div>").hide().appendTo($chat)
+    $tabs.append "<li class=\"#{rooms.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
+    $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
     addRoom(room) if not rooms.hasRoom(room)
@@ -50,7 +46,6 @@ window.initChat = (room, user) ->
     rooms.switchRoom room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    console.log "/api/org/#{eu(org)}/room/#{eu(room)}/chats" 
     $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
 
   closeRoom = (room) ->
