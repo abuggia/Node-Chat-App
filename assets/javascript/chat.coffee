@@ -47,25 +47,29 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"#{rooms.domClass room}\" data-room=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
+    $tabs.append "<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x<li>"
     $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
-    addRoom(room) if not rooms.hasRoom(room)
+    isNew = not rooms.hasRoom(room)
 
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
+
+    addRoom(room) if isNew 
     rooms.switchRoom room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
+
+    if isNew
+      $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
+    
 
   closeRoom = (room) ->
     $tab = $tabs.find(rooms.selector room);
     $dialogue = $chat.find(rooms.selector room);
 
     if $tab.hasClass 'active'
-      console.log " here and closest is #{rooms.closest(room)}"
       goToRoom(rooms.closest(room))
 
     $tab.remove()
@@ -102,8 +106,11 @@ window.initChat = (room, user) ->
 
   $tabs.delegate 'li a.close', 'click', (e) ->
     e.preventDefault()
-    closeRoom $(this).closest('li').data("room")
+    closeRoom $(this).closest('li').find(".room").text()
 
+  $tabs.delegate 'li a.room', 'click', (e) ->
+    e.preventDefault()
+    goToRoom $(this).text()
 
 
   $input.focus()

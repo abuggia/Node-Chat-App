@@ -79,28 +79,31 @@
     };
     addRoom = function(room) {
       rooms.addRoom(room);
-      $tabs.append("<li class=\"" + (rooms.domClass(room)) + "\" data-room=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>");
+      $tabs.append("<li class=\"" + (rooms.domClass(room)) + "\"><a href=\"#\" class=\"room\">" + room + "</a><a href=\"#\" class=\"close\">x<li>");
       return $("<div class=\"dialogue " + (rooms.domClass(room)) + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
-      if (!rooms.hasRoom(room)) {
-        addRoom(room);
-      }
+      var isNew;
+      isNew = !rooms.hasRoom(room);
       $roomDialogue().hide();
       $roomTab().removeClass("active");
+      if (isNew) {
+        addRoom(room);
+      }
       rooms.switchRoom(room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
-        return addChats(chats);
-      });
+      if (isNew) {
+        return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
+          return addChats(chats);
+        });
+      }
     };
     closeRoom = function(room) {
       var $dialogue, $tab;
       $tab = $tabs.find(rooms.selector(room));
       $dialogue = $chat.find(rooms.selector(room));
       if ($tab.hasClass('active')) {
-        console.log(" here and closest is " + (rooms.closest(room)));
         goToRoom(rooms.closest(room));
       }
       $tab.remove();
@@ -136,7 +139,11 @@
     });
     $tabs.delegate('li a.close', 'click', function(e) {
       e.preventDefault();
-      return closeRoom($(this).closest('li').data("room"));
+      return closeRoom($(this).closest('li').find(".room").text());
+    });
+    $tabs.delegate('li a.room', 'click', function(e) {
+      e.preventDefault();
+      return goToRoom($(this).text());
     });
     return $input.focus();
   };
