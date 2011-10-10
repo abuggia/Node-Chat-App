@@ -4,6 +4,7 @@
     function Rooms(first) {
       this.ids = {};
       this.ids[first] = 1;
+      this._ids = _(this.ids).chain();
       this.current = first;
       this.last = 1;
     }
@@ -20,10 +21,36 @@
       return this.domClass(this.current);
     };
     Rooms.prototype.currentSelector = function() {
-      return '.' + this.currentClass();
+      return this.selector(this.current);
+    };
+    Rooms.prototype.selector = function(room) {
+      return '.' + this.domClass(room);
     };
     Rooms.prototype.domClass = function(room) {
       return "room-" + this.ids[room];
+    };
+    Rooms.prototype.roomFromNum = function(num) {
+      var ids;
+      ids = this.ids;
+      return this._ids.keys().find(function(name) {
+        return ids[name] === num;
+      }).value();
+    };
+    Rooms.prototype.maxPrev = function(num) {
+      return this._ids.values().reject(function(n) {
+        return n >= num;
+      }).max().value();
+    };
+    Rooms.prototype.minNext = function(num) {
+      return this._ids.values().reject(function(n) {
+        return n <= num;
+      }).min().value();
+    };
+    Rooms.prototype.closest = function(room) {
+      var newNum, num;
+      num = this.ids[room];
+      newNum = this.maxPrev(num) || this.minNext(num);
+      return this.roomFromNum(newNum);
     };
     return Rooms;
   })();
@@ -43,7 +70,6 @@
       return $tabs.find(rooms.currentSelector());
     };
     addChat = function(name, text, time) {
-      console.log(" Appending to " + ($roomDialogue().selector));
       return $("<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>").appendTo($roomDialogue());
     };
     addChats = function(chats) {
@@ -53,7 +79,7 @@
     };
     addRoom = function(room) {
       rooms.addRoom(room);
-      $tabs.append("<li class=\"" + (rooms.domClass(room)) + "\" data-room-num=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>");
+      $tabs.append("<li class=\"" + (rooms.domClass(room)) + "\" data-room=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>");
       return $("<div class=\"dialogue " + (rooms.domClass(room)) + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
@@ -70,13 +96,15 @@
       });
     };
     closeRoom = function(room) {
-      var $tab;
-      $tab = $tabs.find("room-" + num);
+      var $dialogue, $tab;
+      $tab = $tabs.find(rooms.selector(room));
+      $dialogue = $chat.find(rooms.selector(room));
       if ($tab.hasClass('active')) {
-        goToRoom(rooms.prevRoom(num));
+        console.log(" here and closest is " + (rooms.closest(room)));
+        goToRoom(rooms.closest(room));
       }
       $tab.remove();
-      return $chat.find(".room-" + num).remove();
+      return $dialogue.remove();
     };
     now.ready(function() {
       now.joinRoom(room);
@@ -108,7 +136,7 @@
     });
     $tabs.delegate('li a.close', 'click', function(e) {
       e.preventDefault();
-      return closeRoom($(this).data("room"));
+      return closeRoom($(this).closest('li').data("room"));
     });
     return $input.focus();
   };

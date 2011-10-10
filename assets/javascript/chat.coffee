@@ -2,6 +2,7 @@ class Rooms
   constructor: (first)->
     @ids = {}
     @ids[first] = 1
+    @_ids = _(@ids).chain()
     @current = first
     @last = 1
 
@@ -9,8 +10,20 @@ class Rooms
   addRoom: (name) -> @ids[name] = ++@last
   switchRoom: (name) -> @current = name
   currentClass: -> this.domClass(@current)
-  currentSelector: -> '.' + this.currentClass()
+  currentSelector: -> this.selector(@current) 
+  selector: (room) -> '.' + this.domClass(room)
   domClass: (room) -> "room-#{ @ids[room] }" 
+  roomFromNum: (num) -> 
+    ids = @ids
+    @_ids.keys().find((name) -> 
+      ids[name] is num
+    ).value()
+  maxPrev: (num) -> @_ids.values().reject( (n) -> n >= num ).max().value()
+  minNext: (num) -> @_ids.values().reject( (n) -> n <= num ).min().value()
+  closest: (room) -> 
+    num = @ids[room]
+    newNum = this.maxPrev(num) or this.minNext(num)
+    this.roomFromNum(newNum)
 
 
 window.initChat = (room, user) ->
@@ -26,7 +39,6 @@ window.initChat = (room, user) ->
   $roomTab = -> $tabs.find rooms.currentSelector()
 
   addChat = (name, text, time) ->
-    console.log " Appending to #{$roomDialogue().selector}"
     $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
 
   addChats = (chats) ->
@@ -35,7 +47,7 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"#{rooms.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
+    $tabs.append "<li class=\"#{rooms.domClass room}\" data-room=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
     $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
@@ -49,12 +61,15 @@ window.initChat = (room, user) ->
     $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
 
   closeRoom = (room) ->
-    $tab = $tabs.find("room-#{num}");
+    $tab = $tabs.find(rooms.selector room);
+    $dialogue = $chat.find(rooms.selector room);
+
     if $tab.hasClass 'active'
-      goToRoom(rooms.prevRoom(num))
+      console.log " here and closest is #{rooms.closest(room)}"
+      goToRoom(rooms.closest(room))
 
     $tab.remove()
-    $chat.find(".room-#{num}").remove()
+    $dialogue.remove()
 
 
   # Set up now
@@ -87,7 +102,7 @@ window.initChat = (room, user) ->
 
   $tabs.delegate 'li a.close', 'click', (e) ->
     e.preventDefault()
-    closeRoom $(this).data("room")
+    closeRoom $(this).closest('li').data("room")
 
 
 
