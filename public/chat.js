@@ -145,6 +145,15 @@
       e.preventDefault();
       return goToRoom($(this).text());
     });
+    $tabs.find(".new a").hover(function(e) {
+      e.preventDefault();
+      return $(this).find(".join").show("fast");
+    });
+    $tabs.find(".new a").hover(function(e) {
+      return $(this).find(".join").show("fast");
+    }, function(e) {
+      return $(this).find(".join").hide("fast");
+    });
     return $input.focus();
   };
 }).call(this);

@@ -111,6 +111,17 @@ window.initChat = (room, user) ->
     e.preventDefault()
     goToRoom $(this).text()
 
+  $tabs.find(".new a").hover (e) ->
+    e.preventDefault()
+    $(this).find(".join").show("fast");
+
+  $tabs.find(".new a").hover (e) ->
+    $(this).find(".join").show("fast");
+  , (e) ->
+    $(this).find(".join").hide("fast");
+
+
+
 
   $input.focus()
 
