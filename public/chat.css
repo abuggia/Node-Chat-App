@@ -254,6 +254,20 @@ ul#tabs li.active a {
   background:#fff;
 }
 
+#rooms-list {
+  display:none;
+  position:absolute;
+  background:#ddd;
+}
+
+#tabs #rooms-list li {
+  display:list-item;
+}
+
+#tabs #rooms-list li:hover {
+  background:#eee;
+}
+
 html {
   height:100%;
 }

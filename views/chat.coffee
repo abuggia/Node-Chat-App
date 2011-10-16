@@ -35,8 +35,9 @@ class ChatView
       res.render "../public/chat.html", { room: room, user: { handle: user.handle, email: user.email }, layout: false } 
 
   getChats: (req, res) ->
-    console.log " org is #{req.params.org} and room is #{req.params.room}"
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
 
+  getRooms: (req, res) ->
+    Chat.distinct 'room', {org: req.params.org}, (err, doc) -> res.json doc
 
 module.exports = (app) -> new ChatView(app)

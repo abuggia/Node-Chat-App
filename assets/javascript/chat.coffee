@@ -27,10 +27,12 @@ class Rooms
 
 
 window.initChat = (room, user) ->
-  $input = $ "#enter input"
-  $users = $ "#users"
-  $chat = $ "#chat"
-  $tabs = $ "#tabs"
+  $input = $ '#enter input'
+  $users = $ '#users'
+  $chat = $ '#chat'
+  $tabs = $ '#tabs'
+  $roomsList = $ '#rooms-list'
+  $newRoom = $tabs.find('.new a')
   eu = window.encodeURIComponent
   org = room
   rooms = new Rooms room
@@ -113,15 +115,32 @@ window.initChat = (room, user) ->
 
   $tabs.find(".new a").hover (e) ->
     e.preventDefault()
-    $(this).find(".join").show("fast");
+    $(this).find(".join").show "fast"
 
-  $tabs.find(".new a").hover (e) ->
-    $(this).find(".join").show("fast");
+
+  roomListOpen = false
+  $newRoom.hover (e) ->
+    $newRoom.find(".join").show("fast");
   , (e) ->
-    $(this).find(".join").hide("fast");
+    if not roomListOpen
+      $newRoom.find(".join").hide("fast");
 
+      
+  $tabs.find(".new a").click (e) ->
+    roomListOpen = true
+    e.preventDefault()
+    position = $(this).position()
+    $.get "/api/org/#{org}/rooms", (rooms) ->
+      $roomsList
+        .empty()
+        .append( _.reduce(rooms, ( (m, room) -> "#{m}<li><a href=\"#\">#{room}</a></li>" ), "") )
+        .css( {top: (position.top + 30) + 'px', left: (position.left - 4) + 'px' } )
+        .show()
 
-
+  $roomsList.bind "mouseleave", (e) ->
+    roomListOpen = true
+    $roomsList.hide()
+    $newRoom.find(".join").hide("fast");
 
   $input.focus()
 

@@ -55,11 +55,13 @@
     return Rooms;
   })();
   window.initChat = function(room, user) {
-    var $chat, $input, $roomDialogue, $roomTab, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, org, pub, rooms;
-    $input = $("#enter input");
-    $users = $("#users");
-    $chat = $("#chat");
-    $tabs = $("#tabs");
+    var $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, org, pub, roomListOpen, rooms;
+    $input = $('#enter input');
+    $users = $('#users');
+    $chat = $('#chat');
+    $tabs = $('#tabs');
+    $roomsList = $('#rooms-list');
+    $newRoom = $tabs.find('.new a');
     eu = window.encodeURIComponent;
     org = room;
     rooms = new Rooms(room);
@@ -149,10 +151,32 @@
       e.preventDefault();
       return $(this).find(".join").show("fast");
     });
-    $tabs.find(".new a").hover(function(e) {
-      return $(this).find(".join").show("fast");
+    roomListOpen = false;
+    $newRoom.hover(function(e) {
+      return $newRoom.find(".join").show("fast");
     }, function(e) {
-      return $(this).find(".join").hide("fast");
+      if (!roomListOpen) {
+        return $newRoom.find(".join").hide("fast");
+      }
+    });
+    $tabs.find(".new a").click(function(e) {
+      var position;
+      roomListOpen = true;
+      e.preventDefault();
+      position = $(this).position();
+      return $.get("/api/org/" + org + "/rooms", function(rooms) {
+        return $roomsList.empty().append(_.reduce(rooms, (function(m, room) {
+          return "" + m + "<li><a href=\"#\">" + room + "</a></li>";
+        }), "")).css({
+          top: (position.top + 30) + 'px',
+          left: (position.left - 4) + 'px'
+        }).show();
+      });
+    });
+    $roomsList.bind("mouseleave", function(e) {
+      roomListOpen = true;
+      $roomsList.hide();
+      return $newRoom.find(".join").hide("fast");
     });
     return $input.focus();
   };
