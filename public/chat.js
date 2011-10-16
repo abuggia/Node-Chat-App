@@ -55,7 +55,7 @@
     return Rooms;
   })();
   window.initChat = function(room, user) {
-    var $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, org, pub, roomListOpen, rooms;
+    var $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, hideJoinNewRoom, org, pub, roomListOpen, rooms;
     $input = $('#enter input');
     $users = $('#users');
     $chat = $('#chat');
@@ -81,7 +81,7 @@
     };
     addRoom = function(room) {
       rooms.addRoom(room);
-      $tabs.append("<li class=\"" + (rooms.domClass(room)) + "\"><a href=\"#\" class=\"room\">" + room + "</a><a href=\"#\" class=\"close\">x<li>");
+      $("<li class=\"" + (rooms.domClass(room)) + "\"><a href=\"#\" class=\"room\">" + room + "</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).show("fast");
       return $("<div class=\"dialogue " + (rooms.domClass(room)) + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
@@ -151,12 +151,15 @@
       e.preventDefault();
       return $(this).find(".join").show("fast");
     });
+    hideJoinNewRoom = function() {
+      return $newRoom.find(".join").hide("fast");
+    };
     roomListOpen = false;
     $newRoom.hover(function(e) {
       return $newRoom.find(".join").show("fast");
     }, function(e) {
       if (!roomListOpen) {
-        return $newRoom.find(".join").hide("fast");
+        return hideJoinNewRoom();
       }
     });
     $tabs.find(".new a").click(function(e) {
@@ -174,9 +177,15 @@
       });
     });
     $roomsList.bind("mouseleave", function(e) {
-      roomListOpen = true;
       $roomsList.hide();
-      return $newRoom.find(".join").hide("fast");
+      hideJoinNewRoom();
+      return roomListOpen = false;
+    });
+    $roomsList.delegate('li a', 'click', function(e) {
+      e.preventDefault();
+      $roomsList.hide();
+      $newRoom.find(".join").hide();
+      return goToRoom($(this).text());
     });
     return $input.focus();
   };

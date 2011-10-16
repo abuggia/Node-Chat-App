@@ -49,7 +49,7 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $tabs.append "<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x<li>"
+    $("<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).show("fast")
     $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
@@ -117,14 +117,13 @@ window.initChat = (room, user) ->
     e.preventDefault()
     $(this).find(".join").show "fast"
 
+  hideJoinNewRoom = -> $newRoom.find(".join").hide("fast")
 
   roomListOpen = false
   $newRoom.hover (e) ->
-    $newRoom.find(".join").show("fast");
+    $newRoom.find(".join").show("fast")
   , (e) ->
-    if not roomListOpen
-      $newRoom.find(".join").hide("fast");
-
+    hideJoinNewRoom() if not roomListOpen
       
   $tabs.find(".new a").click (e) ->
     roomListOpen = true
@@ -138,9 +137,18 @@ window.initChat = (room, user) ->
         .show()
 
   $roomsList.bind "mouseleave", (e) ->
-    roomListOpen = true
     $roomsList.hide()
-    $newRoom.find(".join").hide("fast");
+    hideJoinNewRoom()
+    roomListOpen = false
+
+  $roomsList.delegate 'li a', 'click', (e) ->
+    e.preventDefault()
+    $roomsList.hide()
+    $newRoom.find(".join").hide()
+    goToRoom $(this).text()
+    
 
   $input.focus()
+
+
 
