@@ -85,13 +85,18 @@ School = new mongoose.Schema {
 Chat = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
   org:  { type: String, required: true, index: { unique: false, sparse: true } }
+  type: { type: String, required: true }
   text: { type: String, required: true }
   tags: { type: Array, index: { unique: false } }
   created_at: { type: Date, default: Date.now }
+  room: { type: String, required: true }
 }
 
 Chat.statics.forOrg = (org, numRecords) -> 
   this.find({}).select('text', 'user', 'created_at').where('org', org).asc('created_at').limit(numRecords)
+
+Chat.statics.forRoom = (org, room, numRecords) -> 
+  this.forOrg(org, numRecords).where('room', room)
 
 mongoose.model 'Chat', Chat
 

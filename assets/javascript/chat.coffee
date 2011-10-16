@@ -64,7 +64,6 @@ window.initChat = (room, user) ->
     if isNew
       $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
     
-
   closeRoom = (room) ->
     $tab = $tabs.find(rooms.selector room);
     $dialogue = $chat.find(rooms.selector room);
@@ -80,7 +79,7 @@ window.initChat = (room, user) ->
   # ----------
   now.ready ->
     now.joinRoom(room)
-    $.get "/api/org/#{eu(org)}/chats", (chats) -> addChats(chats)
+    $.get "/api/org/#{eu(org)}/room/#{rooms.current}/chats", (chats) -> addChats(chats)
     now.eachUserInRoom room, (user) -> $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
 
   now.name = user.handle
@@ -90,7 +89,7 @@ window.initChat = (room, user) ->
   # Set handlers
   # ------------
   pub = ->
-    now.pub org, user.email, $input.val()
+    now.pub org, rooms.current, user.email, $input.val()
     $input.val ""
  
   $input.enter pub
@@ -114,5 +113,4 @@ window.initChat = (room, user) ->
 
 
   $input.focus()
-
 

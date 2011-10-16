@@ -111,7 +111,7 @@
     };
     now.ready(function() {
       now.joinRoom(room);
-      $.get("/api/org/" + (eu(org)) + "/chats", function(chats) {
+      $.get("/api/org/" + (eu(org)) + "/room/" + rooms.current + "/chats", function(chats) {
         return addChats(chats);
       });
       return now.eachUserInRoom(room, function(user) {
@@ -124,7 +124,7 @@
       return addChat(name, text, formattedTime());
     };
     pub = function() {
-      now.pub(org, user.email, $input.val());
+      now.pub(org, rooms.current, user.email, $input.val());
       return $input.val("");
     };
     $input.enter(pub);
