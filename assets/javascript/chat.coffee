@@ -1,16 +1,16 @@
 class Rooms
-  constructor: (first)->
-    @ids = { first: 1 }
-    @_names = _(@names).chain 
-    @current = first
-    @last = 1
-
-  hasRoom: (name) -> @ids[name]?
-  addRoom: (name) -> @ids[name] = ++@last
+  constructor: (room) ->
+    @rooms = [room]
+    @current = room
+    
+  hasRoom: (name) -> _.include @rooms, name
+  addRoom: (name) -> @rooms.push name
   switchRoom: (name) -> @current = name
+  domClass: (room) -> 
+    "room-#{_.indexOf @rooms, room}"
   currentClass: -> this.domClass(@current)
-  currentSelector: -> '.' + this.currentClass()
-  domClass: (room): -> "room-#{@ids[@currentRoom]}" 
+  currentSelector: -> 
+    '.' + this.currentClass()
 
   #prevRoomName: (num) -> this.roomName(this.prevRoomNum(num))
   #prevRoomNum: (num) -> @_name.values.reject( (n) -> n >= num ).max.value
@@ -26,18 +26,25 @@ window.initChat = (room, user) ->
   eu = window.encodeURIComponent
   org = room
   rooms = new Rooms room
+  window.rooms = rooms
 
-  $roomDialogue = -> $chat.find rooms.currentSelector
-  $roomTab = -> $tabs.find rooms.currentSelector
+  $roomDialogue = -> 
+    diag = $chat.find rooms.currentSelector()
+    diag
+    
+  $roomTab = -> $tabs.find rooms.currentSelector()
 
   addChat = (name, text, time) ->
-    $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
+    console.log "add message: ", text
+    msg = "<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>"
+    $roomDialogue().append msg
 
   addChats = (chats) ->
     $.each chats, (index, chat) -> 
       addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)))
 
   addRoom = (room) ->
+    console.log "add room: ", room
     rooms.addRoom room
     $tabs.append "<li class=\"#{room.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
     $("<div class=\"dialogue room-#{room.domClass room}\"></div>").hide().appendTo($chat)
@@ -45,11 +52,11 @@ window.initChat = (room, user) ->
   goToRoom = (room) ->
     addRoom(room) if not rooms.hasRoom(room)
 
-    $roomDialogue().hide() 
-    $roomTab().removeClass("active")
+    $roomDialogue.hide() 
+    $roomTab.removeClass("active")
     rooms.switchRoom room
-    $roomTab().addClass("active")
-    $roomDialogue().show()
+    $roomTab.addClass("active")
+    $roomDialogue.show()
     console.log "/api/org/#{eu(org)}/room/#{eu(room)}/chats" 
     $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
 
@@ -67,11 +74,12 @@ window.initChat = (room, user) ->
   now.ready ->
     now.joinRoom(room)
     $.get "/api/org/#{eu(org)}/chats", (chats) -> addChats(chats)
-    now.eachUserInRoom room, (user) -> $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
+    now.eachUserInRoom room, (user) -> $("<li><a href=\"javascript:void(0)\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo($users)
 
   now.name = user.handle
   now.email = user.email
-  now.sub = (name, text) -> addChat(name, text, formattedTime())
+  now.sub = (name, text) -> 
+    addChat(name, text, formattedTime())
 
   # Set handlers
   # ------------
@@ -86,7 +94,7 @@ window.initChat = (room, user) ->
     e.preventDefault()
     goToRoom this.innerText
 
-  $chat.delegate '.name a', 'click', (e) ->
+  $chat.delegate '.side-panel .user a', 'click', (e) ->
     e.preventDefault()
     goToRoom this.innerText
 
@@ -95,7 +103,11 @@ window.initChat = (room, user) ->
     closeRoom $(this).data("room")
 
 
-
+  $users.delegate '.user a', 'click', (e) ->
+    # e.preventDefault()
+    console.log "aaaa"
+    # goToRoom this.innerText
+  
   $input.focus()
 
 

@@ -24,4 +24,9 @@ The following steps should get a new developer up and running.  Feel free to fur
 9.  Open another terminal, navigate to the project root and type `coffee start.coffee`
 
 
+### NOTES:
+
+- create an user
+
+- set user password: curl -d "user[email]=user@host.edu&user[password]=secret" http://localhost:3000/api/users/user@host.edu
 

@@ -1,40 +1,28 @@
 (function() {
   var Rooms;
   Rooms = (function() {
-    function Rooms(first) {
-      this.names = {
-        first: 1
-      };
-      this._names = _(this.names).chain;
-      this.currentRoom = first;
-      this.numRooms = 1;
+    function Rooms(room) {
+      this.rooms = [room];
+      this.current = room;
     }
     Rooms.prototype.hasRoom = function(name) {
-      return this.names[name] != null;
+      return _.include(this.rooms, name);
     };
     Rooms.prototype.addRoom = function(name) {
-      return this.names[name] = ++this.numRooms;
+      return this.rooms.push(name);
     };
     Rooms.prototype.switchRoom = function(name) {
-      return this.currentRoomNum = this.names[name];
+      return this.current = name;
     };
-    Rooms.prototype.prevRoomName = function(num) {
-      return this.roomName(this.prevRoomNum(num));
+    Rooms.prototype.domClass = function(room) {
+      return "room-" + (_.indexOf(this.rooms, room));
     };
-    Rooms.prototype.prevRoomNum = function(num) {
-      return this._name.values.reject(function(n) {
-        return n >= num;
-      }).max.value;
+    Rooms.prototype.currentClass = function() {
+      return this.domClass(this.current);
     };
-    Rooms.prototype.roomName = function(num) {
-      return this._name.key.find(function(name) {
-        return this.name[name] === n;
-      }).value;
+    Rooms.prototype.currentSelector = function() {
+      return '.' + this.currentClass();
     };
-    Rooms.prototype.currentRoomClass = function() {
-      return "room-" + currentRoomNum;
-    };
-    Rooms.prototype.roomClass = room;
     return Rooms;
   })();
   window.initChat = function(room, user) {
@@ -46,14 +34,20 @@
     eu = window.encodeURIComponent;
     org = room;
     rooms = new Rooms(room);
+    window.rooms = rooms;
     $roomDialogue = function() {
-      return $chat.find(".room-" + rooms.currentRoomNum);
+      var diag;
+      diag = $chat.find(rooms.currentSelector());
+      return diag;
     };
     $roomTab = function() {
-      return $tabs.find(".room-" + rooms.currentRoomNum);
+      return $tabs.find(rooms.currentSelector());
     };
     addChat = function(name, text, time) {
-      return $("<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>").appendTo($roomDialogue());
+      var msg;
+      console.log("add message: ", text);
+      msg = "<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>";
+      return $roomDialogue().append(msg);
     };
     addChats = function(chats) {
       return $.each(chats, function(index, chat) {
@@ -61,27 +55,27 @@
       });
     };
     addRoom = function(room) {
+      console.log("add room: ", room);
       rooms.addRoom(room);
-      $tabs.append("<li class=\"room-" + rooms.numRooms + "\" data-room-num=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>");
-      return $("<div class=\"dialogue room-" + rooms.numRooms + "\"></div>").hide().appendTo($chat);
+      $tabs.append("<li class=\"" + (room.domClass(room)) + "\" data-room-num=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>");
+      return $("<div class=\"dialogue room-" + (room.domClass(room)) + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
       if (!rooms.hasRoom(room)) {
         addRoom(room);
       }
-      $roomDialogue().hide();
-      $roomTab().removeClass("active");
+      $roomDialogue.hide();
+      $roomTab.removeClass("active");
       rooms.switchRoom(room);
-      $roomTab().addClass("active");
-      $roomDialogue().show();
+      $roomTab.addClass("active");
+      $roomDialogue.show();
       console.log("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats");
       return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
         return addChats(chats);
       });
     };
-    closeRoom = function(num) {
+    closeRoom = function(room) {
       var $tab;
-      alert(" here and num is " + num);
       $tab = $tabs.find("room-" + num);
       if ($tab.hasClass('active')) {
         goToRoom(rooms.prevRoom(num));
@@ -95,7 +89,7 @@
         return addChats(chats);
       });
       return now.eachUserInRoom(room, function(user) {
-        return $("<li><a href=\"#\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users);
+        return $("<li><a href=\"javascript:void(0)\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users);
       });
     });
     now.name = user.handle;
@@ -113,13 +107,16 @@
       e.preventDefault();
       return goToRoom(this.innerText);
     });
-    $chat.delegate('.name a', 'click', function(e) {
+    $chat.delegate('.side-panel .user a', 'click', function(e) {
       e.preventDefault();
       return goToRoom(this.innerText);
     });
     $tabs.delegate('li a.close', 'click', function(e) {
       e.preventDefault();
       return closeRoom($(this).data("room"));
+    });
+    $users.delegate('.user a', 'click', function(e) {
+      return console.log("aaaa");
     });
     return $input.focus();
   };

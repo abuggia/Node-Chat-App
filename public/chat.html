@@ -16,16 +16,14 @@
 </head>
 
 <body>
-
- <nav>
-   <ul id="tabs">
-     <li class="active room-1">${ room }<a href="#" class="close" data-room="1">x</a></li>
-   </lu>
- </nav>
-
  <div id="content">
+   <ul id="tabs">
+     <li class="active room-0">${ room }<a href="#" class="close" data-room="0">x</a></li>
+   </ul>
    <div id="chat">
-     <div class="dialogue room-1"></div>
+     <div class="scroller">
+       <div class="dialogue room-0"></div>
+     </div> 
    </div>
    <div id="side-panel">
      <ul id="users"></ul>
