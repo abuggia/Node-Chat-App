@@ -38,6 +38,7 @@ window.initChat = (room, user) ->
     console.log "add message: ", text
     msg = "<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>"
     $roomDialogue().append msg
+    $chat.scrollTop(1000000)
 
   addChats = (chats) ->
     $.each chats, (index, chat) -> 

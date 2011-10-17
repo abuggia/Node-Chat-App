@@ -47,7 +47,8 @@
       var msg;
       console.log("add message: ", text);
       msg = "<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>";
-      return $roomDialogue().append(msg);
+      $roomDialogue().append(msg);
+      return $chat.scrollTop(1000000);
     };
     addChats = function(chats) {
       return $.each(chats, function(index, chat) {
