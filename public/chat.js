@@ -51,6 +51,7 @@
       return $chat.scrollTop(1000000);
     };
     addChats = function(chats) {
+      chats.reverse();
       return $.each(chats, function(index, chat) {
         return addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)));
       });

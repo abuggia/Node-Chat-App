@@ -41,6 +41,7 @@ window.initChat = (room, user) ->
     $chat.scrollTop(1000000)
 
   addChats = (chats) ->
+    chats.reverse()
     $.each chats, (index, chat) -> 
       addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)))
 
