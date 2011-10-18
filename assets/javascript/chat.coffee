@@ -9,7 +9,7 @@ class Rooms
   domClass: (room) -> 
     "room-#{_.indexOf @rooms, room}"
   currentClass: -> this.domClass(@current)
-  currentSelector: -> 
+  currentSelector: ->
     '.' + this.currentClass()
 
   #prevRoomName: (num) -> this.roomName(this.prevRoomNum(num))
@@ -29,13 +29,12 @@ window.initChat = (room, user) ->
   window.rooms = rooms
 
   $roomDialogue = -> 
-    diag = $chat.find rooms.currentSelector()
-    diag
+    $chat.find rooms.currentSelector()
+    
     
   $roomTab = -> $tabs.find rooms.currentSelector()
 
   addChat = (name, text, time) ->
-    console.log "add message: ", text
     msg = "<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>"
     $roomDialogue().append msg
     $chat.scrollTop(1000000)
@@ -48,29 +47,38 @@ window.initChat = (room, user) ->
   addRoom = (room) ->
     console.log "add room: ", room
     rooms.addRoom room
-    $tabs.append "<li class=\"#{room.domClass room}\" data-room-num=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
-    $("<div class=\"dialogue room-#{room.domClass room}\"></div>").hide().appendTo($chat)
+    $tabs.append tabView(room)
+    diag = $("<div class=\"dialogue #{rooms.domClass room}\"></div>")
+    $chat.find(".dialogue").hide()
 
   goToRoom = (room) ->
     addRoom(room) if not rooms.hasRoom(room)
-
-    $roomDialogue.hide() 
-    $roomTab.removeClass("active")
+    
+    console.log $roomDialogue
+    
+    $roomDialogue().hide() 
+    $roomTab().removeClass("active")
     rooms.switchRoom room
-    $roomTab.addClass("active")
-    $roomDialogue.show()
+    $roomTab().addClass("active")
+    $roomDialogue().show()
     console.log "/api/org/#{eu(org)}/room/#{eu(room)}/chats" 
     $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
 
   closeRoom = (room) ->
-    $tab = $tabs.find("room-#{num}");
-    if $tab.hasClass 'active'
-      goToRoom(rooms.prevRoom(num))
+    tab = $tabs.find("."+rooms.domClass room)
+    console.log "closing: ", room
+    if tab.hasClass 'active'
+      goToRoom rooms.prevRoom(num)
 
-    $tab.remove()
-    $chat.find(".room-#{num}").remove()
+    tab.remove()
+    $chat.find(rooms.domClass room).remove()
 
-
+  # views
+  #
+  # TODO: move views in another file
+  tabView = (room) ->
+    "<li class=\"#{rooms.domClass room}\" data-room-name=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
+  
   # Set up now
   # ----------
   now.ready ->
@@ -86,11 +94,12 @@ window.initChat = (room, user) ->
   # Set handlers
   # ------------
   pub = ->
+    console.log "pub"
     now.pub org, user.email, $input.val()
     $input.val ""
  
   $input.enter pub
-  $("#send").click pub
+  $("#enter button").click pub
 
   $chat.delegate 'a.hashtag', 'click', (e) ->
     e.preventDefault()
@@ -101,14 +110,16 @@ window.initChat = (room, user) ->
     goToRoom this.innerText
 
   $tabs.delegate 'li a.close', 'click', (e) ->
-    e.preventDefault()
-    closeRoom $(this).data("room")
+    closeRoom $(this).parent().data("room-name")
 
+  $tabs.delegate 'li, li a.close', 'click', (e) ->
+    return false if $(this).hasClass("close")
+    goToRoom $(this).data("room-name")
 
-  $users.delegate '.user a', 'click', (e) ->
-    # e.preventDefault()
-    console.log "aaaa"
-    # goToRoom this.innerText
+  $("#users .user").live 'click', (e) ->
+    sel_user = this.innerText
+    if sel_user != user.handle
+      goToRoom sel_user
   
   $input.focus()
 
