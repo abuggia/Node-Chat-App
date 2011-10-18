@@ -55,13 +55,14 @@
     return Rooms;
   })();
   window.initChat = function(room, user) {
-    var $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, hideJoinNewRoom, org, pub, roomListOpen, rooms;
+    var $bus, $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, hideJoinNewRoom, org, pub, roomListOpen, rooms;
     $input = $('#enter input');
     $users = $('#users');
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
     $newRoom = $tabs.find('.new a');
+    $bus = $(document);
     eu = window.encodeURIComponent;
     org = room;
     rooms = new Rooms(room);
@@ -95,6 +96,7 @@
       rooms.switchRoom(room);
       $roomTab().addClass("active");
       $roomDialogue().show();
+      $bus.trigger("room-changed");
       if (isNew) {
         return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
           return addChats(chats);
@@ -111,44 +113,34 @@
       $tab.remove();
       return $dialogue.remove();
     };
-    now.ready(function() {
-      now.joinRoom(room);
-      $.get("/api/org/" + (eu(org)) + "/room/" + rooms.current + "/chats", function(chats) {
-        return addChats(chats);
-      });
-      return now.eachUserInRoom(room, function(user) {
-        return $("<li><a href=\"#\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users);
-      });
-    });
-    now.name = user.handle;
-    now.email = user.email;
-    now.sub = function(name, text) {
-      return addChat(name, text, formattedTime());
-    };
     pub = function() {
       now.pub(org, rooms.current, user.email, $input.val());
       return $input.val("");
     };
+    $bus.bind("room-changed", function() {
+      now.joinRoom(rooms.current);
+      $.get("/api/org/" + (eu(org)) + "/room/" + (eu(rooms.current)) + "/chats", function(chats) {
+        return addChats(chats);
+      });
+      return now.eachUserInRoom(rooms.current, function(user) {
+        return $("<li><a href=\"#\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users.empty());
+      });
+    });
     $input.enter(pub);
     $("#send").click(pub);
-    $chat.delegate('a.hashtag', 'click', function(e) {
-      e.preventDefault();
+    $chat.dclick('a.hashtag', function(e) {
       return goToRoom(this.innerText);
     });
-    $chat.delegate('.name a', 'click', function(e) {
-      e.preventDefault();
+    $chat.dclick('.name a', function() {
       return goToRoom(this.innerText);
     });
-    $tabs.delegate('li a.close', 'click', function(e) {
-      e.preventDefault();
+    $tabs.dclick('li a.close', function() {
       return closeRoom($(this).closest('li').find(".room").text());
     });
-    $tabs.delegate('li a.room', 'click', function(e) {
-      e.preventDefault();
+    $tabs.dclick('click', function() {
       return goToRoom($(this).text());
     });
-    $tabs.find(".new a").hover(function(e) {
-      e.preventDefault();
+    $tabs.find(".new a").hover(function() {
       return $(this).find(".join").show("fast");
     });
     hideJoinNewRoom = function() {
@@ -164,8 +156,8 @@
     });
     $tabs.find(".new a").click(function(e) {
       var position;
-      roomListOpen = true;
       e.preventDefault();
+      roomListOpen = true;
       position = $(this).position();
       return $.get("/api/org/" + org + "/rooms", function(rooms) {
         return $roomsList.empty().append(_.reduce(rooms, (function(m, room) {
@@ -181,12 +173,19 @@
       hideJoinNewRoom();
       return roomListOpen = false;
     });
-    $roomsList.delegate('li a', 'click', function(e) {
-      e.preventDefault();
+    $roomsList.dclick('click', function(e) {
       $roomsList.hide();
       $newRoom.find(".join").hide();
       return goToRoom($(this).text());
     });
+    now.ready(function() {
+      return $bus.trigger("room-changed");
+    });
+    now.name = user.handle;
+    now.email = user.email;
+    now.sub = function(name, text) {
+      return addChat(name, text, formattedTime());
+    };
     return $input.focus();
   };
 }).call(this);

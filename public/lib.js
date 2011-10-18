@@ -62,5 +62,13 @@ var formattedTime = function() {
 
     return this;
   };
+
+  $.fn.dclick = function (selector, fn) {
+    this.delegate(selector, 'click', function(e) {
+      e.preventDefault();
+      fn.call(this);
+    });
+  };
+
 })();
 
