@@ -38,6 +38,7 @@ var twoDigits = function(num) {
 };
 
 var formatTime = function(d) {
+  d = (d instanceof Date) ? d : new Date(d);
   var h = d.getHours(), hours = (h > 12) ? (h - 12) : h;
   return hours + ":" + twoDigits(d.getMinutes()) + ":" + twoDigits(d.getSeconds())
 };

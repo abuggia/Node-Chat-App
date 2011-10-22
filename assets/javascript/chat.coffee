@@ -44,9 +44,7 @@ window.initChat = (room, user) ->
   addChat = (name, text, time) ->
     $("<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>").appendTo($roomDialogue())
 
-  addChats = (chats) ->
-    $.each chats, (index, chat) -> 
-      addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)))
+  addChats = (chats) -> addChat(c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room) ->
     rooms.addRoom room
@@ -123,7 +121,7 @@ window.initChat = (room, user) ->
     hideJoinNewRoom()
     roomListOpen = false
 
-  $roomsList.dclick 'click', (e) ->
+  $roomsList.dclick 'li a', (e) ->
     $roomsList.hide()
     $newRoom.find(".join").hide()
     goToRoom $(this).text()

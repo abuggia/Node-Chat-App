@@ -76,9 +76,13 @@
       return $("<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>").appendTo($roomDialogue());
     };
     addChats = function(chats) {
-      return $.each(chats, function(index, chat) {
-        return addChat(chat.user, chat.text, formatTime(new Date(chat.created_at)));
-      });
+      var c, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = chats.length; _i < _len; _i++) {
+        c = chats[_i];
+        _results.push(addChat(c.user, c.text, formatTime(c.created_at)));
+      }
+      return _results;
     };
     addRoom = function(room) {
       rooms.addRoom(room);
@@ -173,7 +177,7 @@
       hideJoinNewRoom();
       return roomListOpen = false;
     });
-    $roomsList.dclick('click', function(e) {
+    $roomsList.dclick('li a', function(e) {
       $roomsList.hide();
       $newRoom.find(".join").hide();
       return goToRoom($(this).text());
