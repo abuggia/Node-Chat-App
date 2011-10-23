@@ -39,15 +39,8 @@ app.post '/api/users/:email', UserView.update
 app.post '/api/vote/:email', UserView.vote
 app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login
-
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
-
-
-app.get '/api/org/:org/room/:room/chats', ChatView.getChatsForRoom
-app.get '/api/org/:org/chats', ChatView.getChats
-
-# app.get '/api/org/:org/room/:room/chats', ChatView.getChats
+app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms
-
 
 module.exports = app

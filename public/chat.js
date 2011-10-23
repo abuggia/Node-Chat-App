@@ -52,15 +52,13 @@
     return Rooms;
   })();
   window.initChat = function(room, user) {
-    var $bus, $chat, $input, $newRoom, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, eu, goToRoom, hideJoinNewRoom, org, pub, roomListOpen, rooms, tabView;
+    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, org, pub, roomListOpen, rooms;
     $input = $('#enter input');
     $users = $('#users');
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
-    $newRoom = $tabs.find('.new a');
     $bus = $(document);
-    eu = window.encodeURIComponent;
     org = room;
     rooms = new Rooms(room);
     window.rooms = rooms;
@@ -71,10 +69,11 @@
       return $tabs.find(rooms.currentSelector());
     };
     addChat = function(name, text, time) {
-      var msg;
-      msg = "<div><span class=\"time\">" + time + "</span><span class=\"name\"><a href=\"#\">" + name + "</a></span><span class=\"text\">" + text + "</span></div>";
-      $roomDialogue().append(msg);
-      return $chat.scrollTop(1000000);
+      return $render('single-chat', {
+        name: name,
+        text: text,
+        time: time
+      }).appendTo($roomDialogue());
     };
     addChats = function(chats) {
       var c, _i, _len, _results;
@@ -86,14 +85,14 @@
       return _results;
     };
     addRoom = function(room) {
-      var diag;
+      var data;
       rooms.addRoom(room);
-      $tabs.append(tabView(room));
-      diag = $("<div class=\"dialogue " + (rooms.domClass(room)) + "\"></div>");
-      return $chat.find(".dialogue").hide();
-    };
-    tabView = function(room) {
-      return "<li class=\"" + (rooms.domClass(room)) + "\" data-room-name=\"" + room + "\">" + room + "<a href=\"#\" class=\"close\">x<li>";
+      data = {
+        room: room,
+        domClass: rooms.domClass(room)
+      };
+      $render('room-tab', data).insertBefore($$("#tabs li.new"));
+      return $render('dialogue-window', data).hide().appendTo($$("#chat"));
     };
     goToRoom = function(room) {
       var isNew;
@@ -108,7 +107,7 @@
       $roomDialogue().show();
       $bus.trigger("room-changed");
       if (isNew) {
-        return $.get("/api/org/" + (eu(org)) + "/room/" + (eu(room)) + "/chats", function(chats) {
+        return api.chats(org, room, function(chats) {
           return addChats(chats);
         });
       }
@@ -127,17 +126,19 @@
       now.pub(org, rooms.current, user.email, $input.val());
       return $input.val("");
     };
-    $bus.bind("room-changed", function() {
+    $bus.bind('room-changed', function() {
       now.joinRoom(rooms.current);
-      $.get("/api/org/" + (eu(org)) + "/room/" + (eu(rooms.current)) + "/chats", function(chats) {
+      api.chats(org, rooms.current, function(chats) {
         return addChats(chats);
       });
       return now.eachUserInRoom(rooms.current, function(user) {
-        return $("<li><a href=\"#\" class=\"user\" data-user-email=\"" + user.email + "\">" + user.name + "</li>").appendTo($users.empty());
+        return $render("user-list-item", {
+          user: user
+        }).appendTo($$("#users").empty());
       });
     });
     $input.enter(pub);
-    $("#enter button").click(pub);
+    $('#enter button').click(pub);
     $chat.dclick('a.hashtag', function() {
       return goToRoom($(this).text());
     });
@@ -153,39 +154,34 @@
     $tabs.find(".new a").hover(function() {
       return $(this).find(".join").show("fast");
     });
-    hideJoinNewRoom = function() {
-      return $newRoom.find(".join").hide("fast");
-    };
     roomListOpen = false;
-    $newRoom.hover(function(e) {
-      return $newRoom.find(".join").show("fast");
-    }, function(e) {
+    $$('#tabs .new a').hover((function() {
+      return $$('#tabs .join').show('fast');
+    }), (function() {
       if (!roomListOpen) {
-        return hideJoinNewRoom();
+        return $$('#tabs .join').hide('fast');
       }
-    });
+    }));
     $tabs.find(".new a").click(function(e) {
       var position;
       e.preventDefault();
       roomListOpen = true;
       position = $(this).position();
-      return $.get("/api/org/" + org + "/rooms", function(rooms) {
-        return $roomsList.empty().append(_.reduce(rooms, (function(m, room) {
-          return "" + m + "<li><a href=\"#\">" + room + "</a></li>";
-        }), "")).css({
-          top: (position.top + 30) + 'px',
-          left: (position.left - 4) + 'px'
-        }).show();
+      return api.rooms(org, function(rooms) {
+        $render('rooms-list', {
+          rooms: rooms
+        }).replaceAll($$('#rooms-list'));
+        return $$('#rooms-list').moveDownLeftOf(30, -4, this).slideDown('fast');
       });
     });
-    $roomsList.bind("mouseleave", function(e) {
+    $$('#rooms-list').bind("mouseleave", function() {
       $roomsList.hide();
-      hideJoinNewRoom();
+      $$('#tabs .join').hide('fast');
       return roomListOpen = false;
     });
-    $roomsList.dclick('li a', function(e) {
+    $$('#rooms-list').dclick('li a', function() {
       $roomsList.hide();
-      $newRoom.find(".join").hide();
+      $$('#tabs .join').hide('fast');
       return goToRoom($(this).text());
     });
     now.ready(function() {
@@ -196,11 +192,11 @@
     now.sub = function(name, text) {
       return addChat(name, text, formattedTime());
     };
-    $("#users .user").live('click', function(e) {
-      var sel_user;
-      sel_user = $(this).text();
-      if (sel_user !== user.handle) {
-        return goToRoom(sel_user);
+    $$('#users').dclick('.user', function() {
+      var handle;
+      handle = $(this).text();
+      if (handle !== user.handle) {
+        return goToRoom(handle);
       }
     });
     return $input.focus();

@@ -1,4 +1,15 @@
 
+// jQuery selector caching.  Got from:  https://github.com/mape/node-express-boilerplate/blob/master/public/js/jquery.client.js
+var $$ = (function() {
+		var cache = {};
+		return function(selector) {
+			if (!cache[selector]) {
+				cache[selector] = $(selector);
+			}
+			return cache[selector];
+		};
+})();
+
 var ShowMe = function() {
   var $elems = {};
 
@@ -71,5 +82,37 @@ var formattedTime = function() {
     });
   };
 
+  $.fn.moveDownLeftOf = function(down, left, of) {
+    pos = $(of).position;
+    this.css( {top: (position.top + down) + 'px', left: (position.left + left) + 'px' } );
+  };
+
 })();
 
+var render = (function() {
+  var compiled = {}
+
+  return function(id, data) {
+    if (compiled[id] === undefined) {
+      compiled[id] = _.template($('#' + id).html());
+    }
+    return compiled[id](data)
+  };
+})();
+
+// return a jQuery object instead of raw HTML
+var $render = function(id, data) { return $(render(id, data)) };
+
+var api = function() {
+
+  var eu = window.encodeURIComponent
+
+  return {
+    chats: function(org, room, fn) {
+      $.get("/api/org/" + eu(org) + "/room/" + eu(room) + "/chats", function(data) { fn(data); });
+    },
+    rooms: function(org, fn) {
+      $.get("/api/org/" + org + "/rooms", function(data) { fn(data); });
+    }
+  }
+}();

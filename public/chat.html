@@ -17,18 +17,16 @@
 
 <body>
 
- <div id="content">
+ <nav>
    <ul id="tabs">
-      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
-      <li class="new"><a href="#">+<span class="join" style="display:none">Join New Room</span></a><ul id="rooms-list"></ul></li>
-     <!-- TODO: remove
-     <li class="active room-0" data-room-name='${ room }'>${ room }<a href="#" class="close" data-room="0">x</a></li> 
-     -->
-   </ul>
+     <li class="active room-1"><a href="#" class="room">${ room }</a></li>
+     <li class="new"><a href="#">+<span class="join" style="display:none">Join New Room</span></a><ul id="rooms-list"></ul></li>
+   </lu>
+ </nav>
+
+ <div id="content">
    <div id="chat">
-     <div class="scroller">
-       <div class="dialogue room-0"></div>
-     </div> 
+     <div class="dialogue room-1"></div>
    </div>
    <div id="side-panel">
      <ul id="users"></ul>
@@ -39,6 +37,42 @@
    <input type="text">
    <button type="button">Send</button>
  </div>
+
+ <!-- templates -->
+ <script id="single-chat" type="text/html">
+<div>
+ <span class="time"><%= time %></span>
+ <span class="name">
+   <a href="#"><%= name %></a>
+ </span>
+ <span class="text"><%= text %></span>
+</div>
+ </script>
+
+ <script id="room-tab" type="text/html">
+<li class="domClass">
+  <a href="#" class="room"><%= room %></a>
+  <a href="#" class="close">x</a>
+<li>
+ </script>
+
+ <script id="dialogue-window" type="text/html">
+<div class="dialogue domClass"></div>
+ </script>
+
+ <script id="user-list-item" type="text/html">
+<li>
+  <a href="#" class="user" data-user-email="<%= user.email %>"><%= user.name %></a>
+</li>
+ </script>
+
+ <script id="rooms-list" type="text/html">
+<% for (var i=0; i < rooms.length; i++) { %>
+  <li><a href="#"><%= rooms[i] %></a></li>
+<% } %>
+ </script>
+
+
 
  
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->

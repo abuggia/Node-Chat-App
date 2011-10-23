@@ -31,9 +31,7 @@ window.initChat = (room, user) ->
   $chat = $ '#chat'
   $tabs = $ '#tabs'
   $roomsList = $ '#rooms-list'
-  $newRoom = $tabs.find('.new a')
   $bus = $ document
-  eu = window.encodeURIComponent
   org = room
   rooms = new Rooms room
   window.rooms = rooms
@@ -41,34 +39,19 @@ window.initChat = (room, user) ->
   $roomDialogue = -> $chat.find rooms.currentSelector()
   $roomTab = -> $tabs.find rooms.currentSelector()
 
-  addChat = (name, text, time) ->
-    msg = "<div><span class=\"time\">#{time}</span><span class=\"name\"><a href=\"#\">#{name}</a></span><span class=\"text\">#{text}</span></div>"
-    $roomDialogue().append msg
-    $chat.scrollTop(1000000)
+  addChat = (name, text, time) -> $render('single-chat', {name: name, text: text, time: time}).appendTo $roomDialogue()
+#    $chat.scrollTop(1000000)
 
   addChats = (chats) -> addChat(c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room) ->
     rooms.addRoom room
-
-    $tabs.append tabView(room)
-    diag = $("<div class=\"dialogue #{rooms.domClass room}\"></div>")
-    $chat.find(".dialogue").hide()
-
-  # views
-  #
-  # TODO: move views in another file
-  tabView = (room) ->
-    "<li class=\"#{rooms.domClass room}\" data-room-name=\"#{room}\">#{room}<a href=\"#\" class=\"close\">x<li>"
-
-#    $("<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).css(display: "inline-block")
-#    $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
-
-
+    data = {room: room, domClass: rooms.domClass(room)}
+    $render('room-tab', data).insertBefore $$("#tabs li.new")
+    $render('dialogue-window', data).hide().appendTo $$("#chat")
 
   goToRoom = (room) ->
     isNew = not rooms.hasRoom(room)
-
 
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
@@ -79,16 +62,13 @@ window.initChat = (room, user) ->
     $roomDialogue().show()
 
     $bus.trigger "room-changed"
-
-    if isNew
-      $.get "/api/org/#{eu(org)}/room/#{eu(room)}/chats", (chats) -> addChats(chats)
+    api.chats(org, room, (chats) -> addChats(chats)) if isNew
     
   closeRoom = (room) ->
     $tab = $tabs.find(rooms.selector room);
     $dialogue = $chat.find(rooms.selector room);
 
-    if $tab.hasClass 'active'
-      goToRoom(rooms.closest(room))
+    goToRoom(rooms.closest(room)) if $tab.hasClass 'active'
 
     $tab.remove()
     $dialogue.remove()
@@ -97,50 +77,40 @@ window.initChat = (room, user) ->
     now.pub org, rooms.current, user.email, $input.val()
     $input.val ""
  
-  $bus.bind "room-changed", -> 
+  $bus.bind 'room-changed', -> 
     now.joinRoom(rooms.current)
-    $.get "/api/org/#{eu(org)}/room/#{eu(rooms.current)}/chats", (chats) -> addChats(chats)
-    now.eachUserInRoom rooms.current, (user) -> $("<li><a href=\"#\" class=\"user\" data-user-email=\"#{user.email}\">#{user.name}</li>").appendTo $users.empty()
+    api.chats org, rooms.current, (chats) -> addChats(chats)
+    now.eachUserInRoom rooms.current, (user) -> $render("user-list-item", {user: user}).appendTo $$("#users").empty()
 
   # Set handlers
   # ------------
   $input.enter pub
-  $("#enter button").click pub
-
-
+  $('#enter button').click pub
   $chat.dclick 'a.hashtag', -> goToRoom $(this).text()
   $chat.dclick '.name a', -> goToRoom $(this).text()
   $tabs.dclick 'li a.close', -> closeRoom $(this).closest('li').find(".room").text()
   $tabs.dclick 'click', -> goToRoom $(this).text()
   $tabs.find(".new a").hover -> $(this).find(".join").show "fast"
 
-  hideJoinNewRoom = -> $newRoom.find(".join").hide("fast")
-
   roomListOpen = false
-  $newRoom.hover (e) ->
-    $newRoom.find(".join").show("fast")
-  , (e) ->
-    hideJoinNewRoom() if not roomListOpen
+  $$('#tabs .new a').hover (-> $$('#tabs .join').show('fast')), (-> $$('#tabs .join').hide('fast') if not roomListOpen)
       
   $tabs.find(".new a").click (e) ->
     e.preventDefault()
     roomListOpen = true
     position = $(this).position()
-    $.get "/api/org/#{org}/rooms", (rooms) ->
-      $roomsList
-        .empty()
-        .append( _.reduce(rooms, ( (m, room) -> "#{m}<li><a href=\"#\">#{room}</a></li>" ), "") )
-        .css( {top: (position.top + 30) + 'px', left: (position.left - 4) + 'px' } )
-        .show()
+    api.rooms org, (rooms) ->
+      $render('rooms-list', {rooms: rooms}).replaceAll $$('#rooms-list')
+      $$('#rooms-list').moveDownLeftOf(30, -4, this).slideDown('fast')
 
-  $roomsList.bind "mouseleave", (e) ->
+  $$('#rooms-list').bind "mouseleave", ->
     $roomsList.hide()
-    hideJoinNewRoom()
+    $$('#tabs .join').hide('fast')
     roomListOpen = false
 
-  $roomsList.dclick 'li a', (e) ->
+  $$('#rooms-list').dclick 'li a', ->
     $roomsList.hide()
-    $newRoom.find(".join").hide()
+    $$('#tabs .join').hide('fast')
     goToRoom $(this).text()
 
   # Set up now
@@ -150,11 +120,9 @@ window.initChat = (room, user) ->
   now.email = user.email
   now.sub = (name, text) -> addChat(name, text, formattedTime())
 
-
-  $("#users .user").live 'click', (e) ->
-    sel_user = $(this).text()
-    if sel_user != user.handle
-      goToRoom sel_user
+  $$('#users').dclick '.user', ->
+    handle = $(this).text()
+    goToRoom handle if handle != user.handle
   
   $input.focus()
 
