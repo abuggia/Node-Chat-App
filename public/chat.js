@@ -51,22 +51,20 @@
     };
     return Rooms;
   })();
-  window.initChat = function(room, user) {
-    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, org, pub, roomListOpen, rooms;
+  window.initChat = function(org, user) {
+    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, pub, roomListOpen, rooms;
     $input = $('#enter input');
     $users = $('#users');
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
     $bus = $(document);
-    org = room;
-    rooms = new Rooms(room);
-    window.rooms = rooms;
+    rooms = new Rooms(org);
     $roomDialogue = function() {
-      return $chat.find(rooms.currentSelector());
+      return $$("#chat " + (rooms.currentSelector()));
     };
     $roomTab = function() {
-      return $tabs.find(rooms.currentSelector());
+      return $$("#tabs " + (rooms.currentSelector()));
     };
     addChat = function(name, text, time) {
       return $render('single-chat', {
@@ -95,32 +93,22 @@
       return $render('dialogue-window', data).hide().appendTo($$("#chat"));
     };
     goToRoom = function(room) {
-      var isNew;
-      isNew = !rooms.hasRoom(room);
       $roomDialogue().hide();
       $roomTab().removeClass("active");
-      if (isNew) {
+      if (!rooms.hasRoom(room)) {
         addRoom(room);
       }
       rooms.switchRoom(room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      $bus.trigger("room-changed");
-      if (isNew) {
-        return api.chats(org, room, function(chats) {
-          return addChats(chats);
-        });
-      }
+      return $bus.trigger("room-changed");
     };
     closeRoom = function(room) {
-      var $dialogue, $tab;
-      $tab = $tabs.find(rooms.selector(room));
-      $dialogue = $chat.find(rooms.selector(room));
-      if ($tab.hasClass('active')) {
+      if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {
         goToRoom(rooms.closest(room));
       }
-      $tab.remove();
-      return $dialogue.remove();
+      $$("#tabs " + (rooms.selector(room))).remove();
+      return $$("#chat " + (rooms.selector(room))).remove();
     };
     pub = function() {
       now.pub(org, rooms.current, user.email, $input.val());
@@ -128,13 +116,14 @@
     };
     $bus.bind('room-changed', function() {
       now.joinRoom(rooms.current);
+      $roomDialogue().empty();
       api.chats(org, rooms.current, function(chats) {
         return addChats(chats);
       });
       return now.eachUserInRoom(rooms.current, function(user) {
         return $render("user-list-item", {
           user: user
-        }).appendTo($$("#users").empty());
+        }).replaceAll($$("#users"));
       });
     });
     $input.enter(pub);
@@ -148,7 +137,7 @@
     $tabs.dclick('li a.close', function() {
       return closeRoom($(this).closest('li').find(".room").text());
     });
-    $tabs.dclick('click', function() {
+    $tabs.dclick('li a.room', function() {
       return goToRoom($(this).text());
     });
     $tabs.find(".new a").hover(function() {

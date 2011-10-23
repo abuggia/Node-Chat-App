@@ -25,19 +25,17 @@ class Rooms
     this.roomFromNum(newNum)
 
 
-window.initChat = (room, user) ->
+window.initChat = (org, user) ->
   $input = $ '#enter input'
   $users = $ '#users'
   $chat = $ '#chat'
   $tabs = $ '#tabs'
   $roomsList = $ '#rooms-list'
   $bus = $ document
-  org = room
-  rooms = new Rooms room
-  window.rooms = rooms
+  rooms = new Rooms org
 
-  $roomDialogue = -> $chat.find rooms.currentSelector()
-  $roomTab = -> $tabs.find rooms.currentSelector()
+  $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
+  $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
   addChat = (name, text, time) -> $render('single-chat', {name: name, text: text, time: time}).appendTo $roomDialogue()
 #    $chat.scrollTop(1000000)
@@ -51,36 +49,28 @@ window.initChat = (room, user) ->
     $render('dialogue-window', data).hide().appendTo $$("#chat")
 
   goToRoom = (room) ->
-    isNew = not rooms.hasRoom(room)
-
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
-
-    addRoom(room) if isNew 
+    addRoom(room) if not rooms.hasRoom(room)
     rooms.switchRoom room
     $roomTab().addClass("active")
     $roomDialogue().show()
-
     $bus.trigger "room-changed"
-    api.chats(org, room, (chats) -> addChats(chats)) if isNew
     
   closeRoom = (room) ->
-    $tab = $tabs.find(rooms.selector room);
-    $dialogue = $chat.find(rooms.selector room);
-
-    goToRoom(rooms.closest(room)) if $tab.hasClass 'active'
-
-    $tab.remove()
-    $dialogue.remove()
+    goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
+    $$("#tabs #{rooms.selector room}").remove()
+    $$("#chat #{rooms.selector room}").remove()
 
   pub = ->
     now.pub org, rooms.current, user.email, $input.val()
     $input.val ""
- 
+
   $bus.bind 'room-changed', -> 
     now.joinRoom(rooms.current)
+    $roomDialogue().empty()
     api.chats org, rooms.current, (chats) -> addChats(chats)
-    now.eachUserInRoom rooms.current, (user) -> $render("user-list-item", {user: user}).appendTo $$("#users").empty()
+    now.eachUserInRoom rooms.current, (user) -> $render("user-list-item", {user: user}).replaceAll $$("#users")
 
   # Set handlers
   # ------------
@@ -89,7 +79,7 @@ window.initChat = (room, user) ->
   $chat.dclick 'a.hashtag', -> goToRoom $(this).text()
   $chat.dclick '.name a', -> goToRoom $(this).text()
   $tabs.dclick 'li a.close', -> closeRoom $(this).closest('li').find(".room").text()
-  $tabs.dclick 'click', -> goToRoom $(this).text()
+  $tabs.dclick 'li a.room', -> goToRoom $(this).text()
   $tabs.find(".new a").hover -> $(this).find(".join").show "fast"
 
   roomListOpen = false
