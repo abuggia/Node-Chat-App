@@ -21,7 +21,9 @@ The following steps should get a new developer up and running.  Feel free to fur
 
 8.  Open another terminal, navigate to the project root and type `bin/watch-js`
 
-9.  Open another terminal, navigate to the project root and type `coffee start.coffee`
+9.  Open another terminal, navigate to the project root and type `source config/dev.config`
+
+10.  In that same terminal, now type `coffee start.coffee`
 
 
 ### NOTES:

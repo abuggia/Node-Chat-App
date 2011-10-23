@@ -16,9 +16,14 @@
 </head>
 
 <body>
+
  <div id="content">
    <ul id="tabs">
-     <li class="active room-0" data-room-name='${ room }'>${ room }<a href="#" class="close" data-room="0">x</a></li>
+      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
+      <li class="new"><a href="#">+<span class="join" style="display:none">Join New Room</span></a><ul id="rooms-list"></ul></li>
+     <!-- TODO: remove
+     <li class="active room-0" data-room-name='${ room }'>${ room }<a href="#" class="close" data-room="0">x</a></li> 
+     -->
    </ul>
    <div id="chat">
      <div class="scroller">
@@ -34,6 +39,7 @@
    <input type="text">
    <button type="button">Send</button>
  </div>
+
  
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
