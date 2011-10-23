@@ -86,7 +86,9 @@
     };
     addRoom = function(room) {
       rooms.addRoom(room);
-      $("<li class=\"" + (rooms.domClass(room)) + "\"><a href=\"#\" class=\"room\">" + room + "</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).show("fast");
+      $("<li class=\"" + (rooms.domClass(room)) + "\"><a href=\"#\" class=\"room\">" + room + "</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).css({
+        display: "inline-block"
+      });
       return $("<div class=\"dialogue " + (rooms.domClass(room)) + "\"></div>").hide().appendTo($chat);
     };
     goToRoom = function(room) {
@@ -132,11 +134,11 @@
     });
     $input.enter(pub);
     $("#send").click(pub);
-    $chat.dclick('a.hashtag', function(e) {
-      return goToRoom(this.innerText);
+    $chat.dclick('a.hashtag', function() {
+      return goToRoom($(this).text());
     });
     $chat.dclick('.name a', function() {
-      return goToRoom(this.innerText);
+      return goToRoom($(this).text());
     });
     $tabs.dclick('li a.close', function() {
       return closeRoom($(this).closest('li').find(".room").text());

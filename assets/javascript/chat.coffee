@@ -48,7 +48,7 @@ window.initChat = (room, user) ->
 
   addRoom = (room) ->
     rooms.addRoom room
-    $("<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).show("fast")
+    $("<li class=\"#{rooms.domClass room}\"><a href=\"#\" class=\"room\">#{room}</a><a href=\"#\" class=\"close\">x</a></li>").hide().insertBefore($tabs.find('li.new')).css(display: "inline-block")
     $("<div class=\"dialogue #{rooms.domClass room}\"></div>").hide().appendTo($chat)
 
   goToRoom = (room) ->
@@ -91,8 +91,8 @@ window.initChat = (room, user) ->
   $input.enter pub
   $("#send").click pub
 
-  $chat.dclick 'a.hashtag', (e) -> goToRoom this.innerText
-  $chat.dclick '.name a', -> goToRoom this.innerText
+  $chat.dclick 'a.hashtag', -> goToRoom $(this).text()
+  $chat.dclick '.name a', -> goToRoom $(this).text()
   $tabs.dclick 'li a.close', -> closeRoom $(this).closest('li').find(".room").text()
   $tabs.dclick 'click', -> goToRoom $(this).text()
   $tabs.find(".new a").hover -> $(this).find(".join").show "fast"
