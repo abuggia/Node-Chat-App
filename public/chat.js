@@ -8,13 +8,16 @@
       this.current = first;
       this.last = 1;
     }
-    Rooms.prototype.hasRoom = function(name) {
+    Rooms.prototype.has = function(name) {
       return this.ids[name] != null;
     };
-    Rooms.prototype.addRoom = function(name) {
+    Rooms.prototype.add = function(name) {
       return this.ids[name] = ++this.last;
     };
-    Rooms.prototype.switchRoom = function(name) {
+    Rooms.prototype.remove = function(name) {
+      return delete this.ids[name];
+    };
+    Rooms.prototype["switch"] = function(name) {
       return this.current = name;
     };
     Rooms.prototype.currentSelector = function() {
@@ -83,22 +86,23 @@
       return _results;
     };
     addRoom = function(room) {
-      var data;
-      rooms.addRoom(room);
+      var $tab, data;
+      rooms.add(room);
       data = {
         room: room,
         domClass: rooms.domClass(room)
       };
-      $render('room-tab', data).insertBefore($$("#tabs li.new"));
+      $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
+      $tab.slideOut($tab.width());
       return $render('dialogue-window', data).hide().appendTo($$("#chat"));
     };
     goToRoom = function(room) {
       $roomDialogue().hide();
       $roomTab().removeClass("active");
-      if (!rooms.hasRoom(room)) {
+      if (!rooms.has(room)) {
         addRoom(room);
       }
-      rooms.switchRoom(room);
+      rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
       return $bus.trigger("room-changed");
@@ -108,7 +112,8 @@
         goToRoom(rooms.closest(room));
       }
       $$("#tabs " + (rooms.selector(room))).remove();
-      return $$("#chat " + (rooms.selector(room))).remove();
+      $$("#chat " + (rooms.selector(room))).remove();
+      return rooms.remove(room);
     };
     pub = function() {
       now.pub(org, rooms.current, user.email, $input.val());
@@ -145,12 +150,7 @@
     });
     roomListOpen = false;
     $$('#tabs .new a').hover(function() {
-      return $$('#tabs .join').animate({
-        width: "105px"
-      }, {
-        queue: false,
-        duration: 450
-      });
+      return $$('#tabs .join').slideOut(105);
     }, function() {
       if (!roomListOpen) {
         return $$('#tabs .join').animate({
@@ -168,9 +168,11 @@
       var $this;
       roomListOpen = true;
       $this = $(this);
-      api.rooms(org, function(rooms) {
+      api.rooms(org, function(list) {
         $$('#rooms-list').html(render('rooms-list-items', {
-          rooms: rooms
+          list: _.reject(list, function(room) {
+            return rooms.has(room);
+          })
         }));
         return $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92);
       });
@@ -183,7 +185,7 @@
     });
     $$('#rooms-list').dclick('li a', function() {
       $roomsList.hide();
-      $$('#tabs .join').hide('fast');
+      $$('#tabs .join').hide();
       return goToRoom($(this).text());
     });
     now.ready(function() {

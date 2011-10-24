@@ -21,7 +21,7 @@
    <ul id="tabs">
      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
      <li class="new">
-       <a href="#">+<span class="join" style="display:none;white-space:nowrap">Join New Room</span></a>
+       <a href="#">+<span class="join slide-out" style="display:none">Join New Room</span></a>
        <ul id="rooms-list">
        </ul>
      </li>
@@ -42,6 +42,8 @@
    <button type="button">Send</button>
  </div>
 
+ <div id="test" style="position:absolute;top:-9000;left:-9000;display:none;overflow:visible"></div>
+
  <!-- templates -->
  <script id="single-chat" type="text/html">
 <div>
@@ -54,10 +56,10 @@
  </script>
 
  <script id="room-tab" type="text/html">
-<li class="domClass">
+<li class="<%= domClass %> slide-out" style="display:none">
   <a href="#" class="room"><%= room %></a>
   <a href="#" class="close">x</a>
-<li>
+</li>
  </script>
 
  <script id="dialogue-window" type="text/html">
@@ -71,8 +73,8 @@
  </script>
 
  <script id="rooms-list-items" type="text/html">
-<% for (var i=0; i < rooms.length; i++) { %>
-  <li><a href="#"><%= rooms[i] %></a></li>
+<% for (var i=0; i < list.length; i++) { %>
+  <li><a href="#"><%= list[i] %></a></li>
 <% } %>
   <li class="input">#<input placeholder="Create New Room" style="width:138px"></li>
  </script>

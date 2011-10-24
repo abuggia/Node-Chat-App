@@ -88,6 +88,18 @@ var formattedTime = function() {
     return this;
   };
 
+  $.fn.slideOut = function(width) {
+    this.css({width:0});
+    this.show();
+    this.animate({width: width + 'px'}, {queue:false, duration:150})
+  };
+
+  $.fn.slideIn = function() {
+    t = this;
+    t.animate({width: 0}, {queue:false, duration:250, complete: function() { t.hide() }});
+  };
+
+
 })();
 
 var render = (function() {

@@ -6,9 +6,10 @@ class Rooms
     @current = first
     @last = 1
 
-  hasRoom: (name) -> @ids[name]? # use _.include 
-  addRoom: (name) -> @ids[name] = ++@last
-  switchRoom: (name) -> @current = name
+  has: (name) -> @ids[name]? # use _.include 
+  add: (name) -> @ids[name] = ++@last
+  remove: (name) -> delete @ids[name]
+  switch: (name) -> @current = name
   currentSelector: -> this.selector(@current) 
   selector: (room) -> '.' + this.domClass(room)
   domClass: (room) -> "room-#{ @ids[room] }" 
@@ -33,7 +34,7 @@ window.initChat = (org, user) ->
   $roomsList = $ '#rooms-list'
   $bus = $ document
   rooms = new Rooms org
-
+  
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
@@ -43,16 +44,17 @@ window.initChat = (org, user) ->
   addChats = (chats) -> addChat(c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room) ->
-    rooms.addRoom room
+    rooms.add room
     data = {room: room, domClass: rooms.domClass(room)}
-    $render('room-tab', data).insertBefore $$("#tabs li.new")
+    $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
+    $tab.slideOut $tab.width()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
 
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
-    addRoom(room) if not rooms.hasRoom(room)
-    rooms.switchRoom room
+    addRoom(room) if not rooms.has room
+    rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
     $bus.trigger "room-changed"
@@ -61,6 +63,7 @@ window.initChat = (org, user) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
     $$("#tabs #{rooms.selector room}").remove()
     $$("#chat #{rooms.selector room}").remove()
+    rooms.remove room
 
   pub = ->
     now.pub org, rooms.current, user.email, $input.val()
@@ -85,7 +88,7 @@ window.initChat = (org, user) ->
   # Joining a new room
   roomListOpen = false
   $$('#tabs .new a').hover ->
-    $$('#tabs .join').animate({width: "105px"}, {queue:false, duration:450})
+    $$('#tabs .join').slideOut(105)
   , -> 
     if not roomListOpen 
       $$('#tabs .join').animate({width: 0}, {queue:false, duration:450, complete: (-> $(this).hide() ) }) 
@@ -93,8 +96,8 @@ window.initChat = (org, user) ->
   $$('#tabs .new a').click (e) ->
     roomListOpen = true
     $this = $(this)
-    api.rooms org, (rooms) ->
-      $$('#rooms-list').html(render('rooms-list-items', {rooms: rooms}))
+    api.rooms org, (list) ->
+      $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room) }))
       $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92)
     e.preventDefault()
 
@@ -105,7 +108,7 @@ window.initChat = (org, user) ->
 
   $$('#rooms-list').dclick 'li a', ->
     $roomsList.hide()
-    $$('#tabs .join').hide('fast')
+    $$('#tabs .join').hide()
     goToRoom $(this).text()
 
   # Set up now

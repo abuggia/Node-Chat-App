@@ -218,6 +218,10 @@ nav {
   background:#ddd;
 }
 
+ul#tabs {
+  height:31px;
+}
+
 ul#tabs li {
   display:inline-block;
   padding:0;
@@ -254,6 +258,10 @@ ul#tabs li.active a {
   background:#fff;
 }
 
+.slide-out {
+  white-space:nowrap;
+}
+
 #rooms-list {
   display:none;
   position:absolute;
@@ -274,7 +282,7 @@ ul#tabs #rooms-list li a {
 }
 
 ul#tabs #rooms-list li input {
-  margin: 7px 7px 7px 7px;
+  margin: 7px 7px 7px 2px;
 }
 
 #tabs #rooms-list li:hover {
