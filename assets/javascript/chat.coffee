@@ -38,10 +38,13 @@ window.initChat = (org, user) ->
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
-  addChat = (name, text, time) -> $render('single-chat', {name: name, text: text, time: time}).appendTo $roomDialogue()
-#    $chat.scrollTop(1000000)
+  addChat = (name, text, time) -> 
+    $render('single-chat', {name: name, text: text, time: time}).appendTo $roomDialogue()
+    $chat.scrollTop(1000000)
 
-  addChats = (chats) -> addChat(c.user, c.text, formatTime c.created_at) for c in chats
+  addChats = (chats) -> 
+    chats.reverse()
+    addChat(c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room) ->
     rooms.add room
@@ -73,7 +76,9 @@ window.initChat = (org, user) ->
     now.joinRoom(rooms.current)
     $roomDialogue().empty()
     api.chats org, rooms.current, (chats) -> addChats(chats)
-    now.eachUserInRoom rooms.current, (user) -> $render("user-list-item", {user: user}).replaceAll $$("#users")
+    now.eachUserInRoom rooms.current, (user) ->
+    user_view = $render("user-list-item", {user: user})
+    $$("#users").append user_view
 
   # Set handlers
   # ------------

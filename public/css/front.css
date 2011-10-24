@@ -1,0 +1,231 @@
+
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Serif'), local('DroidSerif'), url('http://themes.googleusercontent.com/static/fonts/droidserif/v1/0AKsP294HTD-nvJgucYTaLrIa-7acMAeDBVuclsi6Gc.woff') format('woff');
+}
+
+
+html {
+  background: url('/imgs/bentley-university-background.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  /*
+  'cover' for IE
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
+ -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='myBackground.jpg', sizingMethod='scale')";
+ */
+}
+
+body {
+  background-image:;
+  width:100%;
+  height:100%;
+  text-align:center;
+  font-family: 'Droid Serif', serif;
+  text-shadow: 0 .1em #ccc;
+}
+
+h2 {
+  color:#626262;
+}
+
+h3 {
+  font-size:20px;
+  font-weight:normal;
+  margin:15px 0 15px 0;
+  text-shadow: 0 .1em #dedede;
+}
+
+img {
+  opacity:1;
+  margin:auto;
+}
+
+.error {
+  color:red;
+}
+
+input.disabled {
+  background:#ccc;
+}
+
+#dialogue {
+  background: url('/imgs/transparent-white-bg.png') repeat;
+  border:1px solid #ccc;
+  padding:18px 12px 12px 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+  border-radius:5px;
+  font-size:1.2em;
+  width:590px;
+  height:330px;
+  margin:150px auto 0 auto;
+}
+
+
+fieldset label {
+  display:block;
+  margin-top:15px;
+  font-size:18px;
+}
+
+fieldset ul label {
+  display:inline;
+}
+
+fieldset input {
+  font-family: 'Droid Serif', serif;
+  font-size:23px;
+  padding:6px;
+  border:1px solid #b7b7b7;
+  margin-top:15px;
+  color:#626262;
+}
+
+#login-email {
+  width:293px;
+}
+
+fieldset button {
+  padding:6px;
+  border:1px solid #bbb;
+  background-color:#d2d2d2;
+  font-family: 'Droid Serif', serif;
+  color:#454545;
+  margin-left:14px;
+  margin-top:-9px;
+  font-weight:700;
+  font-size:23px;
+}
+
+fieldset button:hover {
+  background:#c2c2c2;
+}
+
+#login-fields .message, #enter-password .message {
+  margin:23px auto 23px auto;
+  background:#ffb2b2;
+  border-radius:4px;
+  width:300px;
+  opacity:0;
+  padding:10px;
+  height:38px;
+}
+
+#registration-info {
+  margin-top:8px;
+  font-size:.9em;
+  text-align:left;
+}
+
+#registration-info li {
+  list-style-type:none;
+}
+
+#registration-info li span {
+  font-size:.8em ! important;
+  color:#999;
+  display:inline-block;
+  padding:4px;
+}
+
+#registration-info-email {
+  width:360px;
+}
+
+#registration-info-handle, #registration-info-password {
+  width:190px;
+}
+
+#registration-info label {
+  white-space:nowrap; 
+}
+
+#registration-info button {
+  margin-top:9px;
+  margin-left:0;
+}
+
+#check-email span {
+  display:inline-block;
+  margin-top:200px;
+}
+
+#non-edu-message span {
+  display:inline-block;
+  margin-top:80px;
+}
+
+#new-campus ul {
+  margin-top:22px;
+  text-align:left;
+}
+
+#new-campus span {
+  display: inline-block;
+  margin-top: 33px;
+}
+
+#new-campus li {
+  list-style-type: none;
+  margin-left:18px;
+  padding:4px;
+}
+
+#new-campus li input {
+  font-size:200%;
+  margin:6px;
+}
+
+#enter-password label {
+  margin-top:70px;
+}
+
+#login-fields, #registration-info, #check-email, #new-campus, #enter-password, #new-campus, #non-edu-message, #vote-recorded, #already-voted {
+  display:none;
+}
+
+#loading {
+  margin-top: 100px;
+}
+
+#vote-recorded ul, #already-voted ul {
+  margin-top:35px;
+  margin-left:0;
+  padding-left:0;
+}
+
+#vote-recorded ul li, #already-voted ul li {
+  margin-left:0;
+  padding:14px;
+  list-style:none;
+}
+
+#facebook-link, #facebook-link:visited {
+  color:#0006ea;
+}
+
+#twitter-link, #twitter-link:visited {
+  color:#00c7d3;
+}
+
+
+/* ==|== media queries ======================================================
+   PLACEHOLDER Media Queries for Responsive Design.
+   These override the primary ('mobile first') styles
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 480px) {
+  /* Style adjustments for viewports 480px and over go here */
+
+}
+
+@media only screen and (min-width: 768px) {
+  /* Style adjustments for viewports 768px and over go here */
+
+}
