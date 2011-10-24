@@ -20,7 +20,11 @@
  <nav>
    <ul id="tabs">
      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
-     <li class="new"><a href="#">+<span class="join" style="display:none">Join New Room</span></a><ul id="rooms-list"></ul></li>
+     <li class="new">
+       <a href="#">+<span class="join" style="display:none;white-space:nowrap">Join New Room</span></a>
+       <ul id="rooms-list">
+       </ul>
+     </li>
    </lu>
  </nav>
 
@@ -66,15 +70,14 @@
 </li>
  </script>
 
- <script id="rooms-list" type="text/html">
+ <script id="rooms-list-items" type="text/html">
 <% for (var i=0; i < rooms.length; i++) { %>
   <li><a href="#"><%= rooms[i] %></a></li>
 <% } %>
+  <li class="input">#<input placeholder="Create New Room" style="width:138px"></li>
  </script>
 
 
-
- 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>

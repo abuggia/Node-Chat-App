@@ -82,16 +82,21 @@ window.initChat = (org, user) ->
   $tabs.dclick 'li a.room', -> goToRoom $(this).text()
   $tabs.find(".new a").hover -> $(this).find(".join").show "fast"
 
+  # Joining a new room
   roomListOpen = false
-  $$('#tabs .new a').hover (-> $$('#tabs .join').show('fast')), (-> $$('#tabs .join').hide('fast') if not roomListOpen)
-      
-  $tabs.find(".new a").click (e) ->
-    e.preventDefault()
+  $$('#tabs .new a').hover ->
+    $$('#tabs .join').animate({width: "105px"}, {queue:false, duration:450})
+  , -> 
+    if not roomListOpen 
+      $$('#tabs .join').animate({width: 0}, {queue:false, duration:450, complete: (-> $(this).hide() ) }) 
+
+  $$('#tabs .new a').click (e) ->
     roomListOpen = true
-    position = $(this).position()
+    $this = $(this)
     api.rooms org, (rooms) ->
-      $render('rooms-list', {rooms: rooms}).replaceAll $$('#rooms-list')
-      $$('#rooms-list').moveDownLeftOf(30, -4, this).slideDown('fast')
+      $$('#rooms-list').html(render('rooms-list-items', {rooms: rooms}))
+      $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92)
+    e.preventDefault()
 
   $$('#rooms-list').bind "mouseleave", ->
     $roomsList.hide()

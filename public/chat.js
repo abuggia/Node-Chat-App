@@ -144,24 +144,37 @@
       return $(this).find(".join").show("fast");
     });
     roomListOpen = false;
-    $$('#tabs .new a').hover((function() {
-      return $$('#tabs .join').show('fast');
-    }), (function() {
-      if (!roomListOpen) {
-        return $$('#tabs .join').hide('fast');
-      }
-    }));
-    $tabs.find(".new a").click(function(e) {
-      var position;
-      e.preventDefault();
-      roomListOpen = true;
-      position = $(this).position();
-      return api.rooms(org, function(rooms) {
-        $render('rooms-list', {
-          rooms: rooms
-        }).replaceAll($$('#rooms-list'));
-        return $$('#rooms-list').moveDownLeftOf(30, -4, this).slideDown('fast');
+    $$('#tabs .new a').hover(function() {
+      return $$('#tabs .join').animate({
+        width: "105px"
+      }, {
+        queue: false,
+        duration: 450
       });
+    }, function() {
+      if (!roomListOpen) {
+        return $$('#tabs .join').animate({
+          width: 0
+        }, {
+          queue: false,
+          duration: 450,
+          complete: (function() {
+            return $(this).hide();
+          })
+        });
+      }
+    });
+    $$('#tabs .new a').click(function(e) {
+      var $this;
+      roomListOpen = true;
+      $this = $(this);
+      api.rooms(org, function(rooms) {
+        $$('#rooms-list').html(render('rooms-list-items', {
+          rooms: rooms
+        }));
+        return $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92);
+      });
+      return e.preventDefault();
     });
     $$('#rooms-list').bind("mouseleave", function() {
       $roomsList.hide();

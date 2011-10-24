@@ -260,8 +260,21 @@ ul#tabs li.active a {
   background:#ddd;
 }
 
-#tabs #rooms-list li {
+ul#tabs #rooms-list li {
   display:list-item;
+  overflow: visible;
+}
+
+ul#tabs #rooms-list li.input {
+  height:38px ! important;
+}
+
+ul#tabs #rooms-list li a {
+  width:100%;
+}
+
+ul#tabs #rooms-list li input {
+  margin: 7px 7px 7px 7px;
 }
 
 #tabs #rooms-list li:hover {

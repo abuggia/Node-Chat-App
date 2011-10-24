@@ -83,8 +83,9 @@ var formattedTime = function() {
   };
 
   $.fn.moveDownLeftOf = function(down, left, of) {
-    pos = $(of).position;
-    this.css( {top: (position.top + down) + 'px', left: (position.left + left) + 'px' } );
+    pos = $(of).offset();
+    this.css( {top: (pos.top + down) + 'px', left: (pos.left + left) + 'px' } );
+    return this;
   };
 
 })();
