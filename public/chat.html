@@ -11,13 +11,17 @@
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link rel="stylesheet" href="chat.css">
-  <script src="modernizr-2.0.6.min.js"></script>
+  <link rel="stylesheet" href="/css/boilerplate.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/clearfix_and_print.css">
+  
+  <script src="/js_vendor/modernizr-2.0.6.min.js"></script>
 </head>
 
 <body>
 
- <nav>
+ <div id="content">
+   
    <ul id="tabs">
      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
      <li class="new">
@@ -25,12 +29,12 @@
        <ul id="rooms-list">
        </ul>
      </li>
-   </lu>
- </nav>
-
- <div id="content">
+   </ul>
+   
    <div id="chat">
-     <div class="dialogue room-1"></div>
+     <div class="scroller">
+       <div class="dialogue room-1"></div>
+     </div>
    </div>
    <div id="side-panel">
      <ul id="users"></ul>
@@ -68,7 +72,9 @@
 
  <script id="user-list-item" type="text/html">
 <li>
-  <a href="#" class="user" data-user-email="<%= user.email %>"><%= user.name %></a>
+  <a href="#" class="user" data-user-email="<%= user.email %>">
+    <%= user.email %>
+  </a>
 </li>
  </script>
 
@@ -84,7 +90,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
   <script src="nowjs/now.js"></script>
-  <script src="underscore-min.js"></script>
+  <script src="/js_vendor/underscore-min.js"></script>
   <script src="lib.js"></script>
   <script defer src="chat.js"></script>
 

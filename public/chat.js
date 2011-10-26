@@ -70,14 +70,16 @@
       return $$("#tabs " + (rooms.currentSelector()));
     };
     addChat = function(name, text, time) {
-      return $render('single-chat', {
+      $render('single-chat', {
         name: name,
         text: text,
         time: time
       }).appendTo($roomDialogue());
+      return $chat.scrollTop(1000000);
     };
     addChats = function(chats) {
       var c, _i, _len, _results;
+      chats.reverse();
       _results = [];
       for (_i = 0, _len = chats.length; _i < _len; _i++) {
         c = chats[_i];
@@ -120,16 +122,17 @@
       return $input.val("");
     };
     $bus.bind('room-changed', function() {
+      var user_view;
       now.joinRoom(rooms.current);
       $roomDialogue().empty();
       api.chats(org, rooms.current, function(chats) {
         return addChats(chats);
       });
-      return now.eachUserInRoom(rooms.current, function(user) {
-        return $render("user-list-item", {
-          user: user
-        }).replaceAll($$("#users"));
+      now.eachUserInRoom(rooms.current, function(user) {});
+      user_view = $render("user-list-item", {
+        user: user
       });
+      return $$("#users").append(user_view);
     });
     $input.enter(pub);
     $('#enter button').click(pub);

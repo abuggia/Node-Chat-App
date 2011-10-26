@@ -3,5 +3,5 @@ node_modules
 *.swp
 dev.config
 prod.config
-<<<<<<< HEAD
 .DS_Store
+*_mongo.json
