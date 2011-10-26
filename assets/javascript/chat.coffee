@@ -111,6 +111,16 @@ window.initChat = (org, user) ->
     $$('#tabs .join').hide()
     goToRoom $(this).text()
 
+  $$('#rooms-list').delegate 'input', 'keyup', (e) ->
+    if keyCode(e) is 13
+      e.preventDefault();
+
+      $roomsList.hide()
+      $$('#tabs .join').hide()
+      goToRoom $(this).val()
+ 
+ 
+
   # Set up now
   # ----------
   now.ready -> $bus.trigger "room-changed"

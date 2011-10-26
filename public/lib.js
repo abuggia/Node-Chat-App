@@ -58,11 +58,11 @@ var formattedTime = function() {
   return formatTime(new Date());
 };
 
-(function() {
+var keyCode = function(e) {
+  return (e.keyCode ? e.keyCode : e.which);
+};
 
-  var keyCode = function(e) {
-    return (e.keyCode ? e.keyCode : e.which);
-  };
+(function() {
 
   $.fn.enter = function(fn) {
     this.keyup(function(e) {

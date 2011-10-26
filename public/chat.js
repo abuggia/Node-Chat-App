@@ -188,6 +188,14 @@
       $$('#tabs .join').hide();
       return goToRoom($(this).text());
     });
+    $$('#rooms-list').delegate('input', 'keyup', function(e) {
+      if (keyCode(e) === 13) {
+        e.preventDefault();
+        $roomsList.hide();
+        $$('#tabs .join').hide();
+        return goToRoom($(this).val());
+      }
+    });
     now.ready(function() {
       return $bus.trigger("room-changed");
     });

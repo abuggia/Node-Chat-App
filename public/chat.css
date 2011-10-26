@@ -282,7 +282,27 @@ ul#tabs #rooms-list li a {
 }
 
 ul#tabs #rooms-list li input {
-  margin: 7px 7px 7px 2px;
+  margin: 7px 7px 7px 0;
+  font-size:12px;
+  border-top:1px solid #d4d4d4;
+  border-right:1px solid #d4d4d4;
+  border-bottom:1px solid #d4d4d4;
+  border-left:0;
+  padding:4px;
+}
+
+.prepend {
+  display:inline-block;
+  margin-left:5px;
+  margin-right:0;
+  border-top:1px solid #d4d4d4;
+  border-right:0;
+  border-bottom:1px solid #d4d4d4;
+  border-left:1px solid #d4d4d4;
+  font-size:12px;
+  padding:4px;
+  background:#eee;
+  color:#444;
 }
 
 #tabs #rooms-list li:hover {
