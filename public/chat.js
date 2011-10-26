@@ -191,8 +191,17 @@
       $$('#tabs .join').hide();
       return goToRoom($(this).text());
     });
+    $$('#rooms-list').delegate('input', 'keydown', function(e) {
+      var code;
+      code = keyCode(e);
+      if (code === 32) {
+        return e.preventDefault();
+      }
+    });
     $$('#rooms-list').delegate('input', 'keyup', function(e) {
-      if (keyCode(e) === 13) {
+      var code;
+      code = keyCode(e);
+      if (code === 13) {
         e.preventDefault();
         $roomsList.hide();
         $$('#tabs .join').hide();
