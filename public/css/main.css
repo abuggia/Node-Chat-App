@@ -6,32 +6,24 @@ ul#tabs {
 
 ul#tabs li {
   display:inline;
-  padding:0;
   font-family:Arial, Helvetica, sans-serif;
   font-size: 16px;
   color:#404040;
-  float:left;
-}
-
-ul#tabs li a, ul#rooms-list li a {
-  display:inline-block;
-  text-decoration:none;
-  font-family:verdana;
-  color:#444;
-  font-size:14px;
-  padding-top:9px;
-  padding-right:20px;
-  padding-bottom:7px;
-  padding-left:20px;
-  overflow-y:hidden;
   float: left;
 }
+
+ul#tabs li li {
+  padding: 3px;
+  float: none;
+  display: block;
+}
+
 
 ul#tabs li a {
   font-family:verdana;
   color:#444;
   font-size:13px;
-  padding: 9px 20px;
+  padding: 9px 21px;
   line-height: 33px;
 }
   
@@ -63,25 +55,12 @@ ul#tabs li.active a, ul#tabs li.active {
   display:none;
   position:absolute;
   background:#ddd;
-  border-left:1px solid #ccc;
-  border-bottom:1px solid #ccc;
   margin-top: -1px;
 }
 
 #rooms-list li {
   display:list-item;
   overflow: visible;
-  padding:0;
-  font-family:Arial, Helvetica, sans-serif;
-  font-size:16px;
-  list-style-type:none;
-  color:#404040;
-  border:0;
-  border-right:1px solid #ccc;
-  overflow-y:hidden;
-  height:33px;
-  padding: 3px;
-  float: none;
 }
 
 #rooms-list li.input {
