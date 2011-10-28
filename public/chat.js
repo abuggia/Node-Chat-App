@@ -110,7 +110,6 @@
         domClass: rooms.domClass(room)
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
-      console.log(" here and width is " + ($tab.width()) + " " + ($tab.innerWidth()) + " " + ($tab.outerWidth()));
       $tab.slideOut($tab.innerWidth());
       return $render('dialogue-window', data).hide().appendTo($$("#chat"));
     };

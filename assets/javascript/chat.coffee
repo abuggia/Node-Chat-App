@@ -64,7 +64,6 @@ window.initChat = (org, user) ->
     rooms.add room
     data = {room: room, domClass: rooms.domClass(room)}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
-    console.log " here and width is #{$tab.width()} #{$tab.innerWidth()} #{$tab.outerWidth()}"
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
 
@@ -122,10 +121,7 @@ window.initChat = (org, user) ->
     $this = $(this)
     api.rooms org, (list) ->
       $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room) }))
-      # $$('#rooms-list').slideDown(200)
       $$('#rooms-list').show()
-      # $$("#rooms-list").moveDownLeftOf(31, -4, $this)
-      #$$('#rooms-list').moveDownLeftOf(33, -1, $this).slideDown(92)
       $$('#rooms-list input').focus()
     e.preventDefault()
 
