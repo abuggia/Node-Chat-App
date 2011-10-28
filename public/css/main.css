@@ -1,41 +1,49 @@
 
+
+
 ul#tabs {
   background:#ddd;
   height:33px; 
   width: 100%;
-  display:inline-block;
 }
 
 ul#tabs li {
-  display:inline-block;
+  display:inline;
   padding:0;
   font-family:Arial, Helvetica, sans-serif;
-  font-size:16px;
-  list-style-type:none;
+  font-size: 16px;
   color:#404040;
-  border:0;
-  border-right:1px solid #ccc;
-  overflow-y:hidden;
-  height:33px;
+  float: left;
 }
 
+ul#tabs li li {
+  padding: 3px;
+  float: none;
+}
+  
 ul#tabs li a {
-  display:inline-block;
-  text-decoration:none;
   font-family:verdana;
   color:#444;
-  font-size:14px;
-  padding-top:9px;
-  padding-right:20px;
-  padding-bottom:7px;
-  padding-left:20px;
-  height:33px;
-  overflow-y:hidden;
+  font-size:13px;
+  padding: 9px 20px;
+  line-height: 33px;
+}
+  
+ul#tabs .new {
+  width: 47px; 
+  /* width: 180px; when open */
+  overflow: hidden;
+  display: inline-block;
+}
+
+
+ul#tabs .join {
 }
 
 ul#tabs li a.close {
   padding-right:8px;
-  padding-left:8px;
+  padding-left: 8px;
+  font-weight: bold;
 }
 
 ul#tabs li.active a {
@@ -43,13 +51,16 @@ ul#tabs li.active a {
 }
 
 .slide-out {
+  margin: 0 0 0 15px;
   white-space:nowrap;
+  font-size: 12px;
 }
 
 #rooms-list {
   display:none;
   position:absolute;
   background:#ddd;
+  margin-top: -1px;
 }
 
 ul#tabs #rooms-list li {
@@ -72,7 +83,7 @@ ul#tabs #rooms-list li input {
   border-right:1px solid #d4d4d4;
   border-bottom:1px solid #d4d4d4;
   border-left:0;
-  padding:4px;
+  padding: 4px 4px;
 }
 
 .prepend {
@@ -162,7 +173,6 @@ body {
 }
 
 #side-panel ul {
-  margin:0;
   padding-top:6px;
   padding-right:4px;
   padding-bottom:6px;
@@ -184,7 +194,6 @@ body {
   background:#eee;
   width:95%;
   padding:4px;
-  margin:1px;
 }
 
 #side-panel ul li a:hover {

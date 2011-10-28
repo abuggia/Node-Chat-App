@@ -25,10 +25,6 @@ class Rooms
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
 
-
-console.log "asd"
-
-
 resizeChat = ->
   height = $("body").height()
   header = 33 #px
@@ -38,6 +34,7 @@ resizeChat = ->
   $("#chat").scrollTop(1000000)
   button = 100 #px
   $("#enter input").width($("#enter").width()-button)
+
 
 window.initChat = (org, user) ->
   $input = $ '#enter input'
@@ -51,8 +48,6 @@ window.initChat = (org, user) ->
   $(window).resize( ->
     resizeChat()
   )
-  
-  
   
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
@@ -107,32 +102,37 @@ window.initChat = (org, user) ->
   $chat.dclick '.name a', -> goToRoom $(this).text()
   $tabs.dclick 'li a.close', -> closeRoom $(this).closest('li').find(".room").text()
   $tabs.dclick 'li a.room', -> goToRoom $(this).text()
-  $tabs.find(".new a").hover -> $(this).find(".join").show "fast"
-
+  $tabs.find(".new").hover -> 
+    $(this).animate(width: "180px")
+  , ->
+    $(this).animate(width: "47px")
+    
   # Joining a new room
   roomListOpen = false
+  room_input = $$('#tabs .rooms-list input')
   $$('#tabs .new a').hover ->
-    $$('#tabs .join').slideOut(105)
+    room_input.slideOut(110)
   , -> 
     if not roomListOpen 
-      $$('#tabs .join').animate({width: 0}, {queue:false, duration:450, complete: (-> $(this).hide() ) }) 
+      room_input.animate({width: 0}, {queue:false, duration:450 }) 
 
   $$('#tabs .new a').click (e) ->
     roomListOpen = true
     $this = $(this)
     api.rooms org, (list) ->
       $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room) }))
-      $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92)
+      # $$('#rooms-list').slideDown(200)
+      $$('#rooms-list').show()
+      # $$("#rooms-list").moveDownLeftOf(31, -4, $this)
+      $$('#rooms-list input').focus()
     e.preventDefault()
 
-  $$('#rooms-list').bind "mouseleave", ->
+  $$('#tabs .new').bind "mouseleave", ->
     $roomsList.hide()
-    $$('#tabs .join').hide('fast')
     roomListOpen = false
 
   $$('#rooms-list').dclick 'li a', ->
     $roomsList.hide()
-    $$('#tabs .join').hide()
     goToRoom $(this).text()
 
   $$('#rooms-list').delegate 'input', 'keydown', (e) ->
