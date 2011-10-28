@@ -83,8 +83,8 @@ $ ->
 
   main = ->
     $("#registration-info .start-chatting-button").click saveRegistration 
-    $emailInput.enter(sendEmail).focus()
-    $loginButton.click sendEmail
+    $emailInput.enter(sendEmail).blur()
+    $loginButton.click(sendEmail)
     $("#enter-password .start-chatting-button").click -> chat($emailInput.val(), $passwordInput.val())
     $passwordInput.enter -> chat($emailInput.val(), $passwordInput.val())
  
