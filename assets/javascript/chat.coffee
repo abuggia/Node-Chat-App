@@ -26,6 +26,19 @@ class Rooms
     this.roomFromNum(newNum)
 
 
+console.log "asd"
+
+
+resizeChat = ->
+  height = $("body").height()
+  header = 33 #px
+  footer = 40 #px
+  margin = 16 #px
+  $("#chat").height(height-header-footer-margin)
+  $("#chat").scrollTop(1000000)
+  button = 100 #px
+  $("#enter input").width($("#enter").width()-button)
+
 window.initChat = (org, user) ->
   $input = $ '#enter input'
   $users = $ '#users'
@@ -34,6 +47,12 @@ window.initChat = (org, user) ->
   $roomsList = $ '#rooms-list'
   $bus = $ document
   rooms = new Rooms org
+  resizeChat()
+  $(window).resize( ->
+    resizeChat()
+  )
+  
+  
   
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"

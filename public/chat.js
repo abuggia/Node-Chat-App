@@ -1,5 +1,5 @@
 (function() {
-  var Rooms;
+  var Rooms, resizeChat;
   Rooms = (function() {
     function Rooms(first) {
       this.ids = {};
@@ -54,6 +54,18 @@
     };
     return Rooms;
   })();
+  console.log("asd");
+  resizeChat = function() {
+    var button, footer, header, height, margin;
+    height = $("body").height();
+    header = 33;
+    footer = 40;
+    margin = 16;
+    $("#chat").height(height - header - footer - margin);
+    $("#chat").scrollTop(1000000);
+    button = 100;
+    return $("#enter input").width($("#enter").width() - button);
+  };
   window.initChat = function(org, user) {
     var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, pub, roomListOpen, rooms;
     $input = $('#enter input');
@@ -63,6 +75,10 @@
     $roomsList = $('#rooms-list');
     $bus = $(document);
     rooms = new Rooms(org);
+    resizeChat();
+    $(window).resize(function() {
+      return resizeChat();
+    });
     $roomDialogue = function() {
       return $$("#chat " + (rooms.currentSelector()));
     };
