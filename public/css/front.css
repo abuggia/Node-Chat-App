@@ -27,7 +27,7 @@ body {
   height:100%;
   text-align:center;
   font-family: 'Droid Serif', serif;
-  text-shadow: 0 .1em #ccc;
+  text-shadow: 0 2px #e0e0e0;
 }
 
 h2 {

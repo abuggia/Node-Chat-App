@@ -4,10 +4,10 @@ ul#tabs {
   height:33px; 
   width: 100%;
   display:inline-block;
+  list-style-type: none;
 }
 
 ul#tabs li {
-  display:inline-block;
   padding:0;
   font-family:Arial, Helvetica, sans-serif;
   font-size:16px;
@@ -17,9 +17,10 @@ ul#tabs li {
   border-right:1px solid #ccc;
   overflow-y:hidden;
   height:33px;
+  float:left;
 }
 
-ul#tabs li a {
+ul#tabs li a, ul#rooms-list li a {
   display:inline-block;
   text-decoration:none;
   font-family:verdana;
@@ -29,7 +30,6 @@ ul#tabs li a {
   padding-right:20px;
   padding-bottom:7px;
   padding-left:20px;
-  height:33px;
   overflow-y:hidden;
 }
 
@@ -38,7 +38,7 @@ ul#tabs li a.close {
   padding-left:8px;
 }
 
-ul#tabs li.active a {
+ul#tabs li.active a, ul#tabs li.active {
   background:#fff;
 }
 
@@ -50,22 +50,29 @@ ul#tabs li.active a {
   display:none;
   position:absolute;
   background:#ddd;
+  border-left:1px solid #ccc;
+  border-bottom:1px solid #ccc;
 }
 
-ul#tabs #rooms-list li {
+#rooms-list li {
   display:list-item;
   overflow: visible;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:16px;
+  list-style-type:none;
+  color:#404040;
+  border:0;
+  border-right:1px solid #ccc;
+  overflow-y:hidden;
+  height:33px;
 }
 
-ul#tabs #rooms-list li.input {
+#rooms-list li.input {
   height:38px ! important;
 }
 
-ul#tabs #rooms-list li a {
-  width:100%;
-}
-
-ul#tabs #rooms-list li input {
+#rooms-list li input {
   margin: 7px 7px 7px 0;
   font-size:12px;
   border-top:1px solid #d4d4d4;
@@ -89,7 +96,7 @@ ul#tabs #rooms-list li input {
   color:#444;
 }
 
-#tabs #rooms-list li:hover {
+#rooms-list li:hover {
   background:#eee;
 }
 

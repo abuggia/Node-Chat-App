@@ -25,10 +25,6 @@ class Rooms
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
 
-
-console.log "asd"
-
-
 resizeChat = ->
   height = $("body").height()
   header = 33 #px
@@ -53,7 +49,6 @@ window.initChat = (org, user) ->
   )
   
   
-  
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
@@ -69,7 +64,8 @@ window.initChat = (org, user) ->
     rooms.add room
     data = {room: room, domClass: rooms.domClass(room)}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
-    $tab.slideOut $tab.width()
+    console.log " here and width is #{$tab.width()} #{$tab.innerWidth()} #{$tab.outerWidth()}"
+    $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
 
   goToRoom = (room) ->
@@ -122,7 +118,7 @@ window.initChat = (org, user) ->
     $this = $(this)
     api.rooms org, (list) ->
       $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room) }))
-      $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92)
+      $$('#rooms-list').moveDownLeftOf(33, -1, $this).slideDown(92)
     e.preventDefault()
 
   $$('#rooms-list').bind "mouseleave", ->

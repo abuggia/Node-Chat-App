@@ -54,7 +54,6 @@
     };
     return Rooms;
   })();
-  console.log("asd");
   resizeChat = function() {
     var button, footer, header, height, margin;
     height = $("body").height();
@@ -111,7 +110,8 @@
         domClass: rooms.domClass(room)
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
-      $tab.slideOut($tab.width());
+      console.log(" here and width is " + ($tab.width()) + " " + ($tab.innerWidth()) + " " + ($tab.outerWidth()));
+      $tab.slideOut($tab.innerWidth());
       return $render('dialogue-window', data).hide().appendTo($$("#chat"));
     };
     goToRoom = function(room) {
@@ -193,7 +193,7 @@
             return rooms.has(room);
           })
         }));
-        return $$('#rooms-list').moveDownLeftOf(31, -4, $this).slideDown(92);
+        return $$('#rooms-list').moveDownLeftOf(33, -1, $this).slideDown(92);
       });
       return e.preventDefault();
     });
