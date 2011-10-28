@@ -10,6 +10,8 @@ ul#tabs li {
   font-size: 16px;
   color:#404040;
   float: left;
+  border-right:1px solid #ccc;
+  float:left;
 }
 
 ul#tabs li li {
@@ -46,16 +48,23 @@ ul#tabs li.active a, ul#tabs li.active {
 }
 
 .slide-out {
-  margin: 0 0 0 15px;
   white-space:nowrap;
   font-size: 12px;
 }
+
+a.join span.plus {
+  display:inline-block;
+  width:30px;
+} 
 
 #rooms-list {
   display:none;
   position:absolute;
   background:#ddd;
   margin-top: -1px;
+  margin-left: -1px;
+  border-left:1px solid #ccc;
+  border-bottom:1px solid #ccc;
 }
 
 #rooms-list li {
