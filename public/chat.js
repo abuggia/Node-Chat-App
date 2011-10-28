@@ -66,7 +66,7 @@
     return $("#enter input").width($("#enter").width() - button);
   };
   window.initChat = function(org, user) {
-    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, pub, roomListOpen, rooms;
+    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, pub, roomListOpen, room_input, rooms;
     $input = $('#enter input');
     $users = $('#users');
     $chat = $('#chat');
@@ -164,22 +164,26 @@
     $tabs.dclick('li a.room', function() {
       return goToRoom($(this).text());
     });
-    $tabs.find(".new a").hover(function() {
-      return $(this).find(".join").show("fast");
+    $tabs.find(".new").hover(function() {
+      return $(this).animate({
+        width: "180px"
+      });
+    }, function() {
+      return $(this).animate({
+        width: "47px"
+      });
     });
     roomListOpen = false;
+    room_input = $$('#tabs .rooms-list input');
     $$('#tabs .new a').hover(function() {
-      return $$('#tabs .join').slideOut(105);
+      return room_input.slideOut(110);
     }, function() {
       if (!roomListOpen) {
-        return $$('#tabs .join').animate({
+        return room_input.animate({
           width: 0
         }, {
           queue: false,
-          duration: 450,
-          complete: (function() {
-            return $(this).hide();
-          })
+          duration: 450
         });
       }
     });
@@ -193,18 +197,17 @@
             return rooms.has(room);
           })
         }));
-        return $$('#rooms-list').moveDownLeftOf(33, -1, $this).slideDown(92);
+        $$('#rooms-list').show();
+        return $$('#rooms-list input').focus();
       });
       return e.preventDefault();
     });
-    $$('#rooms-list').bind("mouseleave", function() {
+    $$('#tabs .new').bind("mouseleave", function() {
       $roomsList.hide();
-      $$('#tabs .join').hide('fast');
       return roomListOpen = false;
     });
     $$('#rooms-list').dclick('li a', function() {
       $roomsList.hide();
-      $$('#tabs .join').hide();
       return goToRoom($(this).text());
     });
     $$('#rooms-list').delegate('input', 'keydown', function(e) {

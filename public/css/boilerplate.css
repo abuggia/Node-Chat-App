@@ -208,6 +208,20 @@ table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
 
 
+/* defaults */
+
+a {
+  text-decoration:none;
+}
+
+li {
+  list-style-type:none;
+}
+
+.clear {
+  clear: both;
+}
+
 /* ==|== primary styles =====================================================
    Author:
    ========================================================================== */
