@@ -86,7 +86,7 @@
               case 403:
                 return $("#login-fields").showError("Please use your .edu email address to verify that you're a student");
               default:
-                return doError("there was an error");
+                return doError("there was an error sending email");
             }
           });
         } else {
@@ -104,8 +104,15 @@
       return "Invite your friends to vote via     <a target='_blank' id='facebook-link' href='http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=" + text + "'>      Facebook</a>    and     <a target='_blank' id='twitter-link' href='http://twitter.com/intent/tweet?text=" + text + "'>    Twitter</a>!";
     };
     main = function() {
+      $("#registration-info .start-chatting-button").click(saveRegistration);
       $emailInput.enter(sendEmail).focus();
       $loginButton.click(sendEmail);
+      $("#enter-password .start-chatting-button").click(function() {
+        return chat($emailInput.val(), $passwordInput.val());
+      });
+      $passwordInput.enter(function() {
+        return chat($emailInput.val(), $passwordInput.val());
+      });
       return $("#vote-button").click(function() {
         var user;
         user = {
@@ -144,15 +151,6 @@
       show("#login-fields");
       $("#login-fields input[type=text]").focus();
     }
-    main();
-    $("#registration-info .start-chatting-button").click(saveRegistration);
-    $emailInput.enter(sendEmail).focus();
-    $loginButton.click(sendEmail);
-    $("#enter-password .start-chatting-button").click(function() {
-      return chat($emailInput.val(), $passwordInput.val());
-    });
-    return $passwordInput.enter(function() {
-      return chat($emailInput.val(), $passwordInput.val());
-    });
+    return main();
   });
 }).call(this);

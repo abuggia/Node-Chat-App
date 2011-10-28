@@ -62,7 +62,7 @@ $ ->
           switch xhr.status
             when 420 then show "#new-campus"
             when 403 then $("#login-fields").showError "Please use your .edu email address to verify that you're a student"
-            else doError "there was an error"
+            else doError "there was an error sending email"
       else
         doError "Could not find user"
 
@@ -82,8 +82,12 @@ $ ->
     Twitter</a>!"
 
   main = ->
+    $("#registration-info .start-chatting-button").click saveRegistration 
     $emailInput.enter(sendEmail).focus()
     $loginButton.click sendEmail
+    $("#enter-password .start-chatting-button").click -> chat($emailInput.val(), $passwordInput.val())
+    $passwordInput.enter -> chat($emailInput.val(), $passwordInput.val())
+ 
     $("#vote-button").click ->
       user = { email: $emailInput.val(), vote_open_on_campus: $("#vote-to-open").is(":checked"), vote_email_me: $("#vote-to-email").is(":checked") }
       $.post "/api/vote/#{user.email}", user, ->
@@ -117,9 +121,4 @@ $ ->
 
   main()
 
-  $("#registration-info .start-chatting-button").click saveRegistration 
-  $emailInput.enter(sendEmail).focus()
-  $loginButton.click sendEmail
-  $("#enter-password .start-chatting-button").click -> chat($emailInput.val(), $passwordInput.val())
-  $passwordInput.enter -> chat($emailInput.val(), $passwordInput.val())
- 
+
