@@ -94,7 +94,7 @@ Chat = new mongoose.Schema {
 }
 
 Chat.statics.forOrg = (org, numRecords) -> 
-  this.find({}).select('text', 'user', 'created_at').where('org', org).desc('created_at').limit(numRecords)
+  this.find({}).select('text', 'user', 'created_at', 'handle').where('org', org).desc('created_at').limit(numRecords)
 
 Chat.statics.forRoom = (org, room, numRecords) -> 
   this.forOrg(org, numRecords).where('room', room)

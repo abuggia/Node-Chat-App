@@ -90,7 +90,7 @@
         text: text,
         time: time,
         email: email,
-        linkName: email === !user.email
+        linkName: email !== user.email
       }).appendTo($roomDialogue());
       return $chat.scrollTop(1000000);
     };

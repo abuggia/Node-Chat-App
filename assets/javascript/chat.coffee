@@ -53,7 +53,7 @@ window.initChat = (org, user) ->
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
   addChat = (name, email, text, time) -> 
-    $render('single-chat', {name: name, text: text, time: time, email: email, linkName: (email is not user.email)}).appendTo $roomDialogue()
+    $render('single-chat', {name: name, text: text, time: time, email: email, linkName: (email isnt user.email)}).appendTo $roomDialogue()
     $chat.scrollTop(1000000)
 
   addChats = (chats) -> 
