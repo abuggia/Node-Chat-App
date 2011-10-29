@@ -84,6 +84,7 @@ School = new mongoose.Schema {
 
 Chat = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
+  handle:  { type: String, required: true }
   org:  { type: String, required: true, index: { unique: false, sparse: true } }
   type: { type: String, required: true }
   text: { type: String, required: true }

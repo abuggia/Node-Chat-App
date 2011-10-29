@@ -57,7 +57,11 @@
 <div>
  <span class="time"><%= time %></span>
  <span class="name">
-   <a href="#"><%= name %></a>
+   <% if (linkName) { %>
+     <a href="#"><%= name %></a>
+   <% } else { %>
+     <%= name %>
+   <% } %>
  </span>
  <span class="text"><%= text %></span>
 </div>

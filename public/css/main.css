@@ -147,6 +147,7 @@ body {
   display:inline-block;
   width:50px;
   color:#999;
+  text-align:right;
 }
 
 #chat .dialogue .name {

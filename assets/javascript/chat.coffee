@@ -52,13 +52,13 @@ window.initChat = (org, user) ->
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
-  addChat = (name, text, time) -> 
-    $render('single-chat', {name: name, text: text, time: time}).appendTo $roomDialogue()
+  addChat = (name, email, text, time) -> 
+    $render('single-chat', {name: name, text: text, time: time, email: email, linkName: (email is not user.email)}).appendTo $roomDialogue()
     $chat.scrollTop(1000000)
 
   addChats = (chats) -> 
     chats.reverse()
-    addChat(c.user, c.text, formatTime c.created_at) for c in chats
+    addChat(c.handle, c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room) ->
     rooms.add room
@@ -84,7 +84,7 @@ window.initChat = (org, user) ->
     now.leaveRoom room
 
   pub = ->
-    now.pub org, rooms.current, user.email, $input.val()
+    now.pub org, rooms.current, user.email, user.handle, $input.val()
     $input.val ""
 
   $bus.bind 'room-changed', -> 
@@ -149,10 +149,10 @@ window.initChat = (org, user) ->
 
   # Set up now
   # ----------
-  now.ready -> $bus.trigger "room-changed"
   now.name = user.handle
   now.email = user.email
-  now.sub = (name, text) -> addChat(name, text, formattedTime())
+  now.sub = (name, email, text) -> addChat(name, email, text, formattedTime())
+  now.ready -> $bus.trigger "room-changed"
 
   $$('#users').dclick '.user', ->
     handle = $(this).text()

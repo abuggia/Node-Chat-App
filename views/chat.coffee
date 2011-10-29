@@ -7,7 +7,7 @@ class ChatView
     that = this
     @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
 
-    @everyone.now.pub = (org, room, email, msg) -> that.everyone.now.sub this.now.name, that.processMessage(org, room, email, msg)
+    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub handle, email, that.processMessage(org, room, email, handle, msg)
     @everyone.now.joinRoom = (room) -> nowjs.getGroup(room).addUser(this.user.clientId)
     @everyone.now.leaveRoom = (room) -> nowjs.getGroup(room).removeUser(this.user.clientId)
 
@@ -24,7 +24,7 @@ class ChatView
         withLoadedUsers clientIds, [], (users) ->
           fn(users)
 
-  processMessage: (org, room, email, msg) ->
+  processMessage: (org, room, email, handle, msg) ->
     tags = []
     ret = msg.replace(/#\w+/gi, (match) ->
       tags.push match
@@ -32,7 +32,7 @@ class ChatView
     )
     ret = ret.replace(/http\:\/\/[^\s"']+/gi, "<a href=\"$&\" class=\"hash\">$&</a>")
 
-    new Chat({ user: email, text: ret, tags: tags, room: room, org: org, type: 'School' }).save (err) -> console.error "Error saving chat: #{err}\n#{err.stack}" if err
+    new Chat({ user: email, handle: handle, text: ret, tags: tags, room: room, org: org, type: 'School' }).save (err) -> console.error "Error saving chat: #{err}\n#{err.stack}" if err
     ret
  
 
@@ -48,7 +48,6 @@ class ChatView
 
   getChats: (req, res) ->
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
-
 
   getRooms: (req, res) ->
     loadRoomCounts = (rooms, data, callback) ->

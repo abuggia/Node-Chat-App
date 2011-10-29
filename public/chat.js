@@ -84,11 +84,13 @@
     $roomTab = function() {
       return $$("#tabs " + (rooms.currentSelector()));
     };
-    addChat = function(name, text, time) {
+    addChat = function(name, email, text, time) {
       $render('single-chat', {
         name: name,
         text: text,
-        time: time
+        time: time,
+        email: email,
+        linkName: email === !user.email
       }).appendTo($roomDialogue());
       return $chat.scrollTop(1000000);
     };
@@ -98,7 +100,7 @@
       _results = [];
       for (_i = 0, _len = chats.length; _i < _len; _i++) {
         c = chats[_i];
-        _results.push(addChat(c.user, c.text, formatTime(c.created_at)));
+        _results.push(addChat(c.handle, c.user, c.text, formatTime(c.created_at)));
       }
       return _results;
     };
@@ -134,7 +136,7 @@
       return now.leaveRoom(room);
     };
     pub = function() {
-      now.pub(org, rooms.current, user.email, $input.val());
+      now.pub(org, rooms.current, user.email, user.handle, $input.val());
       return $input.val("");
     };
     $bus.bind('room-changed', function() {
@@ -226,14 +228,14 @@
         return goToRoom($(this).val());
       }
     });
+    now.name = user.handle;
+    now.email = user.email;
+    now.sub = function(name, email, text) {
+      return addChat(name, email, text, formattedTime());
+    };
     now.ready(function() {
       return $bus.trigger("room-changed");
     });
-    now.name = user.handle;
-    now.email = user.email;
-    now.sub = function(name, text) {
-      return addChat(name, text, formattedTime());
-    };
     $$('#users').dclick('.user', function() {
       var handle;
       handle = $(this).text();
