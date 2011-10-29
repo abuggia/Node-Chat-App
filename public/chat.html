@@ -83,8 +83,8 @@
  </script>
 
  <script id="rooms-list-items" type="text/html">
-<% for (var i=0; i < list.length; i++) { %>
-  <li><a href="#"><%= list[i] %></a></li>
+<% for (var i=0, room = list[i]; i < list.length; room = list[++i]) { %>
+  <li><a href="#"><span class="roomName"><%= room.name %></span> (<%= room.numUsers %>)</a></li>
 <% } %>
   <li class="input"><span class="prepend">#</span><input placeholder="Create New Room or Join it!" style="width:160px"></li>
  </script>

@@ -36,7 +36,7 @@ User.methods.setPassword = (password) ->
 User.methods.active = -> this.state is 'active'
 
 User.methods.safe_json = -> 
-  { email: this.email, active: this.active(), start_room: this.start_room, voted: this.voted } 
+  { email: this.email, active: this.active(), start_room: this.start_room, voted: this.voted, handle: this.handle } 
 
 User.statics.authenticate = (email, password, fn) ->
   this.findOne { email: email }, (err, user) ->

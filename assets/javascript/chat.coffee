@@ -120,7 +120,7 @@ window.initChat = (org, user) ->
     roomListOpen = true
     $this = $(this)
     api.rooms org, (list) ->
-      $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room) }))
+      $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room.name) }))
       $$('#rooms-list').show()
       $$('#rooms-list input').focus()
     e.preventDefault()
@@ -131,7 +131,7 @@ window.initChat = (org, user) ->
 
   $$('#rooms-list').dclick 'li a', ->
     $roomsList.hide()
-    goToRoom $(this).text()
+    goToRoom $(this).find('.roomName').text()
 
   $$('#rooms-list').delegate 'input', 'keydown', (e) ->
     code = keyCode(e)

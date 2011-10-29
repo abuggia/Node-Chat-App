@@ -24,6 +24,7 @@ class ChatView
     new Chat({ user: email, text: ret, tags: tags, room: room, org: org, type: 'School' }).save (err) -> console.error "Error saving chat: #{err}\n#{err.stack}" if err
     ret
  
+
   loadRoom: (req, res) ->
     room = req.params[0]
     user = req.session.user
@@ -37,7 +38,23 @@ class ChatView
   getChats: (req, res) ->
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
 
+
   getRooms: (req, res) ->
-    Chat.distinct 'room', {org: req.params.org}, (err, doc) -> res.json doc
+    loadRoomCounts = (rooms, data, callback) ->
+      if rooms.length > 0
+        room = rooms.pop()
+        nowjs.getGroup(room).count (count) ->
+          data.push { name: room, numUsers: count }
+          loadRoomCounts(rooms, data, callback)
+      else
+        callback(data)
+
+    Chat.distinct 'room', {org: req.params.org}, (err, rooms) ->
+      return next(err) if err
+      loadRoomCounts rooms, [], (data) -> res.json data
+
+
+
 
 module.exports = (app) -> new ChatView(app)
+

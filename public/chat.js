@@ -193,7 +193,7 @@
       api.rooms(org, function(list) {
         $$('#rooms-list').html(render('rooms-list-items', {
           list: _.reject(list, function(room) {
-            return rooms.has(room);
+            return rooms.has(room.name);
           })
         }));
         $$('#rooms-list').show();
@@ -207,7 +207,7 @@
     });
     $$('#rooms-list').dclick('li a', function() {
       $roomsList.hide();
-      return goToRoom($(this).text());
+      return goToRoom($(this).find('.roomName').text());
     });
     $$('#rooms-list').delegate('input', 'keydown', function(e) {
       var code;
