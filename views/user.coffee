@@ -11,7 +11,7 @@ class UserView
   load: (req, res, next, email) ->
     User.findOne { email: email }, (err, user) ->
       if err? then next(err)
-      if not user? then next(new errors.NotFound())
+      else if not user? then next(new errors.NotFound())
       else
         user.password = undefined
         user.salt = undefined
@@ -34,20 +34,19 @@ class UserView
     user.email = req.body.user.email
 
     user.save (err) ->
-
-      if user.isEmailExistsError(err)
-        res.send new errors.Conflict().code
-      if errors.defined err
-        res.send err.code
-      else if err
-        res.send 500
+      if err
+        console.log "Error is #{err}"
+        console.log err.stack
+        return err
+      else if user.isEmailExistsError(err)
+          res.send new errors.Conflict().code
       else
-        email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
-        res.send new errors.NotReady
+          email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
+          res.send new errors.NotReady
 
   update: (req, res) ->
     user = req.user
-    user.handle = req.body.user.email
+    user.handle = req.body.user.handle
     user.setPassword req.body.user.password
     user.state = 'active'
     user.save (err) ->

@@ -1,13 +1,10 @@
 (function() {
   $(function() {
-    var $emailInput, $loginButton, $passwordInput, $regInfoEmail, $regInfoHandle, $regInfoPassword, chat, doError, emailPattern, invites_template, m, main, render_invites_template, s, saveRegistration, sendEmail, show;
+    var $emailInput, $loginButton, $passwordInput, chat, doError, emailPattern, invites_template, m, main, render_invites_template, s, saveRegistration, sendEmail, show;
     show = ShowMe("#loading");
     $emailInput = $("#login-email");
     $loginButton = $("#login-button");
     $passwordInput = $("#password-input");
-    $regInfoEmail = $("#registration-info-email");
-    $regInfoHandle = $("#registration-info-handle");
-    $regInfoPassword = $("#registration-info-password");
     emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     doError = function(message) {
       return alert("There was an error:\n\n" + message);
@@ -31,9 +28,9 @@
     saveRegistration = function() {
       var user;
       user = {
-        email: $regInfoEmail.val(),
-        handle: $regInfoHandle.val(),
-        password: $regInfoPassword.val()
+        email: $$("#registration-info-email").val(),
+        handle: $("#registration-info-handle").val(),
+        password: $("#registration-info-password").val()
       };
       return $.post('/api/users/' + user.email, {
         user: user
@@ -54,8 +51,13 @@
       }
       return $.get("/api/user/" + email, function(user) {
         if (user.active) {
-          show("#enter-password");
-          return $passwordInput.focus();
+          if (!user.handle) {
+            $$("#registration-info-email").val(email);
+            return show("#registration-info");
+          } else {
+            show("#enter-password");
+            return $passwordInput.focus();
+          }
         } else if (user.voted) {
           return $.get("/api/votes/" + email, function(data) {
             var message;

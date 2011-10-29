@@ -3,9 +3,6 @@ $ ->
   $emailInput = $ "#login-email"
   $loginButton = $ "#login-button"
   $passwordInput = $ "#password-input"
-  $regInfoEmail = $ "#registration-info-email"
-  $regInfoHandle = $ "#registration-info-handle"
-  $regInfoPassword = $ "#registration-info-password"
   emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
   doError = (message)-> alert "There was an error:\n\n#{message}"
 
@@ -20,7 +17,8 @@ $ ->
       $("#enter-password").showError "Incorrect Password"
 
   saveRegistration = ->
-    user = { email: $regInfoEmail.val(), handle: $regInfoHandle.val(), password: $regInfoPassword.val() }
+    user = { email: $$("#registration-info-email").val(), handle: $("#registration-info-handle").val(), password: $("#registration-info-password").val() }
+    
     $.post '/api/users/' + user.email, { user: user }, ->
       chat user.email, user.password
     .error ->
@@ -37,8 +35,13 @@ $ ->
 
     $.get "/api/user/#{email}", (user) ->
       if user.active
-        show "#enter-password"
-        $passwordInput.focus()
+
+        if not user.handle
+          $$("#registration-info-email").val(email)
+          show "#registration-info"
+        else
+          show "#enter-password"
+          $passwordInput.focus()
 
       else if user.voted
         $.get "/api/votes/#{email}", (data) ->
@@ -72,7 +75,6 @@ $ ->
     text = escape text
     $(".invite_links").html invites_template(text)
 
-  # TODO: move in a real template file (moustache, handlebars, haml-js or whatever)
   invites_template = (text) ->
     "Invite your friends to vote via 
     <a target='_blank' id='facebook-link' href='http://www.facebook.com/sharer/sharer.php?u=http://campusch.at&t=#{text}'>
