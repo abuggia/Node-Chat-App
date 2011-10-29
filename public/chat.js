@@ -130,24 +130,24 @@
       }
       $$("#tabs " + (rooms.selector(room))).remove();
       $$("#chat " + (rooms.selector(room))).remove();
-      return rooms.remove(room);
+      rooms.remove(room);
+      return now.leaveRoom(room);
     };
     pub = function() {
       now.pub(org, rooms.current, user.email, $input.val());
       return $input.val("");
     };
     $bus.bind('room-changed', function() {
-      var user_view;
       now.joinRoom(rooms.current);
       $roomDialogue().empty();
       api.chats(org, rooms.current, function(chats) {
         return addChats(chats);
       });
-      now.eachUserInRoom(rooms.current, function(user) {});
-      user_view = $render("user-list-item", {
-        user: user
+      return now.withUsersInRoom(rooms.current, function(users) {
+        return $$("#users").html(render("user-list-items", {
+          list: users
+        }));
       });
-      return $$("#users").append(user_view);
     });
     $input.enter(pub);
     $('#enter button').click(pub);

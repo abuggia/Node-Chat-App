@@ -81,6 +81,7 @@ window.initChat = (org, user) ->
     $$("#tabs #{rooms.selector room}").remove()
     $$("#chat #{rooms.selector room}").remove()
     rooms.remove room
+    now.leaveRoom room
 
   pub = ->
     now.pub org, rooms.current, user.email, $input.val()
@@ -90,9 +91,8 @@ window.initChat = (org, user) ->
     now.joinRoom(rooms.current)
     $roomDialogue().empty()
     api.chats org, rooms.current, (chats) -> addChats(chats)
-    now.eachUserInRoom rooms.current, (user) ->
-    user_view = $render("user-list-item", {user: user})
-    $$("#users").append user_view
+    now.withUsersInRoom rooms.current, (users) ->
+      $$("#users").html render("user-list-items", { list: users })
 
   # Set handlers
   # ------------

@@ -9,9 +9,20 @@ class ChatView
 
     @everyone.now.pub = (org, room, email, msg) -> that.everyone.now.sub this.now.name, that.processMessage(org, room, email, msg)
     @everyone.now.joinRoom = (room) -> nowjs.getGroup(room).addUser(this.user.clientId)
-    @everyone.now.eachUserInRoom = (room, fn) ->
+    @everyone.now.leaveRoom = (room) -> nowjs.getGroup(room).removeUser(this.user.clientId)
+
+    withLoadedUsers = (clientIds, acc, callback) ->
+      if clientIds.length > 0
+        nowjs.getClient clientIds.pop(), -> 
+          acc.push { name: this.now.name, email: this.now.email }
+          withLoadedUsers clientIds, acc, callback
+      else
+        callback(acc)
+
+    @everyone.now.withUsersInRoom = (room, fn) ->
       nowjs.getGroup(room).getUsers (clientIds) -> 
-        nowjs.getClient(clientId, -> fn { name: this.now.name, email: this.now.email }) for clientId in clientIds
+        withLoadedUsers clientIds, [], (users) ->
+          fn(users)
 
   processMessage: (org, room, email, msg) ->
     tags = []

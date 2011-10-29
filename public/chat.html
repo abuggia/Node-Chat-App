@@ -74,12 +74,14 @@
 <div class="dialogue <%= domClass %>"></div>
  </script>
 
- <script id="user-list-item" type="text/html">
+ <script id="user-list-items" type="text/html">
+<% for (var i=0, user = list[i]; i < list.length; user = list[++i]) { %>
 <li>
   <a href="#" class="user" data-user-email="<%= user.email %>">
     <%= user.email %>
   </a>
 </li>
+<% } %>
  </script>
 
  <script id="rooms-list-items" type="text/html">
