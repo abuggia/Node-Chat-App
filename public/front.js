@@ -32,13 +32,19 @@
         handle: $("#registration-info-handle").val(),
         password: $("#registration-info-password").val()
       };
-      return $.post('/api/users/' + user.email, {
-        user: user
-      }, function() {
-        return chat(user.email, user.password);
-      }).error(function() {
-        return doError("there was an error saving registration info");
-      });
+      if (user.handle.length < 2) {
+        return alert('chat username must be at least 2 characters');
+      } else if (user.password.length < 5) {
+        return alert('Password must be at least 5 characters');
+      } else {
+        return $.post('/api/users/' + user.email, {
+          user: user
+        }, function() {
+          return chat(user.email, user.password);
+        }).error(function() {
+          return doError("there was an error saving registration info");
+        });
+      }
     };
     sendEmail = function(e) {
       var email;

@@ -18,11 +18,16 @@ $ ->
 
   saveRegistration = ->
     user = { email: $$("#registration-info-email").val(), handle: $("#registration-info-handle").val(), password: $("#registration-info-password").val() }
-    
-    $.post '/api/users/' + user.email, { user: user }, ->
-      chat user.email, user.password
-    .error ->
-      doError "there was an error saving registration info"
+
+    if user.handle.length < 2
+      alert('chat username must be at least 2 characters')
+    else if user.password.length < 5
+      alert('Password must be at least 5 characters')
+    else
+      $.post '/api/users/' + user.email, { user: user }, ->
+        chat user.email, user.password
+      .error ->
+        doError "there was an error saving registration info"
 
   sendEmail = (e) ->
     email = $emailInput.val();
