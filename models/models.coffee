@@ -14,6 +14,23 @@ hashed = (msg, salt) ->
 
 require("mongoose-types").loadTypes mongoose, 'email'
 
+School = new mongoose.Schema {
+  name: { type: String, required: true, index: { unique: true } }
+  short: { type: String, required: true, index: { unique: true } }
+  domain: String
+  room: String
+  available: { type: Boolean, default: false }
+}
+
+mongoose.model 'School', School
+
+SpecialEmail = new mongoose.Schema {
+  email: { type: mongoose.SchemaTypes.Email, required: true }
+  school: { type: String, required: true }  # School short name
+}
+
+mongoose.model 'SpecialEmail', SpecialEmail 
+
 User = new mongoose.Schema {
   email: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: true, sparse: true } }
   handle: String
@@ -50,37 +67,46 @@ User.methods.isEmailExistsError = (err) ->
 User.methods.canAccessRoom = (room) ->
   room is this.start_room
 
-acceptList = (users) -> (user) -> _(users).any(user)
-emailDomains = {
-  'campusch.at': -> true
-  #'bentley.edu': (user) -> wordUnderscoreWordPattern.test user
-  'alumni.tufts.edu': (user) -> if process.env.TUFTS_ALUMNI? then acceptList(process.env.TUFTS_ALUMNI.split(','))(user) else false
-}
+User.methods.activateForSchool = (school) ->
+  console.log " activating for school: #{school.name}"
+  this.school = school.short
+  this.start_room = school.room
+  this.state = 'active'
 
 User.pre 'save', (next) -> 
   if not this.activation_code?
     this.activation_code = randomString(12)
   next()
 
-User.pre 'save', (next) -> 
-  [name, domain] = this.email.split '@'
-  this.school = domain
-  next()
-
 User.pre 'save', (next) ->
-  if eduPattern.test(this.email)
-    next()
+  School = mongoose.model 'School'
+  SpecialEmail = mongoose.model 'SpecialEmail'
+  user = this
+
+  if user.isNew
+    [name, domain] = this.email.split '@'
+
+    SpecialEmail.findOne { email: user.email }, (err, special) ->
+      if !err && special
+        School.findOne { short: special.school }, (err, doc) ->
+          return next(err) if err
+          user.activateForSchool doc
+          next()
+
+      else if eduPattern.test(user.email)
+        School.findOne { domain: domain, available: true }, (err, doc) ->
+          if doc
+            user.activateForSchool doc
+            
+          next()
+
+      else
+        next(new errors.Forbidden())
   else
-    next(new errors.Forbidden())
+    next()
+
 
 mongoose.model 'User', User
-
-School = new mongoose.Schema {
-  name: { type: String, required: true, index: { unique: true } }
-  short: { type: String, required: true, index: { unique: true } }
-  domain: String
-  room: String
-}
 
 Chat = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
@@ -108,4 +134,6 @@ db = mongoose.connect mongo_uri, (err) ->
 
 module.exports.User = mongoose.model('User')
 module.exports.Chat = mongoose.model('Chat')
+module.exports.School = mongoose.model('School')
+module.exports.SpecialEmail = mongoose.model('SpecialEmail')
 

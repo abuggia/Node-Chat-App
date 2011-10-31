@@ -29,6 +29,31 @@ $ ->
       .error ->
         doError "there was an error saving registration info"
 
+
+  signUpOrSignIn = (user) ->
+    if user.active
+      if not user.handle
+        $$("#registration-info-email").val(user.email)
+        show "#registration-info"
+      else
+        show "#enter-password"
+        $passwordInput.focus()
+
+    else if user.voted
+      $.get "/api/votes/#{user.email}", (data) ->
+        message = "Once a school reaches 100 votes, we'll open the chat.  "
+        if data.count > 1
+          message += "So far, #{data.count} others also want to open a chat for your school."
+            
+        $("#already-voted .replace-others-for-domain").text message 
+        render_invites_template data.count
+          
+      .complete ->
+        show "#already-voted"
+    else
+      show "#new-campus"
+
+
   sendEmail = (e) ->
     email = $emailInput.val();
     
@@ -39,33 +64,12 @@ $ ->
       return $("#login-fields").showError "Invalid email address"
 
     $.get "/api/user/#{email}", (user) ->
-      if user.active
-
-        if not user.handle
-          $$("#registration-info-email").val(email)
-          show "#registration-info"
-        else
-          show "#enter-password"
-          $passwordInput.focus()
-
-      else if user.voted
-        $.get "/api/votes/#{email}", (data) ->
-          message = "Once a school reaches 100 votes, we'll open the chat.  "
-          if data.count > 1
-            message += "So far, #{data.count} others also want to open a chat for your school."
-            
-          $("#already-voted .replace-others-for-domain").text message 
-          render_invites_template data.count
-          
-        .complete ->
-          show "#already-voted"
-      else
-        show "#new-campus"
+      signUpOrSignIn(user)
 
     .error (xhr)->
       if xhr.status is 404
-        $.post '/api/users', { user: { email: $emailInput.val() } }, (data) ->
-          show "#new-campus"
+        $.post '/api/users', { user: { email: $emailInput.val() } }, (user) ->
+          signUpOrSignIn(user)
         .error (xhr) ->
           switch xhr.status
             when 420 then show "#new-campus"

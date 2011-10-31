@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var $emailInput, $loginButton, $passwordInput, chat, doError, emailPattern, invites_template, m, main, render_invites_template, s, saveRegistration, sendEmail, show;
+    var $emailInput, $loginButton, $passwordInput, chat, doError, emailPattern, invites_template, m, main, render_invites_template, s, saveRegistration, sendEmail, show, signUpOrSignIn;
     show = ShowMe("#loading");
     $emailInput = $("#login-email");
     $loginButton = $("#login-button");
@@ -46,6 +46,31 @@
         });
       }
     };
+    signUpOrSignIn = function(user) {
+      if (user.active) {
+        if (!user.handle) {
+          $$("#registration-info-email").val(user.email);
+          return show("#registration-info");
+        } else {
+          show("#enter-password");
+          return $passwordInput.focus();
+        }
+      } else if (user.voted) {
+        return $.get("/api/votes/" + user.email, function(data) {
+          var message;
+          message = "Once a school reaches 100 votes, we'll open the chat.  ";
+          if (data.count > 1) {
+            message += "So far, " + data.count + " others also want to open a chat for your school.";
+          }
+          $("#already-voted .replace-others-for-domain").text(message);
+          return render_invites_template(data.count);
+        }).complete(function() {
+          return show("#already-voted");
+        });
+      } else {
+        return show("#new-campus");
+      }
+    };
     sendEmail = function(e) {
       var email;
       email = $emailInput.val();
@@ -56,37 +81,15 @@
         return $("#login-fields").showError("Invalid email address");
       }
       return $.get("/api/user/" + email, function(user) {
-        if (user.active) {
-          if (!user.handle) {
-            $$("#registration-info-email").val(email);
-            return show("#registration-info");
-          } else {
-            show("#enter-password");
-            return $passwordInput.focus();
-          }
-        } else if (user.voted) {
-          return $.get("/api/votes/" + email, function(data) {
-            var message;
-            message = "Once a school reaches 100 votes, we'll open the chat.  ";
-            if (data.count > 1) {
-              message += "So far, " + data.count + " others also want to open a chat for your school.";
-            }
-            $("#already-voted .replace-others-for-domain").text(message);
-            return render_invites_template(data.count);
-          }).complete(function() {
-            return show("#already-voted");
-          });
-        } else {
-          return show("#new-campus");
-        }
+        return signUpOrSignIn(user);
       }).error(function(xhr) {
         if (xhr.status === 404) {
           return $.post('/api/users', {
             user: {
               email: $emailInput.val()
             }
-          }, function(data) {
-            return show("#new-campus");
+          }, function(user) {
+            return signUpOrSignIn(user);
           }).error(function(xhr) {
             switch (xhr.status) {
               case 420:

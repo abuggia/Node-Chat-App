@@ -35,22 +35,30 @@ class UserView
 
     user.save (err) ->
       if err
-        console.log "Error is #{err}"
-        console.log err.stack
-        return err
-      else if user.isEmailExistsError(err)
+        if errors.defined err
+          res.send err.code
+ 
+        else if user.isEmailExistsError(err)
           res.send new errors.Conflict().code
+        else
+          console.log "User save for #{user.email} and error is #{JSON.stringify(err)}"
+          res.send 500
+          res.json user.safe_json()
+
       else
-          email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
-          res.send new errors.NotReady
+        email.send process.env.MONITORING_EMAIL, "User signed up", "User email: #{user.email}"
+        if !user.school
+          res.send (new errors.NotReady()).code
+        else
+          res.json user.safe_json()
 
   update: (req, res) ->
     user = req.user
     user.handle = req.body.user.handle
     user.setPassword req.body.user.password
-    user.state = 'active'
+
     user.save (err) ->
-       res.send(err ? 500 : 200)
+      res.send(err ? 500 : 200)
 
   vote: (req, res) ->
     user = req.user
