@@ -86,6 +86,21 @@ a.join span.plus {
   padding: 4px 4px;
 }
 
+#rooms-list .label-item {
+  font-size:9px;
+}
+
+#rooms-list li .user-count {
+  display:inline-block;
+  float:right;
+  margin:2px;
+  margin-right:7px;
+  border-radius:5px;
+  padding:2px 7px 2px 7px;
+  background:blue;
+  color:#fff;
+}
+
 .prepend {
   display:inline-block;
   margin-left:5px;

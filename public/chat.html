@@ -89,10 +89,14 @@
  </script>
 
  <script id="rooms-list-items" type="text/html">
-<% for (var i=0, room = list[i]; i < list.length; room = list[++i]) { %>
-  <li><a href="#"><span class="roomName"><%= room.name %></span> (<%= room.numUsers %>)</a></li>
-<% } %>
   <li class="input"><span class="prepend">#</span><input placeholder="Create New Room or Join it!" style="width:160px"></li>
+  <% if (list.length > 0) { %>
+    <li class="label-item">Top <%= list.length %> Rooms</li>
+    <% for (var i=0, room = list[i]; i < list.length; room = list[++i]) { %>
+      <li><a href="#"><span class="roomName"><%= room.name %></span> <span class="user-count"><%= room.numUsers %></span></a></li>
+    <% } %>
+    </optgroup>
+  <% } %> 
  </script>
 
 

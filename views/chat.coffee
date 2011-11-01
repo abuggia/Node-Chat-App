@@ -1,4 +1,5 @@
 nowjs = require("now")
+_ = require("underscore")
 Chat = require('../models/models.coffee').Chat
 NUM_CHATS = 25
 
@@ -57,7 +58,7 @@ class ChatView
           data.push { name: room, numUsers: count }
           loadRoomCounts(rooms, data, callback)
       else
-        callback(data)
+        callback _.sortBy(data, (d) -> -1 * d.numUsers)
 
     Chat.distinct 'room', {org: req.params.org}, (err, rooms) ->
       return next(err) if err
