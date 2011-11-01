@@ -7,7 +7,7 @@ class ChatView
     that = this
     @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
 
-    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub handle, email, that.processMessage(org, room, email, handle, msg)
+    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
     @everyone.now.joinRoom = (room) -> nowjs.getGroup(room).addUser(this.user.clientId)
     @everyone.now.leaveRoom = (room) -> nowjs.getGroup(room).removeUser(this.user.clientId)
 

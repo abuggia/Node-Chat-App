@@ -150,7 +150,8 @@ window.initChat = (org, user) ->
   # ----------
   now.name = user.handle
   now.email = user.email
-  now.sub = (name, email, text) -> addChat(name, email, text, formattedTime())
+  now.sub = (room, name, email, text) -> addChat(name, email, text, formattedTime()) if room == rooms.current
+
   now.ready -> $bus.trigger "room-changed"
 
   $$('#users').dclick '.user', ->

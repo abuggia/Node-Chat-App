@@ -229,8 +229,10 @@
     });
     now.name = user.handle;
     now.email = user.email;
-    now.sub = function(name, email, text) {
-      return addChat(name, email, text, formattedTime());
+    now.sub = function(room, name, email, text) {
+      if (room === rooms.current) {
+        return addChat(name, email, text, formattedTime());
+      }
     };
     now.ready(function() {
       return $bus.trigger("room-changed");
