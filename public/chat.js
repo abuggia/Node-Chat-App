@@ -214,7 +214,7 @@
     $$('#rooms-list').delegate('input', 'keydown', function(e) {
       var code;
       code = keyCode(e);
-      if (code === 32) {
+      if (!codeIsLetter(code) && !codeIsNumber(code) && code !== 8) {
         return e.preventDefault();
       }
     });
@@ -225,7 +225,7 @@
         e.preventDefault();
         $roomsList.hide();
         $$('#tabs .join').hide();
-        return goToRoom($(this).val());
+        return goToRoom('#' + $(this).val());
       }
     });
     now.name = user.handle;

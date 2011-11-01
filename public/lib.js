@@ -62,6 +62,14 @@ var keyCode = function(e) {
   return (e.keyCode ? e.keyCode : e.which);
 };
 
+var codeIsLetter = function(code) {
+  return code >= 65 && code <= 90;
+};
+
+var codeIsNumber = function(code) {
+  return code >= 48 && code <= 57;
+};
+
 (function() {
 
   $.fn.enter = function(fn) {

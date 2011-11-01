@@ -135,7 +135,7 @@ window.initChat = (org, user) ->
 
   $$('#rooms-list').delegate 'input', 'keydown', (e) ->
     code = keyCode(e)
-    if code is 32
+    if !codeIsLetter(code) and !codeIsNumber(code) and code != 8
       e.preventDefault();
  
   $$('#rooms-list').delegate 'input', 'keyup', (e) ->
@@ -144,7 +144,7 @@ window.initChat = (org, user) ->
       e.preventDefault();
       $roomsList.hide()
       $$('#tabs .join').hide()
-      goToRoom $(this).val()
+      goToRoom '#' + $(this).val()
 
 
   # Set up now
