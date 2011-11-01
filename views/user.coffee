@@ -75,6 +75,16 @@ class UserView
       else
         res.json { school: req.user.school, count: count }
 
+  checkSchool: (req, res) ->
+    School.findOne { domain: req.user.domain(), available: true }, (err, doc) -> 
+      if doc
+        user.activateForSchool doc
+        user.save (err) ->
+          res.send 500 if err
+          res.json user.safe_json
+      else
+        res.send 404
+      
   login: (req, res) ->
     User.authenticate req.body.email, req.body.password, (err, user) ->
       if err

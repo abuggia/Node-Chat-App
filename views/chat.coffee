@@ -14,7 +14,7 @@ class ChatView
     withLoadedUsers = (clientIds, acc, callback) ->
       if clientIds.length > 0
         nowjs.getClient clientIds.pop(), -> 
-          acc.push { name: this.now.name, email: this.now.email }
+          acc.push { name: this.now.name, email: this.now.email, handle: this.now.name}
           withLoadedUsers clientIds, acc, callback
       else
         callback(acc)

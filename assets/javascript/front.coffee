@@ -39,6 +39,9 @@ $ ->
         show "#enter-password"
         $passwordInput.focus()
 
+    else 
+      $.get "/api/user/#{user.email}/checkschool", ()
+
     else if user.voted
       $.get "/api/votes/#{user.email}", (data) ->
         message = "Once a school reaches 100 votes, we'll open the chat.  "

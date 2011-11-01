@@ -64,6 +64,9 @@ User.statics.authenticate = (email, password, fn) ->
 User.methods.isEmailExistsError = (err) ->
   err and /E11000/.test(err.message) and /email/.test(err.message)
 
+User.methods.domain = (err) ->
+  (this.email.split '@')[1]
+
 User.methods.canAccessRoom = (room) ->
   room is this.start_room
 
@@ -84,7 +87,6 @@ User.pre 'save', (next) ->
   user = this
 
   if user.isNew
-    [name, domain] = this.email.split '@'
 
     SpecialEmail.findOne { email: user.email }, (err, special) ->
       if !err && special
@@ -94,10 +96,8 @@ User.pre 'save', (next) ->
           next()
 
       else if eduPattern.test(user.email)
-        School.findOne { domain: domain, available: true }, (err, doc) ->
-          if doc
-            user.activateForSchool doc
-            
+        School.findOne { domain: user.domain(), available: true }, (err, doc) ->
+          user.activateForSchool doc if doc
           next()
 
       else
