@@ -224,7 +224,6 @@
       if (code === 13) {
         e.preventDefault();
         $roomsList.hide();
-        $$('#tabs .join').hide();
         return goToRoom('#' + $(this).val());
       }
     });

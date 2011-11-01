@@ -143,7 +143,6 @@ window.initChat = (org, user) ->
     if code is 13
       e.preventDefault();
       $roomsList.hide()
-      $$('#tabs .join').hide()
       goToRoom '#' + $(this).val()
 
 
