@@ -31,7 +31,7 @@ class ChatView
       tags.push match
       "<a href=\"#\" class=\"hashtag\">#{match}</a>".toLowerCase()
     )
-    ret = ret.replace(/http\:\/\/[^\s"']+/gi, "<a href=\"$&\" class=\"hash\">$&</a>")
+    ret = ret.replace(/http[s]?\:\/\/[^\s"']+/gi, "<a href=\"$&\" target=\"_blank\" class=\"hash\">$&</a>")
 
     new Chat({ user: email, handle: handle, text: ret, tags: tags, room: room, org: org, type: 'School' }).save (err) -> console.error "Error saving chat: #{err}\n#{err.stack}" if err
     ret
