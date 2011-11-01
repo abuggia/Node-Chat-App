@@ -39,8 +39,8 @@ $ ->
         show "#enter-password"
         $passwordInput.focus()
 
-    else 
-      $.get "/api/user/#{user.email}/checkschool", ()
+    #else 
+    #  $.get "/api/user/#{user.email}/checkschool", ()
 
     else if user.voted
       $.get "/api/votes/#{user.email}", (data) ->
