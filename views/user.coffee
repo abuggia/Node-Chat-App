@@ -92,6 +92,10 @@ class UserView
       else
         req.session.user = user
         res.json user.safe_json()
+
+  logout: (req, res) ->
+    req.session.destroy()
+    res.send 200
     
 
 module.exports = new UserView

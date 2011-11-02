@@ -145,6 +145,10 @@ window.initChat = (org, user) ->
       $roomsList.hide()
       goToRoom '#' + $(this).val()
 
+  $('a#logout').click (e) ->
+    e.preventDefault()
+    api.logout()
+
 
   # Set up now
   # ----------

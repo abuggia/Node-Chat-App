@@ -42,7 +42,7 @@ class ChatView
     user = req.session.user
 
     if not user or room is not user.start_room
-      res.send 403
+      res.redirect '/'
     else
       req.session.current_room = room
       res.render "../public/chat.html", { room: room, user: { handle: user.handle, email: user.email }, layout: false } 

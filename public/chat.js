@@ -227,6 +227,10 @@
         return goToRoom('#' + $(this).val());
       }
     });
+    $('a#logout').click(function(e) {
+      e.preventDefault();
+      return api.logout();
+    });
     now.name = user.handle;
     now.email = user.email;
     now.sub = function(room, name, email, text) {

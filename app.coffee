@@ -40,6 +40,7 @@ app.post '/api/user/:email/checkschool', UserView.checkSchool
 app.post '/api/vote/:email', UserView.vote
 app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login
+app.delete '/api/session', UserView.logout
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms

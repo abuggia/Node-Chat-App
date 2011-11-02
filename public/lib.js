@@ -134,6 +134,14 @@ var api = function() {
     },
     rooms: function(org, fn) {
       $.get("/api/org/" + org + "/rooms", function(data) { fn(data); });
+    },
+    logout: function() {
+      $.ajax({
+        type: 'DELETE',
+        url: "/api/session",
+        success: function() { window.location.href = '/' }
+      });
     }
+ 
   }
 }();
