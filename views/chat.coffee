@@ -35,17 +35,25 @@ class ChatView
 
     new Chat({ user: email, handle: handle, text: ret, tags: tags, room: room, org: org, type: 'School' }).save (err) -> console.error "Error saving chat: #{err}\n#{err.stack}" if err
     ret
- 
 
   loadRoom: (req, res) ->
     room = req.params[0]
     user = req.session.user
+    currentRoom = req.session.currentRoom || room
+    rooms = req.session.rooms || [currentRoom]
 
     if not user or room is not user.start_room
       res.redirect '/'
     else
       req.session.current_room = room
-      res.render "../public/chat.html", { room: room, user: { handle: user.handle, email: user.email }, layout: false } 
+
+      console.log " here and rooms is #{rooms}"
+
+      # TODO: fucking stupid. Figure out why jptl is displaying crap json
+      roomsJson = ["'#{room}'" for room in rooms].join(',')
+      console.log " here and rooms is #{rooms} and roomsJson is #{roomsJson}"
+
+      res.render "../public/chat.html", { org: user.school, room: currentRoom, rooms: roomsJson, user: { handle: user.handle, email: user.email }, layout: false } 
 
   getChats: (req, res) ->
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
@@ -63,8 +71,6 @@ class ChatView
     Chat.distinct 'room', {org: req.params.org}, (err, rooms) ->
       return next(err) if err
       loadRoomCounts rooms, [], (data) -> res.json data
-
-
 
 
 module.exports = (app) -> new ChatView(app)

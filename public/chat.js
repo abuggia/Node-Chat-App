@@ -1,12 +1,11 @@
 (function() {
-  var Rooms, resizeChat;
+  var Rooms;
   Rooms = (function() {
-    function Rooms(first) {
+    function Rooms() {
       this.ids = {};
-      this.ids[first] = 1;
       this._ids = _(this.ids).chain();
-      this.current = first;
-      this.last = 1;
+      this.current = void 0;
+      this.last = 0;
     }
     Rooms.prototype.has = function(name) {
       return this.ids[name] != null;
@@ -54,30 +53,12 @@
     };
     return Rooms;
   })();
-  resizeChat = function() {
-    var button, footer, header, height, margin;
-    height = $("body").height();
-    header = 33;
-    footer = 40;
-    margin = 16;
-    $("#chat").height(height - header - footer - margin);
-    $("#chat").scrollTop(1000000);
-    button = 100;
-    return $("#enter input").width($("#enter").width() - button);
-  };
-  window.initChat = function(org, user) {
-    var $bus, $chat, $input, $roomDialogue, $roomTab, $roomsList, $tabs, $users, addChat, addChats, addRoom, closeRoom, goToRoom, pub, roomListOpen, room_input, rooms;
-    $input = $('#enter input');
-    $users = $('#users');
+  window.initChat = function(org, user, roomsList, currentRoom) {
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, closeRoom, footerHeight, goToRoom, headerHeight, margin, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
-    $bus = $(document);
-    rooms = new Rooms(org);
-    resizeChat();
-    $(window).resize(function() {
-      return resizeChat();
-    });
+    rooms = new Rooms();
     $roomDialogue = function() {
       return $$("#chat " + (rooms.currentSelector()));
     };
@@ -113,7 +94,8 @@
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
-      return $render('dialogue-window', data).hide().appendTo($$("#chat"));
+      $render('dialogue-window', data).hide().appendTo($$("#chat"));
+      return api.addRoomToSession(room);
     };
     goToRoom = function(room) {
       $roomDialogue().hide();
@@ -124,7 +106,16 @@
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      return $bus.trigger("room-changed");
+      now.joinRoom(rooms.current);
+      $roomDialogue().empty();
+      api.chats(org, rooms.current, function(chats) {
+        return addChats(chats);
+      });
+      return now.withUsersInRoom(rooms.current, function(users) {
+        return $$("#users").html(render("user-list-items", {
+          list: users
+        }));
+      });
     };
     closeRoom = function(room) {
       if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {
@@ -136,35 +127,37 @@
       return now.leaveRoom(room);
     };
     pub = function() {
-      now.pub(org, rooms.current, user.email, user.handle, $input.val());
-      return $input.val("");
+      now.pub(org, rooms.current, user.email, user.handle, $$("#enter input").val());
+      return $$("#enter input").val('');
     };
-    $bus.bind('room-changed', function() {
-      now.joinRoom(rooms.current);
-      $roomDialogue().empty();
-      api.chats(org, rooms.current, function(chats) {
-        return addChats(chats);
-      });
-      return now.withUsersInRoom(rooms.current, function(users) {
-        return $$("#users").html(render("user-list-items", {
-          list: users
-        }));
-      });
+    _ref = [33, 40, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
+    resizeChat = function() {
+      $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
+      return $$("#enter input").width($$("#enter").width() - 100);
+    };
+    $$('#enter input').enter(pub);
+    $('#enter button').clickWithoutDefault(pub);
+    $chat.dclick('a.hashtag', function($this) {
+      return goToRoom($this.text());
     });
-    $input.enter(pub);
-    $('#enter button').click(pub);
-    $chat.dclick('a.hashtag', function() {
-      return goToRoom($(this).text());
+    $chat.dclick('.name a', function($this) {
+      return goToRoom($this.text());
     });
-    $chat.dclick('.name a', function() {
-      return goToRoom($(this).text());
+    $tabs.dclick('li a.close', function($this) {
+      return closeRoom($this.closest('li').find(".room").text());
     });
-    $tabs.dclick('li a.close', function() {
-      return closeRoom($(this).closest('li').find(".room").text());
+    $tabs.dclick('li a.room', function($this) {
+      return goToRoom($this.text());
     });
-    $tabs.dclick('li a.room', function() {
-      return goToRoom($(this).text());
+    $('a#logout').clickWithoutDefault(function() {
+      return api.logout();
     });
+    $$('#users').dclick('.user', function($this) {
+      if ($this.text() !== user.handle) {
+        return goToRoom($this.text());
+      }
+    });
+    $(window).resize(resizeChat);
     $tabs.find(".new").hover(function() {
       return $(this).animate({
         width: "180px"
@@ -175,12 +168,11 @@
       });
     });
     roomListOpen = false;
-    room_input = $$('#tabs .rooms-list input');
     $$('#tabs .new a').hover(function() {
-      return room_input.slideOut(110);
+      return $$('#tabs .rooms-list input').slideOut(110);
     }, function() {
       if (!roomListOpen) {
-        return room_input.animate({
+        return $$('#tabs .rooms-list input').animate({
           width: 0
         }, {
           queue: false,
@@ -188,11 +180,9 @@
         });
       }
     });
-    $$('#tabs .new a').click(function(e) {
-      var $this;
+    $$('#tabs .new a').clickWithoutDefault(function($this) {
       roomListOpen = true;
-      $this = $(this);
-      api.rooms(org, function(list) {
+      return api.rooms(org, function(list) {
         $$('#rooms-list').html(render('rooms-list-items', {
           list: _.reject(list, function(room) {
             return rooms.has(room.name);
@@ -201,15 +191,14 @@
         $$('#rooms-list').show();
         return $$('#rooms-list input').focus();
       });
-      return e.preventDefault();
     });
     $$('#tabs .new').bind("mouseleave", function() {
       $roomsList.hide();
       return roomListOpen = false;
     });
-    $$('#rooms-list').dclick('li a', function() {
+    $$('#rooms-list').dclick('li a', function($this) {
       $roomsList.hide();
-      return goToRoom($(this).find('.roomName').text());
+      return goToRoom($this.find('.roomName').text());
     });
     $$('#rooms-list').delegate('input', 'keydown', function(e) {
       var code;
@@ -227,10 +216,6 @@
         return goToRoom('#' + $(this).val());
       }
     });
-    $('a#logout').click(function(e) {
-      e.preventDefault();
-      return api.logout();
-    });
     now.name = user.handle;
     now.email = user.email;
     now.sub = function(room, name, email, text) {
@@ -239,15 +224,14 @@
       }
     };
     now.ready(function() {
-      return $bus.trigger("room-changed");
-    });
-    $$('#users').dclick('.user', function() {
-      var handle;
-      handle = $(this).text();
-      if (handle !== user.handle) {
-        return goToRoom(handle);
+      var r, _i, _len;
+      for (_i = 0, _len = roomsList.length; _i < _len; _i++) {
+        r = roomsList[_i];
+        addRoom(r);
       }
+      goToRoom(currentRoom);
+      return resizeChat();
     });
-    return $input.focus();
+    return $$("#enter input").focus();
   };
 }).call(this);

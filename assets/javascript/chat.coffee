@@ -1,10 +1,9 @@
 class Rooms
-  constructor: (first)->
+  constructor: ->
     @ids = {}
-    @ids[first] = 1
     @_ids = _(@ids).chain()
-    @current = first
-    @last = 1
+    @current = undefined
+    @last = 0
 
   has: (name) -> @ids[name]? # use _.include 
   add: (name) -> @ids[name] = ++@last
@@ -25,30 +24,12 @@ class Rooms
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
 
-resizeChat = ->
-  height = $("body").height()
-  header = 33 #px
-  footer = 40 #px
-  margin = 16 #px
-  $("#chat").height(height-header-footer-margin)
-  $("#chat").scrollTop(1000000)
-  button = 100 #px
-  $("#enter input").width($("#enter").width()-button)
-
-
-window.initChat = (org, user) ->
-  $input = $ '#enter input'
-  $users = $ '#users'
+window.initChat = (org, user, roomsList, currentRoom) ->
   $chat = $ '#chat'
   $tabs = $ '#tabs'
   $roomsList = $ '#rooms-list'
-  $bus = $ document
-  rooms = new Rooms org
-  resizeChat()
-  $(window).resize( ->
-    resizeChat()
-  )
-  
+  rooms = new Rooms()
+ 
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
@@ -66,6 +47,7 @@ window.initChat = (org, user) ->
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
+    api.addRoomToSession room
 
   goToRoom = (room) ->
     $roomDialogue().hide() 
@@ -74,8 +56,12 @@ window.initChat = (org, user) ->
     rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    $bus.trigger "room-changed"
-    
+    now.joinRoom(rooms.current)
+    $roomDialogue().empty()
+    api.chats org, rooms.current, (chats) -> addChats(chats)
+    now.withUsersInRoom rooms.current, (users) ->
+      $$("#users").html render("user-list-items", { list: users })
+
   closeRoom = (room) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
     $$("#tabs #{rooms.selector room}").remove()
@@ -84,54 +70,54 @@ window.initChat = (org, user) ->
     now.leaveRoom room
 
   pub = ->
-    now.pub org, rooms.current, user.email, user.handle, $input.val()
-    $input.val ""
+    now.pub org, rooms.current, user.email, user.handle, $$("#enter input").val()
+    $$("#enter input").val ''
 
-  $bus.bind 'room-changed', -> 
-    now.joinRoom(rooms.current)
-    $roomDialogue().empty()
-    api.chats org, rooms.current, (chats) -> addChats(chats)
-    now.withUsersInRoom rooms.current, (users) ->
-      $$("#users").html render("user-list-items", { list: users })
+  [headerHeight, footerHeight, margin] = [33, 40, 16] #px
+  resizeChat = ->
+    $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000)
+    $$("#enter input").width($$("#enter").width() - 100)
 
   # Set handlers
   # ------------
-  $input.enter pub
-  $('#enter button').click pub
-  $chat.dclick 'a.hashtag', -> goToRoom $(this).text()
-  $chat.dclick '.name a', -> goToRoom $(this).text()
-  $tabs.dclick 'li a.close', -> closeRoom $(this).closest('li').find(".room").text()
-  $tabs.dclick 'li a.room', -> goToRoom $(this).text()
+  $$('#enter input').enter pub
+  $('#enter button').clickWithoutDefault pub
+  $chat.dclick 'a.hashtag', ($this) -> goToRoom $this.text()
+  $chat.dclick '.name a', ($this) -> goToRoom $this.text()
+  $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room").text()
+  $tabs.dclick 'li a.room', ($this) -> goToRoom $this.text()
+  $('a#logout').clickWithoutDefault -> api.logout()
+  $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
+  $(window).resize resizeChat
+
+  # Joining a new room
+  # ------------------
   $tabs.find(".new").hover -> 
     $(this).animate(width: "180px")
   , ->
     $(this).animate(width: "47px")
-    
-  # Joining a new room
+ 
   roomListOpen = false
-  room_input = $$('#tabs .rooms-list input')
   $$('#tabs .new a').hover ->
-    room_input.slideOut(110)
+    $$('#tabs .rooms-list input').slideOut(110)
   , -> 
     if not roomListOpen 
-      room_input.animate({width: 0}, {queue:false, duration:450 }) 
+      $$('#tabs .rooms-list input').animate({width: 0}, {queue:false, duration:450 }) 
 
-  $$('#tabs .new a').click (e) ->
+  $$('#tabs .new a').clickWithoutDefault ($this) ->
     roomListOpen = true
-    $this = $(this)
     api.rooms org, (list) ->
       $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room.name) }))
       $$('#rooms-list').show()
       $$('#rooms-list input').focus()
-    e.preventDefault()
 
   $$('#tabs .new').bind "mouseleave", ->
     $roomsList.hide()
     roomListOpen = false
 
-  $$('#rooms-list').dclick 'li a', ->
+  $$('#rooms-list').dclick 'li a', ($this) ->
     $roomsList.hide()
-    goToRoom $(this).find('.roomName').text()
+    goToRoom $this.find('.roomName').text()
 
   $$('#rooms-list').delegate 'input', 'keydown', (e) ->
     code = keyCode(e)
@@ -145,22 +131,15 @@ window.initChat = (org, user) ->
       $roomsList.hide()
       goToRoom '#' + $(this).val()
 
-  $('a#logout').click (e) ->
-    e.preventDefault()
-    api.logout()
-
-
   # Set up now
   # ----------
   now.name = user.handle
   now.email = user.email
-  now.sub = (room, name, email, text) -> addChat(name, email, text, formattedTime()) if room == rooms.current
-
-  now.ready -> $bus.trigger "room-changed"
-
-  $$('#users').dclick '.user', ->
-    handle = $(this).text()
-    goToRoom handle if handle != user.handle
-  
-  $input.focus()
+  now.sub = (room, name, email, text) -> addChat(name, email, text, formattedTime()) if room is rooms.current
+  now.ready -> 
+    addRoom(r) for r in roomsList
+    goToRoom currentRoom
+    resizeChat()
+ 
+  $$("#enter input").focus()
 

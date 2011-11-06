@@ -23,7 +23,6 @@
  <div id="content">
    
     <ul id="tabs">
-      <li class="active room-1"><a href="#" class="room">${ room }</a></li>
       <li class="new">
         <a href="#" class='join'>
           <span class="plus">+</span><span class="slide-out">Create or Join Room</span>
@@ -34,9 +33,7 @@
     </ul>
     
    <div id="chat">
-     <div class="scroller">
-       <div class="dialogue room-1"></div>
-     </div>
+     <div class="scroller"></div>
    </div>
    <div id="side-panel">
       <div class="scroller">
@@ -109,11 +106,15 @@
   <script src="lib.js"></script>
   <script defer src="chat.js"></script>
 
+  <pre>
+{{ html(rooms) }}
+  </pre>
+
   <script>
 var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  initChat('${ room }', { handle: "${ user.handle }", email: "${ user.email }" });
+  initChat('${ org }', { handle: "${ user.handle }", email: "${ user.email }" }, [{{html(rooms)}}], '${ room }');
 });
   </script>
 

@@ -5,11 +5,17 @@ ChatView = require('./views/chat.coffee')(app)
 errors = require('./errors.coffee')
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
+Db = require('mongodb').Db
+Server = require('mongodb').Server
+server_config = new Server('localhost', 27017, {auto_reconnect: true, native_parser: true})
+db = new Db('test', server_config, {})
+mongoStore = require('connect-mongodb');
+
 app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
+  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
   app.use app.router
   app.use express.static(__dirname + "/public")
   app.set("view engine", "html");
@@ -41,8 +47,11 @@ app.post '/api/vote/:email', UserView.vote
 app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login
 app.delete '/api/session', UserView.logout
+app.post '/api/session/room', UserView.addRoomToSession
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms
 
 module.exports = app
+
+

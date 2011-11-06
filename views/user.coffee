@@ -96,6 +96,17 @@ class UserView
   logout: (req, res) ->
     req.session.destroy()
     res.send 200
+
+  addRoomToSession: (req, res) ->
+    room = req.body.room
+    rooms = req.session.rooms || []
+    rooms.push room
+    req.session.rooms = rooms
+
+    console.log " so now rooms are #{JSON.stringify(req.session.rooms)}"
+    console.log " inspect #{req.session.inspect}"
+
+    res.send 200
     
 
 module.exports = new UserView

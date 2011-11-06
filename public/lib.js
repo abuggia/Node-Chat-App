@@ -86,9 +86,16 @@ var codeIsNumber = function(code) {
   $.fn.dclick = function (selector, fn) {
     this.delegate(selector, 'click', function(e) {
       e.preventDefault();
-      fn.call(this);
+      fn.call(this, $(this));
     });
   };
+
+  $.fn.clickWithoutDefault = function (fn) {
+    this.click(function(e) {
+      e.preventDefault();
+      fn($(this));
+    });
+  }
 
   $.fn.moveDownLeftOf = function(down, left, of) {
     pos = $(of).offset();
@@ -125,7 +132,6 @@ var render = (function() {
 var $render = function(id, data) { return $(render(id, data)) };
 
 var api = function() {
-
   var eu = window.encodeURIComponent
 
   return {
@@ -134,6 +140,9 @@ var api = function() {
     },
     rooms: function(org, fn) {
       $.get("/api/org/" + org + "/rooms", function(data) { fn(data); });
+    },
+    addRoomToSession: function(room) {
+      $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );
     },
     logout: function() {
       $.ajax({
