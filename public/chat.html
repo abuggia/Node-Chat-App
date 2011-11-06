@@ -106,15 +106,11 @@
   <script src="lib.js"></script>
   <script defer src="chat.js"></script>
 
-  <pre>
-{{ html(rooms) }}
-  </pre>
-
   <script>
 var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
-  initChat('${ org }', { handle: "${ user.handle }", email: "${ user.email }" }, [{{html(rooms)}}], '${ room }');
+  initChat('{{html org}}', {{html JSON.stringify(user)}}, {{html JSON.stringify(rooms)}}, '{{html room}}');
 });
   </script>
 

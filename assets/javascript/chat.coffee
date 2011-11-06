@@ -41,13 +41,14 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     chats.reverse()
     addChat(c.handle, c.user, c.text, formatTime c.created_at) for c in chats
 
-  addRoom = (room) ->
+  addRoom = (room, loadingFromSession = false) ->
     rooms.add room
     data = {room: room, domClass: rooms.domClass(room)}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
-    api.addRoomToSession room
+    if not loadingFromSession 
+      api.addRoomToSession room
 
   goToRoom = (room) ->
     $roomDialogue().hide() 
@@ -136,10 +137,13 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   now.name = user.handle
   now.email = user.email
   now.sub = (room, name, email, text) -> addChat(name, email, text, formattedTime()) if room is rooms.current
+  init = false
   now.ready -> 
-    addRoom(r) for r in roomsList
-    goToRoom currentRoom
-    resizeChat()
+    if not init
+      addRoom(r, true) for r in roomsList
+      goToRoom currentRoom
+      resizeChat()
+      init = true
  
   $$("#enter input").focus()
 

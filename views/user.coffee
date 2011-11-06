@@ -99,12 +99,8 @@ class UserView
 
   addRoomToSession: (req, res) ->
     room = req.body.room
-    rooms = req.session.rooms || []
-    rooms.push room
-    req.session.rooms = rooms
-
-    console.log " so now rooms are #{JSON.stringify(req.session.rooms)}"
-    console.log " inspect #{req.session.inspect}"
+    req.session.rooms or= []
+    req.session.rooms.push room
 
     res.send 200
     

@@ -54,7 +54,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, closeRoom, footerHeight, goToRoom, headerHeight, margin, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -85,8 +85,11 @@
       }
       return _results;
     };
-    addRoom = function(room) {
+    addRoom = function(room, loadingFromSession) {
       var $tab, data;
+      if (loadingFromSession == null) {
+        loadingFromSession = false;
+      }
       rooms.add(room);
       data = {
         room: room,
@@ -95,7 +98,9 @@
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
       $render('dialogue-window', data).hide().appendTo($$("#chat"));
-      return api.addRoomToSession(room);
+      if (!loadingFromSession) {
+        return api.addRoomToSession(room);
+      }
     };
     goToRoom = function(room) {
       $roomDialogue().hide();
@@ -223,14 +228,18 @@
         return addChat(name, email, text, formattedTime());
       }
     };
+    init = false;
     now.ready(function() {
       var r, _i, _len;
-      for (_i = 0, _len = roomsList.length; _i < _len; _i++) {
-        r = roomsList[_i];
-        addRoom(r);
+      if (!init) {
+        for (_i = 0, _len = roomsList.length; _i < _len; _i++) {
+          r = roomsList[_i];
+          addRoom(r, true);
+        }
+        goToRoom(currentRoom);
+        resizeChat();
+        return init = true;
       }
-      goToRoom(currentRoom);
-      return resizeChat();
     });
     return $$("#enter input").focus();
   };

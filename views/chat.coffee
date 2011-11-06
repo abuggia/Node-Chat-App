@@ -37,23 +37,16 @@ class ChatView
     ret
 
   loadRoom: (req, res) ->
-    room = req.params[0]
     user = req.session.user
-    currentRoom = req.session.currentRoom || room
-    rooms = req.session.rooms || [currentRoom]
+    room = req.params[0]
 
-    if not user or room is not user.start_room
+    if room is not user?.start_room
       res.redirect '/'
     else
-      req.session.current_room = room
+      req.session.rooms or= [room]
+      req.session.currentRoom or= room
 
-      console.log " here and rooms is #{rooms}"
-
-      # TODO: fucking stupid. Figure out why jptl is displaying crap json
-      roomsJson = ["'#{room}'" for room in rooms].join(',')
-      console.log " here and rooms is #{rooms} and roomsJson is #{roomsJson}"
-
-      res.render "../public/chat.html", { org: user.school, room: currentRoom, rooms: roomsJson, user: { handle: user.handle, email: user.email }, layout: false } 
+      res.render "../public/chat.html", { org: user.school, room: req.session.currentRoom, rooms: req.session.rooms, user: {handle: user.handle, email: user.email}, layout: false } 
 
   getChats: (req, res) ->
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
