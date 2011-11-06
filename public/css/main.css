@@ -243,8 +243,52 @@ body {
   margin-top:6px;
 }
 
+#top-right {
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:50;
+  width:120px;
+}
 
+#top-right a.avatar {
+  display:block;
+  padding:5px;
+  color:#444;
+  font-weight:bold;
+  background:#bbb;
+  border:1px solid #999;
+  margin:4px;
+  margin-right:8px;
+  float:right;
+}
 
+#top-right ul.options {
+  position:absolute;
+  top:32px;
+  right:8px;
+}
+
+#top-right ul.options li {
+  list-style-type:none;
+  width:100px;
+  background:#fff;
+  border:1px solid #ccc;
+  padding:0;
+}
+
+#top-right ul.options li a {
+  display:block;
+  width:100%;
+  height:100%;
+  padding:5px;
+  color:#444;
+  font-weight:bold;
+}
+
+#top-right ul.options li a:hover {
+  background:#eee;
+}
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.

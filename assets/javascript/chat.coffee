@@ -91,6 +91,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $('a#logout').clickWithoutDefault -> api.logout()
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
+  $$('#top-right a.avatar').clickWithoutDefault ($this) ->
+    $$('#top-right .options').show()
 
   # Joining a new room
   # ------------------
