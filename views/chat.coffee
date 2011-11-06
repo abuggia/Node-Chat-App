@@ -27,7 +27,12 @@ class ChatView
 
   processMessage: (org, room, email, handle, msg) ->
     tags = []
-    ret = msg.replace(/#\w+/gi, (match) ->
+    ret = msg.replace(/&/g, '&amp;')
+             .replace(/</g, '&lt;')
+             .replace(/>/g, '&gt;')
+             .replace(/'/g, '&#39;')
+             .replace(/"/g, '&quot;')
+    ret = ret.replace(/#\w+/gi, (match) ->
       tags.push match
       "<a href=\"#\" class=\"hashtag\">#{match}</a>".toLowerCase()
     )
