@@ -48,6 +48,7 @@ app.get '/api/votes/:email', UserView.voteCount
 app.post '/api/session', UserView.login
 app.delete '/api/session', UserView.logout
 app.post '/api/session/room', UserView.addRoomToSession
+app.delete '/api/session/room', UserView.removeRoomFromSession
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms

@@ -129,7 +129,8 @@
       $$("#tabs " + (rooms.selector(room))).remove();
       $$("#chat " + (rooms.selector(room))).remove();
       rooms.remove(room);
-      return now.leaveRoom(room);
+      now.leaveRoom(room);
+      return api.removeRoomFromSession(room);
     };
     pub = function() {
       now.pub(org, rooms.current, user.email, user.handle, $$("#enter input").val());

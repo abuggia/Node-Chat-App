@@ -1,3 +1,4 @@
+_ = require("underscore")
 models = require('../models/models.coffee')
 email = require('../models/email.coffee')
 errors = require('./../errors.coffee')
@@ -103,7 +104,11 @@ class UserView
     req.session.rooms.push room
 
     res.send 200
-    
+
+  removeRoomFromSession: (req, res) ->
+    req.session.rooms = _.without((req.session.rooms || []), req.body.room)
+    res.send 200
+
 
 module.exports = new UserView
 

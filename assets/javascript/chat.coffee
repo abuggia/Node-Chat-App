@@ -69,6 +69,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $$("#chat #{rooms.selector room}").remove()
     rooms.remove room
     now.leaveRoom room
+    api.removeRoomFromSession room
 
   pub = ->
     now.pub org, rooms.current, user.email, user.handle, $$("#enter input").val()

@@ -144,6 +144,14 @@ var api = function() {
     addRoomToSession: function(room) {
       $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );
     },
+    removeRoomFromSession: function(room) {
+      $.ajax({
+        type: 'DELETE',
+        data: {room: room},
+        url: "/api/session/room",
+        error: function() { console.log("Can't save room to session: \n" + e) }
+      });
+    },
     logout: function() {
       $.ajax({
         type: 'DELETE',
