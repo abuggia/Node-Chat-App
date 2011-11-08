@@ -165,7 +165,7 @@
     });
     $(window).resize(resizeChat);
     $$('#top-right a.avatar').clickWithoutDefault(function($this) {
-      return $$('#top-right .options').show();
+      return $$('#top-right .options').toggle();
     });
     $tabs.find(".new").hover(function() {
       return $(this).animate({
