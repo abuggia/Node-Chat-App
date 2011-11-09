@@ -46,6 +46,9 @@ User = new mongoose.Schema {
   start_room: String
 }
 
+User.statics.loadRecordFromSession = (user, fn) ->
+  this.findOne { email: user.email }, (err, user) -> fn(err, user)
+
 User.methods.setPassword = (password) ->
   this.salt = randomString(8);
   this.password = hashed(password, this.salt)
@@ -64,14 +67,16 @@ User.statics.authenticate = (email, password, fn) ->
 User.methods.isEmailExistsError = (err) ->
   err and /E11000/.test(err.message) and /email/.test(err.message)
 
-User.methods.domain = (err) ->
+User.methods.domain = ->
   (this.email.split '@')[1]
+
+User.methods.schoolOrBest = ->
+  this.school or this.domain()
 
 User.methods.canAccessRoom = (room) ->
   room is this.start_room
 
 User.methods.activateForSchool = (school) ->
-  console.log " activating for school: #{school.name}"
   this.school = school.short
   this.start_room = school.room
   this.state = 'active'
@@ -96,8 +101,14 @@ User.pre 'save', (next) ->
           next()
 
       else if eduPattern.test(user.email)
-        School.findOne { domain: user.domain(), available: true }, (err, doc) ->
-          user.activateForSchool doc if doc
+        School.findOne { domain: user.domain() }, (err, school) ->
+          if school
+            if school.available
+              user.activateForSchool school
+            else
+              user.school = school.short
+              user.start_room = school.room
+
           next()
 
       else

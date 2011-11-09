@@ -45,11 +45,15 @@ class ChatView
     user = req.session.user
     room = req.params[0]
 
-    if room is not user?.start_room
+    console.log " room is #{room} and startroom is #{user?.start_room} and is it not? #{room is not user?.start_room}"
+    if room isnt user?.start_room
       res.redirect '/'
     else
+      console.log " sending rooms #{JSON.stringify(req.session.rooms)}"
+
       req.session.rooms or= [room]
       req.session.currentRoom or= room
+
 
       res.render "../public/chat.html", { org: user.school, room: req.session.currentRoom, rooms: req.session.rooms, user: {handle: user.handle, email: user.email}, layout: false } 
 

@@ -74,7 +74,11 @@ class UserView
       if err?
         res 500
       else
-        res.json { school: req.user.school, count: count }
+        User.loadRecordFromSession req.user, (err, user) ->
+          if user
+            res.json { school: user.schoolOrBest(), count: count }
+          else
+            res.json { school: 'your school', count: 0 }
 
   checkSchool: (req, res) ->
     School.findOne { domain: req.user.domain(), available: true }, (err, doc) -> 
@@ -100,8 +104,9 @@ class UserView
 
   addRoomToSession: (req, res) ->
     room = req.body.room
-    req.session.rooms or= []
-    req.session.rooms.push room
+    req.session.rooms = _.union((req.session.rooms || []), [room]) 
+
+    log "room is #{room} and rooms is now #{JSON.stringify(req.session.rooms)}"
 
     res.send 200
 
