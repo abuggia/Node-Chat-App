@@ -93,6 +93,8 @@ class UserView
   login: (req, res) ->
     User.authenticate req.body.email, req.body.password, (err, user) ->
       if err
+        console.log "err is #{err}"
+        console.log err.stack
         res.send 401
       else
         req.session.user = user

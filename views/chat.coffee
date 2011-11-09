@@ -45,7 +45,6 @@ class ChatView
     user = req.session.user
     room = req.params[0]
 
-    console.log " room is #{room} and startroom is #{user?.start_room} and is it not? #{room is not user?.start_room}"
     if room isnt user?.start_room
       res.redirect '/'
     else

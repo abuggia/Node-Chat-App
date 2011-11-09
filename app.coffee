@@ -7,15 +7,24 @@ subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
 Db = require('mongodb').Db
 Server = require('mongodb').Server
-server_config = new Server('localhost', 27017, {auto_reconnect: true, native_parser: true})
-db = new Db('test', server_config, {})
+
+###
+server_config = new Server(process.env.MONGO_SERVER, process.env.MONGO_PORT, {auto_reconnect: true, native_parser: true})
+db = new Db('db', server_config, {})
+if process.env.MONGO_USER
+  console.log "Authenticating ..."
+  db.authenticate process.env.MONGO_USER, process.env.MONGO_PASSWORD, ->
+    console.log "Authenticated"
+###
+
 mongoStore = require('connect-mongodb');
 
 app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
+  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
+  #app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
   app.use app.router
   app.use express.static(__dirname + "/public")
   app.set("view engine", "html");
@@ -54,5 +63,4 @@ app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms
 
 module.exports = app
-
 
