@@ -5,20 +5,19 @@ ChatView = require('./views/chat.coffee')(app)
 errors = require('./errors.coffee')
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
-###
-
 Db = require('mongodb').Db
 Server = require('mongodb').Server
 
+###
 server_config = new Server(process.env.MONGO_SERVER, process.env.MONGO_PORT, {auto_reconnect: true, native_parser: true})
 db = new Db('db', server_config, {})
 if process.env.MONGO_USER
   console.log "Authenticating ..."
   db.authenticate process.env.MONGO_USER, process.env.MONGO_PASSWORD, ->
     console.log "Authenticated"
-###
 
 mongoStore = require('connect-mongodb');
+###
 
 app.configure ->
   app.use express.methodOverride()

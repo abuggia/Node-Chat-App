@@ -6,11 +6,23 @@ NUM_CHATS = 25
 class ChatView
   constructor: (app) ->
     that = this
+    leaveRoom = (user, room) -> nowjs.getGroup(room).removeUser(user.clientId)
+    leaveRooms = (user) -> 
+      if user
+        user.getGroups (groups) -> group.removeUser(user) for group in groups
+
     @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
 
     @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
-    @everyone.now.joinRoom = (room) -> nowjs.getGroup(room).addUser(this.user.clientId)
-    @everyone.now.leaveRoom = (room) -> nowjs.getGroup(room).removeUser(this.user.clientId)
+    @everyone.now.leaveRoom = (room) -> leaveRoom this.user, room
+    @everyone.now.joinRoom = (room) ->
+      group = nowjs.getGroup(room)
+      user = this.user
+      group.hasClient user.clientId, (seriously) -> group.addUser(user.clientId) unless seriously
+
+    nowjs.on 'disconnect', -> 
+      nowjs.getClient this.user.clientId, (user) ->
+        leaveRooms(user) if user
 
     withLoadedUsers = (clientIds, acc, callback) ->
       if clientIds.length > 0
