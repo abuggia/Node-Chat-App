@@ -89,6 +89,12 @@ class UserView
           res.json user.safe_json
       else
         res.send 404
+
+  welcome: (req, res) ->
+    if req.session?.user?.start_room
+      res.redirect "/#{req.session.user.start_room}"
+    else
+      res.render "../public/index.html"
       
   login: (req, res) ->
     User.authenticate req.body.email, req.body.password, (err, user) ->

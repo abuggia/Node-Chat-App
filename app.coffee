@@ -28,6 +28,7 @@ app.configure ->
   app.use app.router
   app.use express.static(__dirname + "/public")
   app.set("view engine", "html");
+  app.set("view options", { layout: false });
   app.register(".html", require("jqtpl").express);
 
 app.error (err, req, res, next) -> 
@@ -61,6 +62,7 @@ app.delete '/api/session/room', UserView.removeRoomFromSession
 app.get /^\/([A-Z]\w+$)/, ChatView.loadRoom
 app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms
+app.get '/', UserView.welcome
 
 module.exports = app
 
