@@ -65,13 +65,17 @@
 
  <!-- templates -->
  <script id="single-chat" type="text/html">
+<% if (yours) { %>
+<div class="yours chat-item">
+<% } else { %>
 <div class="chat-item">
+<% } %>
   <table>
     <tr>
       <th class="name"><%= name %></th>
       <td class="main">
+        <span class="time"><%= time %></span>
         <p class="text"><%= text %></p>
-        <p class="time"><%= time %></p>
       </td>
     </tr>
   </table>

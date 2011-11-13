@@ -297,18 +297,18 @@ body {
 }
 
 .chat-item table th, .chat-item table td {
-  border:1px solid #C2D2E8;
-  border-top:0;
+  color:#2F5687;
+  border-top:1px solid #C2D2E8;
   color:#2F5687;
   font-family: 'Droid Sans', sans-serif; 
 }
 
 .chat-item th.name {
+  background:#E4ECF6;
   vertical-align:top;
   padding:4px 4px 8px 0;
   width:115px;
   text-align:right;
-  background:#E4ECF6;
   overflow:hidden;
 }
 
@@ -319,16 +319,35 @@ body {
 }
 
 .chat-item td.main p.text {
-  float:left;
-  margin:0;
-  white-space:normal !important;
+  margin:1px;
+  line-height:19px;
 }
 
-.chat-item td.main p.time {
-  float:right;
+.chat-item td.main .time {
   color:#92ADD0;
+  float:right;
+  font-size:12px;
+  margin:3px;
 }
 
+.yours.chat-item table th, .yours.chat-item table td {
+  color:#999;
+  border-top:1px solid #ccc;
+}
+
+.yours.chat-item table td.main {
+  background:#fff;
+}
+ 
+.yours.chat-item table th.name {
+  background:#eee;
+}
+ 
+.yours.chat-item td.main .time {
+  color:#ccc;
+}
+
+ 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
    These override the primary ('mobile first') styles
