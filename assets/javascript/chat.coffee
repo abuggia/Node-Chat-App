@@ -4,6 +4,8 @@ class Rooms
     @_ids = _(@ids).chain()
     @current = undefined
     @last = 0
+    @lastChatAuthor = {}
+    @lastChatCell = {}
 
   has: (name) -> @ids[name]? # use _.include 
   add: (name) -> @ids[name] = ++@last
@@ -23,6 +25,12 @@ class Rooms
     num = @ids[room]
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
+  setAuthor: (room, author) -> @lastChatAuthor[room] = author
+  isSameAuthor: (room, author) -> 
+    console.log " room is #{room} and author is #{author} and last authof is #{@lastChatAuthor[room]}"
+    @lastChatAuthor[room] is author
+  setCell: (room, $cell) -> @lastChatCell[room] = $cell
+  $lastCell: (room) -> @lastChatCell[room]
 
 window.initChat = (org, user, roomsList, currentRoom) ->
   $chat = $ '#chat'
@@ -34,7 +42,14 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
   addChat = (name, email, text, time) -> 
-    $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)}).appendTo $roomDialogue()
+    if not rooms.isSameAuthor(rooms.current, email) or not rooms.$lastCell(rooms.current)
+      $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
+      $c.appendTo $roomDialogue()
+      rooms.setAuthor rooms.current, email
+      rooms.setCell rooms.current, $c.find('td.main')
+    else
+      rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>')
+
     $chat.scrollTop(1000000)
 
   addChats = (chats) -> 

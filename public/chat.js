@@ -6,6 +6,8 @@
       this._ids = _(this.ids).chain();
       this.current = void 0;
       this.last = 0;
+      this.lastChatAuthor = {};
+      this.lastChatCell = {};
     }
     Rooms.prototype.has = function(name) {
       return this.ids[name] != null;
@@ -51,6 +53,19 @@
       newNum = this.maxPrev(num) || this.minNext(num);
       return this.roomFromNum(newNum);
     };
+    Rooms.prototype.setAuthor = function(room, author) {
+      return this.lastChatAuthor[room] = author;
+    };
+    Rooms.prototype.isSameAuthor = function(room, author) {
+      console.log(" room is " + room + " and author is " + author + " and last authof is " + this.lastChatAuthor[room]);
+      return this.lastChatAuthor[room] === author;
+    };
+    Rooms.prototype.setCell = function(room, $cell) {
+      return this.lastChatCell[room] = $cell;
+    };
+    Rooms.prototype.$lastCell = function(room) {
+      return this.lastChatCell[room];
+    };
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
@@ -66,13 +81,21 @@
       return $$("#tabs " + (rooms.currentSelector()));
     };
     addChat = function(name, email, text, time) {
-      $render('single-chat', {
-        name: name,
-        text: text,
-        time: time,
-        email: email,
-        yours: email === user.email
-      }).appendTo($roomDialogue());
+      var $c;
+      if (!rooms.isSameAuthor(rooms.current, email) || !rooms.$lastCell(rooms.current)) {
+        $c = $render('single-chat', {
+          name: name,
+          text: text,
+          time: time,
+          email: email,
+          yours: email === user.email
+        });
+        $c.appendTo($roomDialogue());
+        rooms.setAuthor(rooms.current, email);
+        rooms.setCell(rooms.current, $c.find('td.main'));
+      } else {
+        rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>');
+      }
       return $chat.scrollTop(1000000);
     };
     addChats = function(chats) {
