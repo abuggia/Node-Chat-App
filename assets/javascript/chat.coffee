@@ -27,7 +27,6 @@ class Rooms
     this.roomFromNum(newNum)
   setAuthor: (room, author) -> @lastChatAuthor[room] = author
   isSameAuthor: (room, author) -> 
-    console.log " room is #{room} and author is #{author} and last authof is #{@lastChatAuthor[room]}"
     @lastChatAuthor[room] is author
   setCell: (room, $cell) -> @lastChatCell[room] = $cell
   $lastCell: (room) -> @lastChatCell[room]
@@ -61,7 +60,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     data = {room: room, domClass: rooms.domClass(room)}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
-    $render('dialogue-window', data).hide().appendTo $$("#chat")
+    $render('dialogue-window', data).hide().appendTo $$("#chat .scroller")
     if not loadingFromSession 
       api.addRoomToSession room
 

@@ -1,6 +1,10 @@
 
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
 
+body {
+  font-family: 'Droid Sans', sans-serif; 
+}
+
 #nav {
   background-image:url('/imgs/header_bg.png');
   background-repeat:repeat-x;
@@ -16,7 +20,6 @@ ul#tabs {
 
 ul#tabs li {
   display:inline;
-  font-family: 'Droid Sans', sans-serif; 
   font-size: 16px;
   border-right:1px solid #ccc;
   float:left;
@@ -236,7 +239,6 @@ body {
   border-radius:4px;
   padding:3px;
   font-size:16px;
-  font-family: 'Droid Sans', sans-serif; 
   outline:none;
 }
 
@@ -313,7 +315,6 @@ body {
   color:#2F5687;
   border-top:1px solid #C2D2E8;
   color:#2F5687;
-  font-family: 'Droid Sans', sans-serif; 
 }
 
 .chat-item th.name {

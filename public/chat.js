@@ -57,7 +57,6 @@
       return this.lastChatAuthor[room] = author;
     };
     Rooms.prototype.isSameAuthor = function(room, author) {
-      console.log(" room is " + room + " and author is " + author + " and last authof is " + this.lastChatAuthor[room]);
       return this.lastChatAuthor[room] === author;
     };
     Rooms.prototype.setCell = function(room, $cell) {
@@ -120,7 +119,7 @@
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
-      $render('dialogue-window', data).hide().appendTo($$("#chat"));
+      $render('dialogue-window', data).hide().appendTo($$("#chat .scroller"));
       if (!loadingFromSession) {
         return api.addRoomToSession(room);
       }
