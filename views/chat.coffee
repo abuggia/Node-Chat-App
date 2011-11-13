@@ -42,8 +42,6 @@ class ChatView
     ret = msg.replace(/&/g, '&amp;')
              .replace(/</g, '&lt;')
              .replace(/>/g, '&gt;')
-             .replace(/'/g, '&#39;')
-             .replace(/"/g, '&quot;')
     ret = ret.replace(/#\w+/gi, (match) ->
       tags.push match
       "<a href=\"#\" class=\"hashtag\">#{match}</a>".toLowerCase()

@@ -14,14 +14,14 @@
   <link rel="stylesheet" href="/css/boilerplate.css">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/clearfix_and_print.css">
-  
+
   <script src="/js_vendor/modernizr-2.0.6.min.js"></script>
 </head>
 
 <body>
 
  <div id="content">
-   
+   <div id="nav">
     <ul id="tabs">
       <li class="new">
         <a href="#" class='join'>
@@ -33,12 +33,15 @@
     </ul>
     <div id="top-right">
       <a href="#" class="avatar">
-       <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="15.2868" style="top: 2.3566px;"><desc>Created with Raphaël</desc><defs/><path fill="#555555" stroke="#000000" d="M19.714799999999997,13.597999999999999C19.291599999999995,11.4142,13.467599999999997,11.6464,12.063999999999997,9.936C11.767999999999997,9.575,11.767999999999997,9.575,11.966399999999997,8.2346C12.305199999999996,6.7342,12.612199999999996,7.6654,13.096599999999997,4.6728000000000005C13.503399999999997,2.1596,12.635399999999997,0,9.999999999999996,0S6.496599999999996,2.1596,6.903399999999996,4.6728000000000005C7.387799999999996,7.6654,7.694599999999996,6.734200000000001,8.033599999999996,8.2346C8.231999999999996,9.575000000000001,8.231999999999996,9.575000000000001,7.935999999999996,9.936C6.532399999999996,11.6464,0.7083999999999966,11.414200000000001,0.2851999999999961,13.597999999999999C0.23499999999999613,13.856399999999999,-3.885780586188048e-15,15.2868,-3.885780586188048e-15,15.2868H19.999999999999996C19.999999999999996,15.2868,19.764999999999997,13.856399999999999,19.714799999999997,13.597999999999999Z" style="stroke-width: 0;" stroke-width="0" transform=""/></svg>
+        <img src="/imgs/user_icon.png">
       </a>
-      <ul class="options" style="display:block">
+      <ul class="options" style="display:none">
         <li><a href="#" id="logout">Logout</a></li>
       </ul>
     </div>
+  </div>
+
+ <div id="body">
     
    <div id="chat">
      <div class="scroller"></div>
@@ -48,6 +51,7 @@
         <ul id="users"></ul>
       </div>
    </div>
+   <div style="clear:both"></div>
  </div>
 
  <div id="enter">
@@ -55,21 +59,24 @@
    <button type="button">Send</button>
  </div>
 
+</div>
+
  <div id="test" style="position:absolute;top:-9000;left:-9000;display:none;overflow:visible"></div>
 
  <!-- templates -->
  <script id="single-chat" type="text/html">
-<div>
- <span class="time"><%= time %></span>
- <span class="name">
-   <% if (linkName) { %>
-     <a href="#"><%= name %></a>
-   <% } else { %>
-     <%= name %>
-   <% } %>
- </span>
- <span class="text"><%= text %></span>
+<div class="chat-item">
+  <table>
+    <tr>
+      <th class="name"><%= name %></th>
+      <td class="main">
+        <p class="text"><%= text %></p>
+        <p class="time"><%= time %></p>
+      </td>
+    </tr>
+  </table>
 </div>
+
  </script>
 
  <script id="room-tab" type="text/html">
@@ -104,7 +111,6 @@
   <% } %> 
  </script>
 
-
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
@@ -114,7 +120,7 @@
   <script defer src="chat.js"></script>
 
   <script>
-var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
+//var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
   initChat('{{html org}}', {{html JSON.stringify(user)}}, {{html JSON.stringify(rooms)}}, '{{html room}}');
