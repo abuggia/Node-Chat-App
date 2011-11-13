@@ -87,17 +87,17 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     api.removeRoomFromSession room
 
   pub = ->
-    now.pub org, rooms.current, user.email, user.handle, $$("#enter input").val()
-    $$("#enter input").val ''
+    now.pub org, rooms.current, user.email, user.handle, $$("#enter textarea").val()
+    $$("#enter textarea").val ''
 
   [headerHeight, footerHeight, margin] = [33, 40, 16] #px
   resizeChat = ->
     $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000)
-    $$("#enter input").width($$("#enter").width() - 100)
+    $$("#enter textarea").width($$("#enter").width() - 100)
 
   # Set handlers
   # ------------
-  $$('#enter input').enter pub
+  $$('#enter textarea').enter pub
   $('#enter button').clickWithoutDefault pub
   $chat.dclick 'a.hashtag', ($this) -> goToRoom $this.text()
   $chat.dclick '.name a', ($this) -> goToRoom $this.text()
@@ -162,5 +162,5 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       resizeChat()
       init = true
  
-  $$("#enter input").focus()
+  $$("#enter textarea").focus()
 

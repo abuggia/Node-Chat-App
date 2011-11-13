@@ -156,15 +156,15 @@
       return api.removeRoomFromSession(room);
     };
     pub = function() {
-      now.pub(org, rooms.current, user.email, user.handle, $$("#enter input").val());
-      return $$("#enter input").val('');
+      now.pub(org, rooms.current, user.email, user.handle, $$("#enter textarea").val());
+      return $$("#enter textarea").val('');
     };
     _ref = [33, 40, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
       $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
-      return $$("#enter input").width($$("#enter").width() - 100);
+      return $$("#enter textarea").width($$("#enter").width() - 100);
     };
-    $$('#enter input').enter(pub);
+    $$('#enter textarea').enter(pub);
     $('#enter button').clickWithoutDefault(pub);
     $chat.dclick('a.hashtag', function($this) {
       return goToRoom($this.text());
@@ -268,6 +268,6 @@
         return init = true;
       }
     });
-    return $$("#enter input").focus();
+    return $$("#enter textarea").focus();
   };
 }).call(this);
