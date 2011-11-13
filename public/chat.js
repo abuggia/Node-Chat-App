@@ -68,7 +68,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -158,6 +158,9 @@
       now.pub(org, rooms.current, user.email, user.handle, $$("#enter textarea").val());
       return $$("#enter textarea").val('');
     };
+    changeNameDialogue = function() {
+      return alert('dude');
+    };
     _ref = [33, 40, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
       $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
@@ -179,6 +182,9 @@
     });
     $('a#logout').clickWithoutDefault(function() {
       return api.logout();
+    });
+    $('a#change-name').clickWithoutDefault(function() {
+      return changeNameDialogue();
     });
     $$('#users').dclick('.user', function($this) {
       if ($this.text() !== user.handle) {

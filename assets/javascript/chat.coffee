@@ -89,6 +89,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     now.pub org, rooms.current, user.email, user.handle, $$("#enter textarea").val()
     $$("#enter textarea").val ''
 
+  changeNameDialogue = ->
+    alert 'dude'
+
   [headerHeight, footerHeight, margin] = [33, 40, 16] #px
   resizeChat = ->
     $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000)
@@ -103,6 +106,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room").text()
   $tabs.dclick 'li a.room', ($this) -> goToRoom $this.text()
   $('a#logout').clickWithoutDefault -> api.logout()
+  $('a#change-name').clickWithoutDefault -> changeNameDialogue()
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
