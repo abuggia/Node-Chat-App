@@ -59,13 +59,14 @@ ul#tabs li.active a, ul#tabs li.active {
 }
 
 .slide-out {
-  white-space:nowrap;
+  white-space:nowrap !important;
   font-size: 12px;
+  margin-left:18px;
 }
 
 a.join span.plus {
   display:inline-block;
-  width:30px;
+  width:23px;
 } 
 
 #rooms-list {
