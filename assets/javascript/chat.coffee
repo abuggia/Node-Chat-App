@@ -57,7 +57,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   addRoom = (room, loadingFromSession = false) ->
     rooms.add room
-    data = {room: room, domClass: rooms.domClass(room)}
+    data = {room: room, domClass: rooms.domClass(room), org}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat .scroller")

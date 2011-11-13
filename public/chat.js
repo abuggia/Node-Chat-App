@@ -115,7 +115,8 @@
       rooms.add(room);
       data = {
         room: room,
-        domClass: rooms.domClass(room)
+        domClass: rooms.domClass(room),
+        org: org
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
