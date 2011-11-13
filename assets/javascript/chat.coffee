@@ -90,7 +90,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $$("#enter textarea").val ''
 
   changeNameDialogue = ->
-    alert 'dude'
+    $$('#modal-dialogue').show()
+    $$('#modal-dialogue-message').show()
 
   [headerHeight, footerHeight, margin] = [33, 40, 16] #px
   resizeChat = ->

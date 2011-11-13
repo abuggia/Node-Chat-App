@@ -6,7 +6,6 @@
   src: local('Droid Serif'), local('DroidSerif'), url('http://themes.googleusercontent.com/static/fonts/droidserif/v1/0AKsP294HTD-nvJgucYTaLrIa-7acMAeDBVuclsi6Gc.woff') format('woff');
 }
 
-
 html {
   background: url('/imgs/bentley-university-background.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;

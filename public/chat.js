@@ -160,7 +160,8 @@
       return $$("#enter textarea").val('');
     };
     changeNameDialogue = function() {
-      return alert('dude');
+      $$('#modal-dialogue').show();
+      return $$('#modal-dialogue-message').show();
     };
     _ref = [33, 40, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
