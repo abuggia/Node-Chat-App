@@ -179,7 +179,7 @@
     };
     _ref = [33, 56, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
-      return $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
+      return $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
     };
     $$('#enter textarea').enter(pub);
     $('#enter button').clickWithoutDefault(pub);
