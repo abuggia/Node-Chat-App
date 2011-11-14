@@ -208,9 +208,7 @@ body {
 
 #side-panel .container {
   width:100%;
-  border-left:1px solid #ccc;
 }
-
 
 #enter {
   position:absolute;
@@ -317,7 +315,6 @@ body {
 .chat-item table th, .chat-item table td {
   color:#2F5687;
   border-top:1px solid #C2D2E8;
-  color:#2F5687;
 }
 
 .chat-item th.name {
@@ -348,7 +345,7 @@ body {
 }
 
 .yours.chat-item table th, .yours.chat-item table td {
-  color:#999;
+  color:#666;
   border-top:1px solid #ccc;
 }
 
@@ -384,6 +381,12 @@ body {
   height:100px;
   border:1px solid #999;
   box-shadow: 10px 10px 5px #888;
+}
+
+#side-bar-bottom {
+  position:absolute;
+  bottom:10px;
+  right:5px;
 }
 
 /* ==|== media queries ======================================================

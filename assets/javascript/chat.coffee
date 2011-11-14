@@ -104,11 +104,12 @@ window.initChat = (org, user, roomsList, currentRoom) ->
        $$('#modal-dialogue-message').addError 'New name cannot be blank'
      else
        changeHandle user.email, newName, ->
-         #now.name = newName
+         now.name = newName
 
   [headerHeight, footerHeight, margin] = [33, 56, 16] #px
   resizeChat = ->
-    $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000)
+    $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop 1000000
+    #$$("#side-panel .container").height $$("body").height() - headerHeight - margin
 
   # Set handlers
   # ------------

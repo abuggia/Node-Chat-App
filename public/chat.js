@@ -174,7 +174,9 @@
       if (newName.length < 1) {
         return $$('#modal-dialogue-message').addError('New name cannot be blank');
       } else {
-        return changeHandle(user.email, newName, function() {});
+        return changeHandle(user.email, newName, function() {
+          return now.name = newName;
+        });
       }
     };
     _ref = [33, 56, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
