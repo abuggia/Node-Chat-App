@@ -44,9 +44,7 @@
 
  <div id="body">
     
-   <div id="chat">
-     <div class="scroller"></div>
-   </div>
+   <div id="chat"></div>
    <div id="side-panel">
       <div class="scroller">
         <ul id="users"></ul>
@@ -124,16 +122,26 @@
   <% } %> 
  </script>
 
-  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+ <script id="change-name-form" type="text/html">
+<h3>Change Name</h3>
+<input placeholder="new name" class="new-name">
+<button type="button">Change</button>
+ </script>
+
+  <script src="jquery-1.6.1.min.js"></script>
+
+  <!-- Grab Google CDNs jQuery, with a protocol relative URL; fall back to local if offline
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  <script>window.jQuery || document.write('<script src="jquery-1.2.6.min.js"><\/script>')</script>
+//var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
+  -->
+
   <script src="nowjs/now.js"></script>
   <script src="/js_vendor/underscore-min.js"></script>
   <script src="lib.js"></script>
   <script defer src="chat.js"></script>
 
   <script>
-//var _gaq=[['_setAccount','UA-25594865-1'],['_trackPageview'],['_trackPageLoadTime']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0]; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));
 
 $(function() {
   initChat('{{html org}}', {{html JSON.stringify(user)}}, {{html JSON.stringify(rooms)}}, '{{html room}}');

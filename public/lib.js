@@ -114,6 +114,15 @@ var codeIsNumber = function(code) {
     t.animate({width: 0}, {queue:false, duration:250, complete: function() { t.hide() }});
   };
 
+  $.fn.addError = function(msg) {
+    this.find('.error').html(msg);
+    return this;
+  }
+
+  $.fn.clearError = function(msg) {
+    this.find('.error').html('');
+    return this;
+  };
 
 })();
 
@@ -143,6 +152,11 @@ var api = function() {
     },
     addRoomToSession: function(room) {
       $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );
+    },
+    changeHandle: function(email, handle, fn) {
+      $.post("/api/user/" + email + "/change_handle", {handle: handle})
+        .success(function() { fn })
+        .error(function(e) { console.log("Can't update user name: \n" + e) } );
     },
     removeRoomFromSession: function(room) {
       $.ajax({

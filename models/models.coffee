@@ -49,6 +49,14 @@ User = new mongoose.Schema {
 User.statics.loadRecordFromSession = (user, fn) ->
   this.findOne { email: user.email }, (err, user) -> fn(err, user)
 
+User.statics.update = (email, fields, fn) ->
+  this.loadRecordFromSession email, (err, user) ->
+    if err
+      fn err
+    else
+      user.handle = fields.handle
+      user.save (err, user) -> fn(err, user)
+
 User.methods.setPassword = (password) ->
   this.salt = randomString(8);
   this.password = hashed(password, this.salt)

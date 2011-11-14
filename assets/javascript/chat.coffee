@@ -60,7 +60,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     data = {room: room, domClass: rooms.domClass(room), org}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
-    $render('dialogue-window', data).hide().appendTo $$("#chat .scroller")
+    $render('dialogue-window', data).hide().appendTo $$("#chat")
     if not loadingFromSession 
       api.addRoomToSession room
 
@@ -89,14 +89,27 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     now.pub org, rooms.current, user.email, user.handle, $$("#enter textarea").val()
     $$("#enter textarea").val ''
 
-  changeNameDialogue = ->
+  modalDialogue = (content) ->
+    $$('#modal-dialogue-message').html(content)
     $$('#modal-dialogue').show()
-    $$('#modal-dialogue-message').show()
+    $$('#modal-dialogue-message').clearError().show()
 
-  [headerHeight, footerHeight, margin] = [33, 40, 16] #px
+  changeNameDialogue = ->
+    modalDialogue(render('change-name-form'))
+
+   changeName = ->
+     newName = $$('#modal-dialogue-message').find('.new-name').val()
+     newName = newName.replace /\s/, ''
+     if newName.length < 1
+       $$('#modal-dialogue-message').addError 'New name cannot be blank'
+     else
+       changeHandle user.email, newName, ->
+         #now.name = newName
+
+
+  [headerHeight, footerHeight, margin] = [33, 56, 16] #px
   resizeChat = ->
     $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000)
-    $$("#enter textarea").width($$("#enter").width() - 100)
 
   # Set handlers
   # ------------
@@ -111,6 +124,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
+  $$('#modal-dialogue-message').dclick 'button', changeName
 
   # Joining a new room
   # ------------------

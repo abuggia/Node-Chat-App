@@ -68,7 +68,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, modalDialogue, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -120,7 +120,7 @@
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
-      $render('dialogue-window', data).hide().appendTo($$("#chat .scroller"));
+      $render('dialogue-window', data).hide().appendTo($$("#chat"));
       if (!loadingFromSession) {
         return api.addRoomToSession(room);
       }
@@ -159,14 +159,27 @@
       now.pub(org, rooms.current, user.email, user.handle, $$("#enter textarea").val());
       return $$("#enter textarea").val('');
     };
-    changeNameDialogue = function() {
+    modalDialogue = function(content) {
+      $$('#modal-dialogue-message').html(content);
       $$('#modal-dialogue').show();
-      return $$('#modal-dialogue-message').show();
+      return $$('#modal-dialogue-message').clearError().show();
     };
-    _ref = [33, 40, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
+    changeNameDialogue = function() {
+      return modalDialogue(render('change-name-form'));
+    };
+    changeName = function() {
+      var newName;
+      newName = $$('#modal-dialogue-message').find('.new-name').val();
+      newName = newName.replace(/\s/, '');
+      if (newName.length < 1) {
+        return $$('#modal-dialogue-message').addError('New name cannot be blank');
+      } else {
+        return changeHandle(user.email, newName, function() {});
+      }
+    };
+    _ref = [33, 56, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
-      $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
-      return $$("#enter textarea").width($$("#enter").width() - 100);
+      return $("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
     };
     $$('#enter textarea').enter(pub);
     $('#enter button').clickWithoutDefault(pub);
@@ -197,6 +210,7 @@
     $$('#top-right a.avatar').clickWithoutDefault(function($this) {
       return $$('#top-right .options').toggle();
     });
+    $$('#modal-dialogue-message').dclick('button', changeName);
     $tabs.find(".new").hover(function() {
       return $(this).animate({
         width: "180px"

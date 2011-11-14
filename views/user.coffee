@@ -61,6 +61,9 @@ class UserView
     user.save (err) ->
       res.send(err ? 500 : 200)
 
+  change_handle: (req, res) ->
+    User.update(req.user.email, { handle: req.body.user.handle }, (err) -> res.send(err ? 500 : 200))
+
   vote: (req, res) ->
     user = req.user
     user.vote_open_on_campus = req.body.vote_open_on_campus 
