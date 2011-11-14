@@ -1,5 +1,6 @@
 
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+/*@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700); */
+@import url(/css/fonts.css);
 
 body, button, textarea {
   font-family: 'Droid Sans', sans-serif; 
@@ -18,9 +19,10 @@ ul#tabs {
   border-bottom:7px solid #f3f3f3;
 }
 
-ul#tabs li {
+ul#tabs > li {
   display:inline;
   font-size: 16px;
+  height:33px;
   border-right:1px solid #ccc;
   float:left;
   background-image:url('/imgs/inactive-tab.png');
@@ -64,7 +66,6 @@ ul#tabs li.active a, ul#tabs li.active {
 .slide-out {
   white-space:nowrap !important;
   font-size: 12px;
-  margin-left:18px;
 }
 
 a.join span.plus {
@@ -154,8 +155,6 @@ body {
   height: 100%;
   padding: 0;
   overflow-y: scroll;
-  clear: both;
-  border-right:1px solid #ccc;
 }
 
 #chat .dialogue {
@@ -176,6 +175,7 @@ body {
   background:#eee;
   height:100%;
   width:20%;
+  border:0;
 }
 
 #side-panel ul {
@@ -206,13 +206,18 @@ body {
   color:#999;
 }
 
+#side-panel .container {
+  width:100%;
+  border-left:1px solid #ccc;
+}
+
+
 #enter {
   position:absolute;
   bottom:0;
   padding:0;
   width:80%;
   border-top:1px solid #ccc;
-  border-right:1px solid #ccc;
 }
 
 #enter table {
