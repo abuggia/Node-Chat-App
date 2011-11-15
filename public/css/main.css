@@ -39,12 +39,26 @@ ul#tabs li li {
   display: block;
 }
 
-
 ul#tabs li a {
   font-size:14px;
-  padding: 9px 3px 9px 21px;
+  padding: 9px 4px 9px 24px;
   line-height: 33px;
   color:#eee;
+}
+
+.num-unread, .num-mentions {
+  display:inline-block;
+  width:10px;
+  text-align:right;
+  font-weight:bold;
+}
+
+.num-unread {
+  color:#22C31A;
+}
+
+.num-mentions {
+  color: #DD2A26;
 }
   
 ul#tabs .new {
@@ -428,11 +442,6 @@ ul#users li a:hover {
   padding:5px 10px;
   color:#666;
   margin-top:2px;
-}
-
-.num-unread, .num-mentions {
-  display:inline-block;
-  width:9px;
 }
 
 /* ==|== media queries ======================================================

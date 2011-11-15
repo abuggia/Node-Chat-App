@@ -50,9 +50,17 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
 
     if room isnt rooms.current
-      $$("#tabs #{rooms.selector room} .num-unread").text(1)
+      increment $$("#tabs #{rooms.selector room} .num-unread")
+
+      if (new RegExp('\\b' + user.handle + '\\b')).test(text)
+        increment $$("#tabs #{rooms.selector room} .num-mentions")
 
     $chat.scrollTop(1000000)
+
+  increment = ($e) ->
+    v = $e.text()
+    v = 0 if /\D/.test(v) or not v
+    $e.text(1 + parseInt(v))
 
   addChats = (room, chats) -> 
     chats.reverse()
@@ -78,6 +86,10 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $roomDialogue().show()
     now.withUsersInRoom rooms.current, (users) ->
       $$("#users").html render("user-list-items", { list: users })
+
+    $$("#tabs #{rooms.selector room} .num-unread").text('')
+    $$("#tabs #{rooms.selector room} .num-mentions").text('')
+
 
   closeRoom = (room) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'

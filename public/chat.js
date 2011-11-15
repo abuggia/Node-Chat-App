@@ -68,7 +68,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -98,9 +98,20 @@
         rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
       }
       if (room !== rooms.current) {
-        $$("#tabs " + (rooms.selector(room)) + " .num-unread").text(1);
+        increment($$("#tabs " + (rooms.selector(room)) + " .num-unread"));
+        if ((new RegExp('\\b' + user.handle + '\\b')).test(text)) {
+          increment($$("#tabs " + (rooms.selector(room)) + " .num-mentions"));
+        }
       }
       return $chat.scrollTop(1000000);
+    };
+    increment = function($e) {
+      var v;
+      v = $e.text();
+      if (/\D/.test(v) || !v) {
+        v = 0;
+      }
+      return $e.text(1 + parseInt(v));
     };
     addChats = function(room, chats) {
       var c, _i, _len, _results;
@@ -143,11 +154,13 @@
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      return now.withUsersInRoom(rooms.current, function(users) {
+      now.withUsersInRoom(rooms.current, function(users) {
         return $$("#users").html(render("user-list-items", {
           list: users
         }));
       });
+      $$("#tabs " + (rooms.selector(room)) + " .num-unread").text('');
+      return $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
     };
     closeRoom = function(room) {
       if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {
