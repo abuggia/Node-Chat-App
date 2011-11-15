@@ -139,9 +139,12 @@
       return $e.text(1 + parseInt(v));
     };
     updateUserList = function() {
-      return $$("#users").html(render("user-list-items", {
-        list: rooms.usersInCurrent()
+      var users;
+      users = rooms.usersInCurrent();
+      $$('#users').html(render("user-list-items", {
+        list: users
       }));
+      return $$('#user-count-num').text(users.length);
     };
     addChats = function(room, chats) {
       var c, _i, _len, _results;

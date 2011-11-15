@@ -72,7 +72,10 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     v = 0 if /\D/.test(v) or not v
     $e.text(1 + parseInt(v))
 
-  updateUserList = -> $$("#users").html render "user-list-items", { list: rooms.usersInCurrent() }
+  updateUserList = -> 
+    users = rooms.usersInCurrent()
+    $$('#users').html render "user-list-items", { list: users }
+    $$('#user-count-num').text(users.length)
 
   addChats = (room, chats) -> 
     chats.reverse()
