@@ -1,7 +1,7 @@
 nowjs = require("now")
 _ = require("underscore")
 Chat = require('../models/models.coffee').Chat
-NUM_CHATS = 25
+NUM_CHATS = 100
 
 class ChatView
   constructor: (app) ->
