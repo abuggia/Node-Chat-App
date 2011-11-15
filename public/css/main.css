@@ -94,11 +94,12 @@ a.join span.plus {
 #rooms-list {
   display:none;
   position:absolute;
-  background:#ddd;
+  background:#fff;
   margin-top: -1px;
   margin-left: -1px;
   border-left:1px solid #ccc;
   border-bottom:1px solid #ccc;
+  border-right:1px solid #ccc;
   z-index:5;
 }
 
@@ -107,13 +108,13 @@ a.join span.plus {
   overflow: visible;
 }
 
-#rooms-list li.input {
-  height:38px ! important;
+#rooms-list li a {
+  color:#444 !important;
 }
 
 #rooms-list li input {
+  font-size:16px;
   margin: 7px 7px 7px 0;
-  font-size:12px;
   border-top:1px solid #d4d4d4;
   border-right:1px solid #d4d4d4;
   border-bottom:1px solid #d4d4d4;
@@ -122,18 +123,7 @@ a.join span.plus {
 }
 
 #rooms-list .label-item {
-  font-size:9px;
-}
-
-#rooms-list li .user-count {
-  display:inline-block;
-  float:right;
-  margin:2px;
-  margin-right:7px;
-  border-radius:5px;
-  padding:2px 7px 2px 7px;
-  background:blue;
-  color:#fff;
+  font-size:12px;
 }
 
 .prepend {
@@ -144,13 +134,14 @@ a.join span.plus {
   border-right:0;
   border-bottom:1px solid #d4d4d4;
   border-left:1px solid #d4d4d4;
-  font-size:12px;
-  padding:4px;
+  font-size:15px;
+  font-weight:bold;
+  padding:5px 6px 4px 6px;
   background:#eee;
   color:#444;
 }
 
-#rooms-list li:hover {
+#rooms-list li.room-choice:hover {
   background:#eee;
 }
 
