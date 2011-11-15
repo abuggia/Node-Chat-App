@@ -96,11 +96,13 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   hideModalDialogue = () ->
     $$('#modal-dialogue').hide()
     $$('#modal-dialogue-message').hide()
+    $$('#enter textarea').focus()
 
   changeNameDialogue = ->
     $d = modalDialogue(render('change-name-form'))
     $input = $d.find('input').focus()
     $d.find('button.change').click -> changeName($input)
+    $input.enter -> changeName($input)
 
   changeName = ($input) ->
     newName = $input.val().replace /\s/, ''
@@ -126,11 +128,13 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room").text()
   $tabs.dclick 'li a.room', ($this) -> goToRoom $this.text()
   $('a#logout').clickWithoutDefault -> api.logout()
-  $('a#change-name').clickWithoutDefault -> changeNameDialogue()
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
   $$('#modal-dialogue-message').dclick 'button.cancel', hideModalDialogue
+  $('a#change-name').clickWithoutDefault -> 
+    changeNameDialogue()
+    $$('#top-right .options').toggle()
 
   # Joining a new room
   # ------------------

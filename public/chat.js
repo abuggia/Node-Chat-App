@@ -165,13 +165,17 @@
     };
     hideModalDialogue = function() {
       $$('#modal-dialogue').hide();
-      return $$('#modal-dialogue-message').hide();
+      $$('#modal-dialogue-message').hide();
+      return $$('#enter textarea').focus();
     };
     changeNameDialogue = function() {
       var $d, $input;
       $d = modalDialogue(render('change-name-form'));
       $input = $d.find('input').focus();
-      return $d.find('button.change').click(function() {
+      $d.find('button.change').click(function() {
+        return changeName($input);
+      });
+      return $input.enter(function() {
         return changeName($input);
       });
     };
@@ -209,9 +213,6 @@
     $('a#logout').clickWithoutDefault(function() {
       return api.logout();
     });
-    $('a#change-name').clickWithoutDefault(function() {
-      return changeNameDialogue();
-    });
     $$('#users').dclick('.user', function($this) {
       if ($this.text() !== user.handle) {
         return goToRoom($this.text());
@@ -222,6 +223,10 @@
       return $$('#top-right .options').toggle();
     });
     $$('#modal-dialogue-message').dclick('button.cancel', hideModalDialogue);
+    $('a#change-name').clickWithoutDefault(function() {
+      changeNameDialogue();
+      return $$('#top-right .options').toggle();
+    });
     $tabs.find(".new").hover(function() {
       return $(this).animate({
         width: "180px"
