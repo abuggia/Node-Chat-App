@@ -57,7 +57,7 @@
       return this.lastChatAuthor[room] = author;
     };
     Rooms.prototype.isSameAuthor = function(room, author) {
-      return this.lastChatAuthor[room] === author;
+      return this.lastChatAuthor[room] === this.setAuthor(room, author);
     };
     Rooms.prototype.setCell = function(room, $cell) {
       return this.lastChatCell[room] = $cell;
@@ -81,7 +81,7 @@
     };
     addChat = function(name, email, text, time) {
       var $c;
-      if (!rooms.isSameAuthor(rooms.current, email) || !rooms.$lastCell(rooms.current)) {
+      if (!rooms.isSameAuthor(rooms.current, name) || !rooms.$lastCell(rooms.current)) {
         $c = $render('single-chat', {
           name: name,
           text: text,
@@ -90,7 +90,6 @@
           yours: email === user.email
         });
         $c.appendTo($roomDialogue());
-        rooms.setAuthor(rooms.current, email);
         rooms.setCell(rooms.current, $c.find('td.main'));
       } else {
         rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>');
@@ -130,11 +129,11 @@
       $roomTab().removeClass("active");
       if (!rooms.has(room)) {
         addRoom(room);
+        now.joinRoom(rooms.current);
       }
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      now.joinRoom(rooms.current);
       $roomDialogue().empty();
       api.chats(org, rooms.current, function(chats) {
         return addChats(chats);
@@ -184,7 +183,8 @@
       } else {
         return api.changeHandle(user.email, newName, function() {
           now.name = newName;
-          return hideModalDialogue();
+          hideModalDialogue();
+          return user.handle = newName;
         });
       }
     };
@@ -300,7 +300,6 @@
         return init = true;
       }
     });
-    $$("#enter textarea").focus();
-    return changeNameDialogue();
+    return $$("#enter textarea").focus();
   };
 }).call(this);

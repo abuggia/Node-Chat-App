@@ -26,8 +26,7 @@ class Rooms
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
   setAuthor: (room, author) -> @lastChatAuthor[room] = author
-  isSameAuthor: (room, author) -> 
-    @lastChatAuthor[room] is author
+  isSameAuthor: (room, author) -> @lastChatAuthor[room] is @setAuthor room, author
   setCell: (room, $cell) -> @lastChatCell[room] = $cell
   $lastCell: (room) -> @lastChatCell[room]
 
@@ -41,10 +40,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
   addChat = (name, email, text, time) -> 
-    if not rooms.isSameAuthor(rooms.current, email) or not rooms.$lastCell(rooms.current)
+    if not rooms.isSameAuthor(rooms.current, name) or not rooms.$lastCell(rooms.current)
       $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
       $c.appendTo $roomDialogue()
-      rooms.setAuthor rooms.current, email
       rooms.setCell rooms.current, $c.find('td.main')
     else
       rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>')
@@ -67,11 +65,12 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
-    addRoom(room) if not rooms.has room
+    if not rooms.has room
+      addRoom(room) 
+      now.joinRoom(rooms.current)
     rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    now.joinRoom(rooms.current)
     $roomDialogue().empty()
     api.chats org, rooms.current, (chats) -> addChats(chats)
     now.withUsersInRoom rooms.current, (users) ->
@@ -111,6 +110,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       api.changeHandle user.email, newName, ->
         now.name = newName
         hideModalDialogue()
+        user.handle = newName
 
   [headerHeight, footerHeight, margin] = [33, 56, 22] #px
   resizeChat = ->
@@ -187,6 +187,4 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       init = true
  
   $$("#enter textarea").focus()
-
-  changeNameDialogue()
 
