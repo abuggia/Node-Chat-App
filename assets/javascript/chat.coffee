@@ -39,7 +39,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
-  addChat = (room, name, email, text, time) -> 
+  addChat = (room, name, email, text, time, trackMentions) -> 
     return unless rooms.has room
 
     if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
@@ -49,7 +49,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     else
       rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
 
-    if room isnt rooms.current
+    if trackMentions and room isnt rooms.current
       increment $$("#tabs #{rooms.selector room} .num-unread")
 
       if (new RegExp('\\b' + user.handle + '\\b')).test(text)
@@ -64,7 +64,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   addChats = (room, chats) -> 
     chats.reverse()
-    addChat(room, c.handle, c.user, c.text, formatTime c.created_at) for c in chats
+    addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false) for c in chats
 
   addRoom = (room, loadingFromSession = false) ->
     rooms.add room
@@ -199,7 +199,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   # ----------
   now.name = user.handle
   now.email = user.email
-  now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime())
+  now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime(), true)
   init = false
   now.ready -> 
     if not init

@@ -79,7 +79,7 @@
     $roomTab = function() {
       return $$("#tabs " + (rooms.currentSelector()));
     };
-    addChat = function(room, name, email, text, time) {
+    addChat = function(room, name, email, text, time, trackMentions) {
       var $c;
       if (!rooms.has(room)) {
         return;
@@ -97,7 +97,7 @@
       } else {
         rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
       }
-      if (room !== rooms.current) {
+      if (trackMentions && room !== rooms.current) {
         increment($$("#tabs " + (rooms.selector(room)) + " .num-unread"));
         if ((new RegExp('\\b' + user.handle + '\\b')).test(text)) {
           increment($$("#tabs " + (rooms.selector(room)) + " .num-mentions"));
@@ -119,7 +119,7 @@
       _results = [];
       for (_i = 0, _len = chats.length; _i < _len; _i++) {
         c = chats[_i];
-        _results.push(addChat(room, c.handle, c.user, c.text, formatTime(c.created_at)));
+        _results.push(addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false));
       }
       return _results;
     };
@@ -309,7 +309,7 @@
     now.name = user.handle;
     now.email = user.email;
     now.sub = function(room, name, email, text) {
-      return addChat(room, name, email, text, formattedTime());
+      return addChat(room, name, email, text, formattedTime(), true);
     };
     init = false;
     now.ready(function() {
