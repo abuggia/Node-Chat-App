@@ -6,6 +6,7 @@ class Rooms
     @last = 0
     @lastChatAuthor = {}
     @lastChatCell = {}
+    @users = {}
 
   has: (name) -> @ids[name]? # use _.include 
   add: (name) -> @ids[name] = ++@last
@@ -29,6 +30,11 @@ class Rooms
   isSameAuthor: (room, author) -> @lastChatAuthor[room] is @setAuthor room, author
   setCell: (room, $cell) -> @lastChatCell[room] = $cell
   $lastCell: (room) -> @lastChatCell[room]
+  usersInCurrent: -> @users[@current] or []
+  addUser: (room, user) -> 
+    @users[room] = [] if not @users[room]
+    @users[room].push(user) if not _.include @users[room], user
+  removeUser: (room, user) -> @users[room] = _.without @users[room], user
 
 window.initChat = (org, user, roomsList, currentRoom) ->
   $chat = $ '#chat'
@@ -62,6 +68,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     v = 0 if /\D/.test(v) or not v
     $e.text(1 + parseInt(v))
 
+  updateUserList = -> $$("#users").html render "user-list-items", { list: rooms.usersInCurrent() }
+
   addChats = (room, chats) -> 
     chats.reverse()
     addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false) for c in chats
@@ -72,7 +80,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
-    now.joinRoom rooms.current
+    now.joinRoom room
     api.chats org, room, (chats) -> addChats(room, chats)
     if not loadingFromSession 
       api.addRoomToSession room
@@ -84,12 +92,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    now.withUsersInRoom rooms.current, (users) ->
-      $$("#users").html render("user-list-items", { list: users })
-
     $$("#tabs #{rooms.selector room} .num-unread").text('')
     $$("#tabs #{rooms.selector room} .num-mentions").text('')
-
+    updateUserList()
 
   closeRoom = (room) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
@@ -200,6 +205,14 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   now.name = user.handle
   now.email = user.email
   now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime(), true)
+  now.addUser = (room, user) ->
+    rooms.addUser(room, user)
+    updateUserList() if room is rooms.current
+      
+  now.removeUser = (room, user) ->
+    rooms.removeUser(room, user)
+    updateUserList() if room is rooms.current
+      
   init = false
   now.ready -> 
     if not init

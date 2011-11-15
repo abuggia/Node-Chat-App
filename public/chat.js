@@ -8,6 +8,7 @@
       this.last = 0;
       this.lastChatAuthor = {};
       this.lastChatCell = {};
+      this.users = {};
     }
     Rooms.prototype.has = function(name) {
       return this.ids[name] != null;
@@ -65,10 +66,24 @@
     Rooms.prototype.$lastCell = function(room) {
       return this.lastChatCell[room];
     };
+    Rooms.prototype.usersInCurrent = function() {
+      return this.users[this.current] || [];
+    };
+    Rooms.prototype.addUser = function(room, user) {
+      if (!this.users[room]) {
+        this.users[room] = [];
+      }
+      if (!_.include(this.users[room], user)) {
+        return this.users[room].push(user);
+      }
+    };
+    Rooms.prototype.removeUser = function(room, user) {
+      return this.users[room] = _.without(this.users[room], user);
+    };
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, updateUserList, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -113,6 +128,11 @@
       }
       return $e.text(1 + parseInt(v));
     };
+    updateUserList = function() {
+      return $$("#users").html(render("user-list-items", {
+        list: rooms.usersInCurrent()
+      }));
+    };
     addChats = function(room, chats) {
       var c, _i, _len, _results;
       chats.reverse();
@@ -137,7 +157,7 @@
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
       $render('dialogue-window', data).hide().appendTo($$("#chat"));
-      now.joinRoom(rooms.current);
+      now.joinRoom(room);
       api.chats(org, room, function(chats) {
         return addChats(room, chats);
       });
@@ -154,13 +174,9 @@
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      now.withUsersInRoom(rooms.current, function(users) {
-        return $$("#users").html(render("user-list-items", {
-          list: users
-        }));
-      });
       $$("#tabs " + (rooms.selector(room)) + " .num-unread").text('');
-      return $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
+      $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
+      return updateUserList();
     };
     closeRoom = function(room) {
       if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {
@@ -310,6 +326,18 @@
     now.email = user.email;
     now.sub = function(room, name, email, text) {
       return addChat(room, name, email, text, formattedTime(), true);
+    };
+    now.addUser = function(room, user) {
+      rooms.addUser(room, user);
+      if (room === rooms.current) {
+        return updateUserList();
+      }
+    };
+    now.removeUser = function(room, user) {
+      rooms.removeUser(room, user);
+      if (room === rooms.current) {
+        return updateUserList();
+      }
     };
     init = false;
     now.ready(function() {

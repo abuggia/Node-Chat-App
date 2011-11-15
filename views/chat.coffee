@@ -6,7 +6,11 @@ NUM_CHATS = 25
 class ChatView
   constructor: (app) ->
     that = this
-    leaveRoom = (user, room) -> nowjs.getGroup(room).removeUser(user.clientId)
+    leaveRoom = (user, room) -> 
+      group = nowjs.getGroup(room)
+      group.removeUser user.clientId
+      nowjs.getClient user.clientId, -> group.now.removeUser room, this.now.name
+
     leaveRooms = (user) -> 
       if user
         user.getGroups (groups) -> group.removeUser(user) for group in groups
@@ -15,10 +19,15 @@ class ChatView
 
     @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
     @everyone.now.leaveRoom = (room) -> leaveRoom this.user, room
+
     @everyone.now.joinRoom = (room) ->
+      console.log "gonna join room #{room}"
       group = nowjs.getGroup(room)
       user = this.user
       group.hasClient user.clientId, (seriously) -> group.addUser(user.clientId) unless seriously
+      nowjs.getClient user.clientId, -> 
+        console.log "now gonna add user to room #{room}"
+        group.now.addUser room, this.now.name
 
     nowjs.on 'disconnect', -> 
       nowjs.getClient this.user.clientId, (user) ->
