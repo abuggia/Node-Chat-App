@@ -61,7 +61,7 @@ class UserView
     user.save (err) ->
       res.send(err ? 500 : 200)
 
-  change_handle: (req, res) ->
+  changeHandle: (req, res) ->
     User.update req.user.email, { handle: req.body.handle }, (err) -> 
       res.send(err ? 500 : 200)
 

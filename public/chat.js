@@ -83,9 +83,29 @@
       }
     };
     Rooms.prototype.removeUser = function(room, user) {
-      return this.users[room] = _.filter(this.users[room], function(u) {
+      return this.users[room] = _.reject(this.users[room], function(u) {
         return u.email === user.email;
       });
+    };
+    Rooms.prototype.removeUserFromAll = function(user) {
+      var room, _i, _len, _ref, _results;
+      _ref = _.keys(this.users);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        room = _ref[_i];
+        _results.push(this.removeUser(room, user));
+      }
+      return _results;
+    };
+    Rooms.prototype.addUserToAll = function(user) {
+      var room, _i, _len, _ref, _results;
+      _ref = _.keys(this.users);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        room = _ref[_i];
+        _results.push(this.addUser(room, user));
+      }
+      return _results;
     };
     Rooms.prototype.setUsers = function(room, users) {
       return this.users[room] = users;
@@ -140,7 +160,9 @@
     };
     updateUserList = function() {
       var users;
-      users = rooms.usersInCurrent();
+      users = _.sortBy(rooms.usersInCurrent(), function(u) {
+        return u.handle;
+      });
       $$('#users').html(render("user-list-items", {
         list: users
       }));
@@ -240,7 +262,10 @@
         return api.changeHandle(user.email, newName, function() {
           now.name = newName;
           hideModalDialogue();
-          return user.handle = newName;
+          user.handle = newName;
+          rooms.removeUserFromAll(user);
+          rooms.addUserToAll(user);
+          return updateUserList();
         });
       }
     };

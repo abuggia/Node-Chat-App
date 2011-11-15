@@ -37,7 +37,12 @@ class Rooms
   addUser: (room, user) -> 
     @users[room] = [] unless @users[room]
     @users[room].push(user) unless _.find(@users[room], (u) -> u.email is user.email)
-  removeUser: (room, user) -> @users[room] = _.filter(@users[room], (u) -> u.email is user.email)
+  removeUser: (room, user) -> 
+    @users[room] = _.reject(@users[room], (u) -> u.email is user.email)
+  
+  removeUserFromAll: (user) -> @removeUser(room, user) for room in _.keys(@users)
+  addUserToAll: (user) -> @addUser(room, user) for room in _.keys(@users)
+
   setUsers: (room, users) -> @users[room] = users
 
 window.initChat = (org, user, roomsList, currentRoom) ->
@@ -73,7 +78,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $e.text(1 + parseInt(v))
 
   updateUserList = -> 
-    users = rooms.usersInCurrent()
+    users = _.sortBy(rooms.usersInCurrent(), (u) -> u.handle)
     $$('#users').html render "user-list-items", { list: users }
     $$('#user-count-num').text(users.length)
 
@@ -141,6 +146,10 @@ window.initChat = (org, user, roomsList, currentRoom) ->
         now.name = newName
         hideModalDialogue()
         user.handle = newName
+        #brute force
+        rooms.removeUserFromAll(user)
+        rooms.addUserToAll(user)
+        updateUserList()
 
   preventSpaces = (e) ->
     code = keyCode(e)

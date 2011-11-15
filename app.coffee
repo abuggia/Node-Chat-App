@@ -53,7 +53,7 @@ app.get '/api/user/:email', UserView.get
 app.get '/api/users/activate/:activation_code', UserView.activate
 app.post '/api/users', UserView.save
 app.post '/api/users/:email', UserView.update
-app.post '/api/handle/:email/change_handle', UserView.change_handle
+app.post '/api/handle/:email/change_handle', UserView.changeHandle
 app.post '/api/user/:email/checkschool', UserView.checkSchool
 app.post '/api/vote/:email', UserView.vote
 app.get '/api/votes/:email', UserView.voteCount
