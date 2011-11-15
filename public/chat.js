@@ -213,7 +213,8 @@
       $roomTab().addClass("active");
       $roomDialogue().show();
       $$("#tabs " + (rooms.selector(room)) + " .num-unread").text('');
-      return $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
+      $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
+      return $$("#chat").scrollTop(1000000);
     };
     closeRoom = function(room) {
       if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {

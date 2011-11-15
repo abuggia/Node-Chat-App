@@ -107,6 +107,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $roomDialogue().show()
     $$("#tabs #{rooms.selector room} .num-unread").text('')
     $$("#tabs #{rooms.selector room} .num-mentions").text('')
+    $$("#chat").scrollTop 1000000
 
   closeRoom = (room) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
