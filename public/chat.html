@@ -104,7 +104,11 @@
 
  <script id="room-tab" type="text/html">
 <li class="<%= domClass %> slide-out" style="display:none">
-  <a href="#" class="room"><%= room %></a>
+  <a href="#" class="room">
+    <span class="name"><%= room %></span>
+    <span class="num-unread"></span>
+    <span class="num-mentions"></span>
+  </a>
   <% if (org !== room) { %>
     <a href="#" class="close"><img src="/imgs/close_x.png" width="21px" height="21px"></a>
   <% } %>

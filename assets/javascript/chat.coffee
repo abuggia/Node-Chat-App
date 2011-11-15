@@ -41,13 +41,16 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   addChat = (room, name, email, text, time) -> 
     return unless rooms.has room
-    
+
     if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
       $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
       $c.appendTo $$ "#chat #{rooms.selector room}"
       rooms.setCell room, $c.find('td.main')
     else
       rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
+
+    if room isnt rooms.current
+      $$("#tabs #{rooms.selector room} .num-unread").text(1)
 
     $chat.scrollTop(1000000)
 
@@ -69,7 +72,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
-    addRoom(room) if not rooms.has room
+    addRoom(room) unless rooms.has room
     rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
@@ -130,9 +133,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $$('#enter textarea').enter pub
   $('#enter button').clickWithoutDefault pub
   $chat.dclick 'a.hashtag', ($this) -> goToRoom $this.text()
-  $chat.dclick '.name a', ($this) -> goToRoom $this.text()
+  #$chat.dclick '.name a', ($this) -> goToRoom $this.text()
   $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room").text()
-  $tabs.dclick 'li a.room', ($this) -> goToRoom $this.text()
+  $tabs.dclick 'li a.room', ($this) -> goToRoom $this.find('.name').text()
   $('a#logout').clickWithoutDefault -> api.logout()
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat

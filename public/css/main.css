@@ -42,7 +42,7 @@ ul#tabs li li {
 
 ul#tabs li a {
   font-size:14px;
-  padding: 9px 21px;
+  padding: 9px 3px 9px 21px;
   line-height: 33px;
   color:#eee;
 }
@@ -430,6 +430,10 @@ ul#users li a:hover {
   margin-top:2px;
 }
 
+.num-unread, .num-mentions {
+  display:inline-block;
+  width:9px;
+}
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.

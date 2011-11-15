@@ -97,6 +97,9 @@
       } else {
         rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
       }
+      if (room !== rooms.current) {
+        $$("#tabs " + (rooms.selector(room)) + " .num-unread").text(1);
+      }
       return $chat.scrollTop(1000000);
     };
     addChats = function(room, chats) {
@@ -213,14 +216,11 @@
     $chat.dclick('a.hashtag', function($this) {
       return goToRoom($this.text());
     });
-    $chat.dclick('.name a', function($this) {
-      return goToRoom($this.text());
-    });
     $tabs.dclick('li a.close', function($this) {
       return closeRoom($this.closest('li').find(".room").text());
     });
     $tabs.dclick('li a.room', function($this) {
-      return goToRoom($this.text());
+      return goToRoom($this.find('.name').text());
     });
     $('a#logout').clickWithoutDefault(function() {
       return api.logout();
