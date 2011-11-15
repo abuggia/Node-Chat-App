@@ -68,7 +68,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, init, margin, modalDialogue, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, init, margin, modalDialogue, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -162,21 +162,29 @@
     modalDialogue = function(content) {
       $$('#modal-dialogue-message').html(content);
       $$('#modal-dialogue').show();
-      $$('#modal-dialogue-message').clearError().show();
-      return $$('#modal-dialogue-message input').focus();
+      return $$('#modal-dialogue-message').clearError().show();
+    };
+    hideModalDialogue = function() {
+      $$('#modal-dialogue').hide();
+      return $$('#modal-dialogue-message').hide();
     };
     changeNameDialogue = function() {
-      return modalDialogue(render('change-name-form'));
+      var $d, $input;
+      $d = modalDialogue(render('change-name-form'));
+      $input = $d.find('input').focus();
+      return $d.find('button.change').click(function() {
+        return changeName($input);
+      });
     };
-    changeName = function() {
+    changeName = function($input) {
       var newName;
-      newName = $$('#modal-dialogue-message').find('.new-name').val();
-      newName = newName.replace(/\s/, '');
+      newName = $input.val().replace(/\s/, '');
       if (newName.length < 1) {
         return $$('#modal-dialogue-message').addError('New name cannot be blank');
       } else {
-        return changeHandle(user.email, newName, function() {
-          return now.name = newName;
+        return api.changeHandle(user.email, newName, function() {
+          now.name = newName;
+          return hideModalDialogue();
         });
       }
     };
@@ -213,7 +221,7 @@
     $$('#top-right a.avatar').clickWithoutDefault(function($this) {
       return $$('#top-right .options').toggle();
     });
-    $$('#modal-dialogue-message').dclick('button', changeName);
+    $$('#modal-dialogue-message').dclick('button.cancel', hideModalDialogue);
     $tabs.find(".new").hover(function() {
       return $(this).animate({
         width: "180px"

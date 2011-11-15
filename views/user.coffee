@@ -62,7 +62,8 @@ class UserView
       res.send(err ? 500 : 200)
 
   change_handle: (req, res) ->
-    User.update(req.user.email, { handle: req.body.user.handle }, (err) -> res.send(err ? 500 : 200))
+    User.update req.user.email, { handle: req.body.handle }, (err) -> 
+      res.send(err ? 500 : 200)
 
   vote: (req, res) ->
     user = req.user
@@ -77,7 +78,7 @@ class UserView
       if err?
         res 500
       else
-        User.loadRecordFromSession req.user, (err, user) ->
+        User.findByEmail req.user.email, (err, user) ->
           if user
             res.json { school: user.schoolOrBest(), count: count }
           else

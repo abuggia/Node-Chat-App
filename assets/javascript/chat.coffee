@@ -93,19 +93,24 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $$('#modal-dialogue-message').html(content)
     $$('#modal-dialogue').show()
     $$('#modal-dialogue-message').clearError().show()
-    $$('#modal-dialogue-message input').focus()
+
+  hideModalDialogue = () ->
+    $$('#modal-dialogue').hide()
+    $$('#modal-dialogue-message').hide()
 
   changeNameDialogue = ->
-    modalDialogue(render('change-name-form'))
+    $d = modalDialogue(render('change-name-form'))
+    $input = $d.find('input').focus()
+    $d.find('button.change').click -> changeName($input)
 
-   changeName = ->
-     newName = $$('#modal-dialogue-message').find('.new-name').val()
-     newName = newName.replace /\s/, ''
-     if newName.length < 1
-       $$('#modal-dialogue-message').addError 'New name cannot be blank'
-     else
-       changeHandle user.email, newName, ->
-         now.name = newName
+  changeName = ($input) ->
+    newName = $input.val().replace /\s/, ''
+    if newName.length < 1
+      $$('#modal-dialogue-message').addError 'New name cannot be blank'
+    else
+      api.changeHandle user.email, newName, ->
+        now.name = newName
+        hideModalDialogue()
 
   [headerHeight, footerHeight, margin] = [33, 56, 22] #px
   resizeChat = ->
@@ -125,7 +130,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
-  $$('#modal-dialogue-message').dclick 'button', changeName
+  $$('#modal-dialogue-message').dclick 'button.cancel', hideModalDialogue
 
   # Joining a new room
   # ------------------

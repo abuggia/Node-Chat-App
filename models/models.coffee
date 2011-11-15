@@ -46,11 +46,11 @@ User = new mongoose.Schema {
   start_room: String
 }
 
-User.statics.loadRecordFromSession = (user, fn) ->
-  this.findOne { email: user.email }, (err, user) -> fn(err, user)
+User.statics.findByEmail = (email, fn) ->
+  this.findOne { email: email }, (err, user) -> fn(err, user)
 
 User.statics.update = (email, fields, fn) ->
-  this.loadRecordFromSession email, (err, user) ->
+  this.findByEmail email, (err, user) ->
     if err
       fn err
     else

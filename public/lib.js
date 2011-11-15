@@ -154,8 +154,8 @@ var api = function() {
       $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );
     },
     changeHandle: function(email, handle, fn) {
-      $.post("/api/user/" + email + "/change_handle", {handle: handle})
-        .success(function() { fn })
+      $.post("/api/handle/" + email + "/change_handle", {handle: handle})
+        .success(function() { fn() })
         .error(function(e) { console.log("Can't update user name: \n" + e) } );
     },
     removeRoomFromSession: function(room) {
