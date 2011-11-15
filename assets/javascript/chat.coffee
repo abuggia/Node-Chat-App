@@ -27,7 +27,10 @@ class Rooms
     newNum = this.maxPrev(num) or this.minNext(num)
     this.roomFromNum(newNum)
   setAuthor: (room, author) -> @lastChatAuthor[room] = author
-  isSameAuthor: (room, author) -> @lastChatAuthor[room] is @setAuthor room, author
+  isSameAuthor: (room, author) -> 
+    last = @lastChatAuthor[room]
+    @setAuthor(room, author)
+    author is last 
   setCell: (room, $cell) -> @lastChatCell[room] = $cell
   $lastCell: (room) -> @lastChatCell[room]
   usersInCurrent: -> @users[@current] or []
@@ -69,9 +72,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     v = 0 if /\D/.test(v) or not v
     $e.text(1 + parseInt(v))
 
-  updateUserList = -> 
-    console.log "updating"
-    $$("#users").html render "user-list-items", { list: rooms.usersInCurrent() }
+  updateUserList = -> $$("#users").html render "user-list-items", { list: rooms.usersInCurrent() }
 
   addChats = (room, chats) -> 
     chats.reverse()
@@ -81,7 +82,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     rooms.add room
     data = {room: room, domClass: rooms.domClass(room), org}
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
-    $tab.slideOut $tab.innerWidth()
+    $tab.slideOut $tab.outerWidth() + 10
     $render('dialogue-window', data).hide().appendTo $$("#chat")
     api.chats org, room, (chats) -> addChats(room, chats)
     api.addRoomToSession room if not loadingFromSession 
@@ -154,7 +155,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $('#enter button').clickWithoutDefault pub
   $chat.dclick 'a.hashtag', ($this) -> goToRoom $this.text()
   #$chat.dclick '.name a', ($this) -> goToRoom $this.text()
-  $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room").text()
+  $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room .name").text()
   $tabs.dclick 'li a.room', ($this) -> goToRoom $this.find('.name').text()
   $('a#logout').clickWithoutDefault -> api.logout()
   $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
@@ -209,7 +210,6 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   now.email = user.email
   now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime(), true)
   now.addUser = (room, user) ->
-    console.log "adding user #{user} to room #{room}"
     rooms.addUser(room, user)
     updateUserList() if room is rooms.current
       

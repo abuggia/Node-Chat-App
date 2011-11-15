@@ -58,7 +58,10 @@
       return this.lastChatAuthor[room] = author;
     };
     Rooms.prototype.isSameAuthor = function(room, author) {
-      return this.lastChatAuthor[room] === this.setAuthor(room, author);
+      var last;
+      last = this.lastChatAuthor[room];
+      this.setAuthor(room, author);
+      return author === last;
     };
     Rooms.prototype.setCell = function(room, $cell) {
       return this.lastChatCell[room] = $cell;
@@ -136,7 +139,6 @@
       return $e.text(1 + parseInt(v));
     };
     updateUserList = function() {
-      console.log("updating");
       return $$("#users").html(render("user-list-items", {
         list: rooms.usersInCurrent()
       }));
@@ -163,7 +165,7 @@
         org: org
       };
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
-      $tab.slideOut($tab.innerWidth());
+      $tab.slideOut($tab.outerWidth() + 10);
       $render('dialogue-window', data).hide().appendTo($$("#chat"));
       api.chats(org, room, function(chats) {
         return addChats(room, chats);
@@ -256,7 +258,7 @@
       return goToRoom($this.text());
     });
     $tabs.dclick('li a.close', function($this) {
-      return closeRoom($this.closest('li').find(".room").text());
+      return closeRoom($this.closest('li').find(".room .name").text());
     });
     $tabs.dclick('li a.room', function($this) {
       return goToRoom($this.find('.name').text());
@@ -338,7 +340,6 @@
       return addChat(room, name, email, text, formattedTime(), true);
     };
     now.addUser = function(room, user) {
-      console.log("adding user " + user + " to room " + room);
       rooms.addUser(room, user);
       if (room === rooms.current) {
         return updateUserList();
