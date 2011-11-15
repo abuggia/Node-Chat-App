@@ -6,40 +6,38 @@ NUM_CHATS = 25
 class ChatView
   constructor: (app) ->
     that = this
-    leaveRoom = (user, room) -> 
-      group = nowjs.getGroup(room)
+    leaveRoom = (user, group) -> 
       group.removeUser user.clientId
-      nowjs.getClient user.clientId, -> group.now.removeUser room, this.now.name
+      nowjs.getClient user.clientId, -> group.now.removeUser group.groupName, userFromNowContext(this.now)
 
     leaveRooms = (user) -> 
       if user
-        user.getGroups (groups) -> group.removeUser(user) for group in groups
-
-    @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
-
-    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
-    @everyone.now.leaveRoom = (room) -> leaveRoom this.user, room
-
-    @everyone.now.joinRoom = (room) ->
-      console.log "gonna join room #{room}"
-      group = nowjs.getGroup(room)
-      user = this.user
-      group.hasClient user.clientId, (seriously) -> group.addUser(user.clientId) unless seriously
-      nowjs.getClient user.clientId, -> 
-        console.log "now gonna add user to room #{room}"
-        group.now.addUser room, this.now.name
-
-    nowjs.on 'disconnect', -> 
-      nowjs.getClient this.user.clientId, (user) ->
-        leaveRooms(user) if user
+        user.getGroups (groups) -> leaveRoom(user, group) for group in groups
 
     withLoadedUsers = (clientIds, acc, callback) ->
       if clientIds.length > 0
         nowjs.getClient clientIds.pop(), -> 
-          acc.push { name: this.now.name, email: this.now.email, handle: this.now.name}
+          acc.push userFromNowContext(this.now)
           withLoadedUsers clientIds, acc, callback
       else
         callback(acc)
+
+    userFromNowContext = (now) -> { name: now.name, email: now.email, handle: now.name }
+
+    @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
+
+    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
+    @everyone.now.leaveRoom = (room) -> leaveRoom this.user, nowjs.getGroup(room)
+
+    @everyone.now.joinRoom = (room) ->
+      group = nowjs.getGroup(room)
+      clientId = this.user.clientId
+      group.hasClient clientId, (seriously) -> group.addUser(clientId) unless seriously
+      group.now.addUser room, userFromNowContext(this.now)
+
+    nowjs.on 'disconnect', -> 
+      nowjs.getClient this.user.clientId, (user) ->
+        leaveRooms(user) if user
 
     @everyone.now.withUsersInRoom = (room, fn) ->
       nowjs.getGroup(room).getUsers (clientIds) -> 

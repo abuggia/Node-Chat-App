@@ -219,6 +219,7 @@ ul#users li {
   font-family:Arial;
   font-weight:bold;
   margin:0;
+  padding:4px;
 }
 
 ul#users li a {

@@ -73,12 +73,19 @@
       if (!this.users[room]) {
         this.users[room] = [];
       }
-      if (!_.include(this.users[room], user)) {
+      if (!_.find(this.users[room], function(u) {
+        return u.email === user.email;
+      })) {
         return this.users[room].push(user);
       }
     };
     Rooms.prototype.removeUser = function(room, user) {
-      return this.users[room] = _.without(this.users[room], user);
+      return this.users[room] = _.filter(this.users[room], function(u) {
+        return u.email === user.email;
+      });
+    };
+    Rooms.prototype.setUsers = function(room, users) {
+      return this.users[room] = users;
     };
     return Rooms;
   })();
@@ -129,6 +136,7 @@
       return $e.text(1 + parseInt(v));
     };
     updateUserList = function() {
+      console.log("updating");
       return $$("#users").html(render("user-list-items", {
         list: rooms.usersInCurrent()
       }));
@@ -157,13 +165,16 @@
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
       $render('dialogue-window', data).hide().appendTo($$("#chat"));
-      now.joinRoom(room);
       api.chats(org, room, function(chats) {
         return addChats(room, chats);
       });
       if (!loadingFromSession) {
-        return api.addRoomToSession(room);
+        api.addRoomToSession(room);
       }
+      return now.withUsersInRoom(room, function(users) {
+        rooms.setUsers(room, users);
+        return now.joinRoom(room);
+      });
     };
     goToRoom = function(room) {
       $roomDialogue().hide();
@@ -175,8 +186,7 @@
       $roomTab().addClass("active");
       $roomDialogue().show();
       $$("#tabs " + (rooms.selector(room)) + " .num-unread").text('');
-      $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
-      return updateUserList();
+      return $$("#tabs " + (rooms.selector(room)) + " .num-mentions").text('');
     };
     closeRoom = function(room) {
       if ($$("#tabs " + (rooms.selector(room))).hasClass('active')) {
@@ -328,6 +338,7 @@
       return addChat(room, name, email, text, formattedTime(), true);
     };
     now.addUser = function(room, user) {
+      console.log("adding user " + user + " to room " + room);
       rooms.addUser(room, user);
       if (room === rooms.current) {
         return updateUserList();
