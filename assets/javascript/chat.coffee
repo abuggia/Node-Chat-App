@@ -93,6 +93,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $$('#modal-dialogue-message').html(content)
     $$('#modal-dialogue').show()
     $$('#modal-dialogue-message').clearError().show()
+    $$('#modal-dialogue-message input').focus()
 
   changeNameDialogue = ->
     modalDialogue(render('change-name-form'))
@@ -181,4 +182,6 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       init = true
  
   $$("#enter textarea").focus()
+
+  changeNameDialogue()
 

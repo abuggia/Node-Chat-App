@@ -78,7 +78,6 @@
 
 </div>
 
-
  <div id="test" style="position:absolute;top:-9000;left:-9000;display:none;overflow:visible"></div>
  <div id="modal-dialogue" style="display:none"></div>
  <div id="modal-dialogue-message" style="display:none">Message</div>
@@ -138,9 +137,14 @@
  </script>
 
  <script id="change-name-form" type="text/html">
-<h3>Change Name</h3>
-<input placeholder="new name" class="new-name">
-<button type="button">Change</button>
+<div id="change-name-form">
+  <h3>Change Name</h3>
+  <input placeholder="new name" class="new-name" maxlength="30">
+  <div class="buttons">
+    <button type="button">Change</button>
+    <button type="button">Cancel</button>
+  </div>
+</div>
  </script>
 
   <script src="jquery-1.6.1.min.js"></script>

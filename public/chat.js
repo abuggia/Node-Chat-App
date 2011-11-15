@@ -162,7 +162,8 @@
     modalDialogue = function(content) {
       $$('#modal-dialogue-message').html(content);
       $$('#modal-dialogue').show();
-      return $$('#modal-dialogue-message').clearError().show();
+      $$('#modal-dialogue-message').clearError().show();
+      return $$('#modal-dialogue-message input').focus();
     };
     changeNameDialogue = function() {
       return modalDialogue(render('change-name-form'));
@@ -291,6 +292,7 @@
         return init = true;
       }
     });
-    return $$("#enter textarea").focus();
+    $$("#enter textarea").focus();
+    return changeNameDialogue();
   };
 }).call(this);

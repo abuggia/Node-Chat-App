@@ -2,7 +2,7 @@
 /*@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700); */
 @import url(/css/fonts.css);
 
-body, button, textarea {
+body, button, textarea, input {
   font-family: 'Droid Sans', sans-serif; 
 }
 
@@ -85,6 +85,7 @@ a.join span.plus {
   margin-left: -1px;
   border-left:1px solid #ccc;
   border-bottom:1px solid #ccc;
+  z-index:5;
 }
 
 #rooms-list li {
@@ -165,6 +166,7 @@ table#body {
   padding: 0;
   overflow-y: scroll;
   width:100%;
+  border-right:1px solid #ccc;
 }
 
 #chat .dialogue {
@@ -392,16 +394,40 @@ ul#users li a:hover {
   background:#fff;
   top:0;
   left:0;
-  margin:50%;
-  width:120px;
-  height:100px;
+  margin:35% 40% 65% 40%;
   border:1px solid #999;
   box-shadow: 10px 10px 5px #888;
+  padding:15px;
+  overflow:visible;
+}
+
+#modal-dialogue-message h3 {
+  margin:0 0 10px 0;
+  color:#666;
 }
 
 #user-count {
   float:right;
   margin: 30px 30px 0 0;
+}
+
+#change-name-form input {
+  font-size:16px;
+  padding:4px;
+  width:230px;
+}
+
+.buttons {
+  padding:7px;
+}
+
+.buttons button {
+  border: 1px solid #999;
+  background: #fff;
+  border-radius: 3px;
+  padding:5px 10px;
+  color:#666;
+  margin-top:2px;
 }
 
 
