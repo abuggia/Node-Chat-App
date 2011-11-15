@@ -6,6 +6,10 @@ body, button, textarea {
   font-family: 'Droid Sans', sans-serif; 
 }
 
+textarea {
+  resize:none;
+}
+
 #nav {
   background-image:url('/imgs/header_bg.png');
   background-repeat:repeat-x;
@@ -149,15 +153,22 @@ body {
   margin:0;
 }
 
+table#body {
+  width:100%;
+  border:0;
+  position:absolute;
+  left:0;
+  top:41px;
+}
+
 #chat {
-  width: 80%;
-  float: left;
-  height: 100%;
   padding: 0;
   overflow-y: scroll;
+  width:100%;
 }
 
 #chat .dialogue {
+  width:100%;
   padding:0;
 }
 
@@ -171,56 +182,57 @@ body {
 }
 
 #side-panel {
-  float:right;
   background:#eee;
   height:100%;
-  width:20%;
-  border:0;
 }
 
-#side-panel ul {
+ul#users {
+  width:84%;
+  margin-top:20px;
+  margin-left:10px;
   padding-top:6px;
   padding-right:4px;
   padding-bottom:6px;
   padding-left:9px;
-  margin: 33px 0 0
+  background:#fff;
+  border:1px solid #ccc;
 }
 
-#side-panel ul li {
+ul#users li {
   list-style-type:none;
   font-family:Arial;
   font-weight:bold;
   margin:0;
 }
 
-#side-panel ul li a {
+ul#users li a {
   display:inline-block;
   text-decoration:none;
   color:#666;
-  background:#eee;
   width:95%;
   padding:4px;
 }
 
-#side-panel ul li a:hover {
-  color:#999;
+ul#users li a:hover {
+  /* color:#999; */
 }
 
-#side-panel .container {
+#bottom {
+  position:absolute;
+  bottom:0;
+  left:0;
+  padding:0;
   width:100%;
 }
 
 #enter {
-  position:absolute;
-  bottom:0;
-  padding:0;
-  width:80%;
+  width:100%;
   border-top:1px solid #ccc;
+  border-right:1px solid #ccc;
 }
 
 #enter table {
   width:100%;
-
 }
 
 #enter table td {
@@ -251,6 +263,10 @@ body {
   height:40px;
   color:#666;
   margin-top:2px;
+}
+
+#side-bar-bottom {
+  background:#eee;
 }
 
 #top-right {
@@ -383,11 +399,11 @@ body {
   box-shadow: 10px 10px 5px #888;
 }
 
-#side-bar-bottom {
-  position:absolute;
-  bottom:10px;
-  right:5px;
+#user-count {
+  float:right;
+  margin: 30px 30px 0 0;
 }
+
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.

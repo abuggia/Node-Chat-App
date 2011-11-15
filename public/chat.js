@@ -179,7 +179,7 @@
         });
       }
     };
-    _ref = [33, 56, 16], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
+    _ref = [33, 56, 22], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
     resizeChat = function() {
       return $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
     };

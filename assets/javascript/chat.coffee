@@ -106,7 +106,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
        changeHandle user.email, newName, ->
          now.name = newName
 
-  [headerHeight, footerHeight, margin] = [33, 56, 16] #px
+  [headerHeight, footerHeight, margin] = [33, 56, 22] #px
   resizeChat = ->
     $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop 1000000
     #$$("#side-panel .container").height $$("body").height() - headerHeight - margin

@@ -42,29 +42,42 @@
     </div>
   </div>
 
- <div id="body">
-    
-   <div id="chat"></div>
-   <div id="side-panel">
-      <div class="container">
-        <ul id="users"></ul>
-      </div>
-   </div>
-   <div style="clear:both"></div>
- </div>
+  <table id="body">
+    <tbody>
+      <tr>
+        <td><div id="chat"></div></td>
+        <td id="side-panel" style="width:245px">
+          <ul id="users"></ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
- <div id="enter">
-   <table>
-     <tr>
-       <td><textarea></textarea></td>
-       <td class="button-cell"><button type="button">Send</button></td>
-     </tr>
-   </table>
+ <table id="bottom">
+   <tr>
+     <td>
+
+   <div id="enter">
+     <table>
+       <tr>
+         <td><textarea></textarea></td>
+         <td class="button-cell"><button type="button">Send</button></td>
+       </tr>
+     </table>
+   </div>
+
+  </td>
+  <td id="side-bar-bottom" style="width:245px">
+   <div id="user-count"><img src="imgs/usercount.png"> <span id="user-count-num">0</span> users</div>
+  </td>
+</tr>
+</table>
+
+
  </div>
 
 </div>
 
- <div id="side-bar-bottom">Number of users</div>
 
  <div id="test" style="position:absolute;top:-9000;left:-9000;display:none;overflow:visible"></div>
  <div id="modal-dialogue" style="display:none"></div>
