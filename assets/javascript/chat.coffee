@@ -39,19 +39,21 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
-  addChat = (name, email, text, time) -> 
-    if not rooms.isSameAuthor(rooms.current, name) or not rooms.$lastCell(rooms.current)
+  addChat = (room, name, email, text, time) -> 
+    return unless rooms.has room
+    
+    if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
       $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
-      $c.appendTo $roomDialogue()
-      rooms.setCell rooms.current, $c.find('td.main')
+      $c.appendTo $$ "#chat #{rooms.selector room}"
+      rooms.setCell room, $c.find('td.main')
     else
-      rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>')
+      rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
 
     $chat.scrollTop(1000000)
 
-  addChats = (chats) -> 
+  addChats = (room, chats) -> 
     chats.reverse()
-    addChat(c.handle, c.user, c.text, formatTime c.created_at) for c in chats
+    addChat(room, c.handle, c.user, c.text, formatTime c.created_at) for c in chats
 
   addRoom = (room, loadingFromSession = false) ->
     rooms.add room
@@ -59,20 +61,18 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $tab = $render('room-tab', data).hide().insertBefore($$ "#tabs li.new" )
     $tab.slideOut $tab.innerWidth()
     $render('dialogue-window', data).hide().appendTo $$("#chat")
+    now.joinRoom rooms.current
+    api.chats org, room, (chats) -> addChats(room, chats)
     if not loadingFromSession 
       api.addRoomToSession room
 
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
-    if not rooms.has room
-      addRoom(room) 
-      now.joinRoom(rooms.current)
+    addRoom(room) if not rooms.has room
     rooms.switch room
     $roomTab().addClass("active")
     $roomDialogue().show()
-    $roomDialogue().empty()
-    api.chats org, rooms.current, (chats) -> addChats(chats)
     now.withUsersInRoom rooms.current, (users) ->
       $$("#users").html render("user-list-items", { list: users })
 
@@ -103,6 +103,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $input = $d.find('input').focus()
     $d.find('button.change').click -> changeName($input)
     $input.enter -> changeName($input)
+    $input.keyup = (e) -> preventSpaces(e)
 
   changeName = ($input) ->
     newName = $input.val().replace /\s/, ''
@@ -113,6 +114,11 @@ window.initChat = (org, user, roomsList, currentRoom) ->
         now.name = newName
         hideModalDialogue()
         user.handle = newName
+
+  preventSpaces = (e) ->
+    code = keyCode(e)
+    if !codeIsLetter(code) and !codeIsNumber(code) and code != 8
+      e.preventDefault();
 
   [headerHeight, footerHeight, margin] = [33, 56, 22] #px
   resizeChat = ->
@@ -165,11 +171,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $roomsList.hide()
     goToRoom $this.find('.roomName').text()
 
-  $$('#rooms-list').delegate 'input', 'keydown', (e) ->
-    code = keyCode(e)
-    if !codeIsLetter(code) and !codeIsNumber(code) and code != 8
-      e.preventDefault();
- 
+  $$('#rooms-list').delegate 'input', 'keydown', (e) -> preventSpaces e
+
   $$('#rooms-list').delegate 'input', 'keyup', (e) ->
     code = keyCode(e)
     if code is 13
@@ -181,7 +184,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   # ----------
   now.name = user.handle
   now.email = user.email
-  now.sub = (room, name, email, text) -> addChat(name, email, text, formattedTime()) if room is rooms.current
+  now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime())
   init = false
   now.ready -> 
     if not init

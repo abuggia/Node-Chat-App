@@ -68,7 +68,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, init, margin, modalDialogue, pub, resizeChat, roomListOpen, rooms, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -79,9 +79,12 @@
     $roomTab = function() {
       return $$("#tabs " + (rooms.currentSelector()));
     };
-    addChat = function(name, email, text, time) {
+    addChat = function(room, name, email, text, time) {
       var $c;
-      if (!rooms.isSameAuthor(rooms.current, name) || !rooms.$lastCell(rooms.current)) {
+      if (!rooms.has(room)) {
+        return;
+      }
+      if (!rooms.isSameAuthor(room, name) || !rooms.$lastCell(rooms.current)) {
         $c = $render('single-chat', {
           name: name,
           text: text,
@@ -89,20 +92,20 @@
           email: email,
           yours: email === user.email
         });
-        $c.appendTo($roomDialogue());
-        rooms.setCell(rooms.current, $c.find('td.main'));
+        $c.appendTo($$("#chat " + (rooms.selector(room))));
+        rooms.setCell(room, $c.find('td.main'));
       } else {
-        rooms.$lastCell(rooms.current).append('<p class="text">' + text + '</p>');
+        rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
       }
       return $chat.scrollTop(1000000);
     };
-    addChats = function(chats) {
+    addChats = function(room, chats) {
       var c, _i, _len, _results;
       chats.reverse();
       _results = [];
       for (_i = 0, _len = chats.length; _i < _len; _i++) {
         c = chats[_i];
-        _results.push(addChat(c.handle, c.user, c.text, formatTime(c.created_at)));
+        _results.push(addChat(room, c.handle, c.user, c.text, formatTime(c.created_at)));
       }
       return _results;
     };
@@ -120,6 +123,10 @@
       $tab = $render('room-tab', data).hide().insertBefore($$("#tabs li.new"));
       $tab.slideOut($tab.innerWidth());
       $render('dialogue-window', data).hide().appendTo($$("#chat"));
+      now.joinRoom(rooms.current);
+      api.chats(org, room, function(chats) {
+        return addChats(room, chats);
+      });
       if (!loadingFromSession) {
         return api.addRoomToSession(room);
       }
@@ -129,15 +136,10 @@
       $roomTab().removeClass("active");
       if (!rooms.has(room)) {
         addRoom(room);
-        now.joinRoom(rooms.current);
       }
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
-      $roomDialogue().empty();
-      api.chats(org, rooms.current, function(chats) {
-        return addChats(chats);
-      });
       return now.withUsersInRoom(rooms.current, function(users) {
         return $$("#users").html(render("user-list-items", {
           list: users
@@ -175,9 +177,12 @@
       $d.find('button.change').click(function() {
         return changeName($input);
       });
-      return $input.enter(function() {
+      $input.enter(function() {
         return changeName($input);
       });
+      return $input.keyup = function(e) {
+        return preventSpaces(e);
+      };
     };
     changeName = function($input) {
       var newName;
@@ -190,6 +195,13 @@
           hideModalDialogue();
           return user.handle = newName;
         });
+      }
+    };
+    preventSpaces = function(e) {
+      var code;
+      code = keyCode(e);
+      if (!codeIsLetter(code) && !codeIsNumber(code) && code !== 8) {
+        return e.preventDefault();
       }
     };
     _ref = [33, 56, 22], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
@@ -270,11 +282,7 @@
       return goToRoom($this.find('.roomName').text());
     });
     $$('#rooms-list').delegate('input', 'keydown', function(e) {
-      var code;
-      code = keyCode(e);
-      if (!codeIsLetter(code) && !codeIsNumber(code) && code !== 8) {
-        return e.preventDefault();
-      }
+      return preventSpaces(e);
     });
     $$('#rooms-list').delegate('input', 'keyup', function(e) {
       var code;
@@ -288,9 +296,7 @@
     now.name = user.handle;
     now.email = user.email;
     now.sub = function(room, name, email, text) {
-      if (room === rooms.current) {
-        return addChat(name, email, text, formattedTime());
-      }
+      return addChat(room, name, email, text, formattedTime());
     };
     init = false;
     now.ready(function() {
