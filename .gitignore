@@ -5,3 +5,6 @@ dev.config
 prod.config
 .DS_Store
 *_mongo.json
+config/dev.special_emails.json
+
+
