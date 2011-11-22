@@ -50,8 +50,8 @@ var twoDigits = function(num) {
 
 var formatTime = function(d) {
   d = (d instanceof Date) ? d : new Date(d);
-  var h = d.getHours(), hours = (h > 12) ? (h - 12) : h;
-  return hours + ":" + twoDigits(d.getMinutes()) + ":" + twoDigits(d.getSeconds())
+  var h = d.getHours(), hours = (h > 12) ? (h - 12) : (h === 0) ? 12 : h, meridian = (h > 11) ? 'pm' : 'am';
+  return hours + ":" + twoDigits(d.getMinutes()) + ":" + twoDigits(d.getSeconds()) + " " + meridian
 };
 
 var formattedTime = function() {
