@@ -109,6 +109,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     $$("#tabs #{rooms.selector room} .num-mentions").text('')
     $$('#enter textarea').focus()
     $$('#chat').scrollTop 1000000
+    $$('#users-header').text "People in #{room}"
 
   closeRoom = (room) ->
     goToRoom(rooms.closest room) if $$("#tabs #{rooms.selector room}").hasClass 'active'
@@ -157,6 +158,16 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     code = keyCode(e)
     if !codeIsLetter(code) and !codeIsNumber(code) and code != 8
       e.preventDefault();
+
+  updateRoomLists = ->
+    console.log "hello"
+    api.topRooms org, 5, (rooms) ->
+      console.log "top rooms?"
+      $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
+
+    api.roomsByNewest org, (rooms) ->
+      $$('#all-rooms').html render 'all-rooms-items', { rooms: rooms }
+
 
   [headerHeight, footerHeight, margin, sidePanelOffset] = [33, 56, 22, 290] #px
   resizeChat = ->
@@ -232,17 +243,13 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     rooms.removeUser(room, user)
     updateUserList() if room is rooms.current
       
-  updateRooms = ->
-    api.topRooms org, 5, (rooms) ->
-      $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
-
   init = false
   now.ready -> 
     if not init
       addRoom(r, true) for r in roomsList
       goToRoom currentRoom
       resizeChat()
-      updateRooms()
+      updateRoomLists()
       init = true
  
   $$("#enter textarea").focus()

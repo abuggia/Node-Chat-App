@@ -1,6 +1,7 @@
 nowjs = require("now")
 _ = require("underscore")
 Chat = require('../models/models.coffee').Chat
+UserEnteredEmptyRoomEvent = require('../models/models.coffee').UserEnteredEmptyRoomEvent
 NUM_CHATS = 150
 
 filteredAccumulatorGenerator = (filter) ->

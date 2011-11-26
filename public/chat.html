@@ -48,7 +48,7 @@
         <td><div id="chat"></div></td>
         <td id="side-panel" style="width:245px">
 
-          <h4>People</h4>
+          <h4 id="users-header">People</h4>
           <ul id="users" class="flex-container"></ul>
 
           <h4>Top 5 Rooms</h4>
@@ -146,9 +146,15 @@
   <% } %> 
  </script>
 
- <script id="top-rooms-itemat." type="text/html">
+ <script id="top-rooms-items" type="text/html">
   <% for (var i=0, room = rooms[i]; i < rooms.length; room = rooms[++i]) { %>
-    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> (<%= room.numUsers %>)</a></li>
+    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp; <span class="user-count"><%= room.numUsers > 1 ? room.numUsers + " people" : "1 person" %></span></a></li>
+  <% } %>
+ </script>
+
+ <script id="all-rooms-items" type="text/html">
+  <% for (var i=0, room = rooms[i]; i < rooms.length; room = rooms[++i]) { %>
+    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp; <span class="time-ago">opened <%= prettyDate(room.openedAt, 'a while ago') %></span></a></li>
   <% } %>
  </script>
 

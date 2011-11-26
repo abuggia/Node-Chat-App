@@ -145,6 +145,9 @@ Chat.statics.forOrg = (org, numRecords) ->
 Chat.statics.forRoom = (org, room, numRecords) -> 
   this.forOrg(org, numRecords).where('room', room)
 
+mongoose.model 'Chat', Chat
+
+
 UserEnteredEmptyRoomEvent = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true }
   org:  { type: String, required: true, index: { unique: false, sparse: true } }
@@ -163,7 +166,7 @@ UserEnteredEmptyRoomEvent.statics.addOrUpdate = (org, room, user, fn) ->
     else if not event
       new UserEnteredEmptyRoomEvent({org: org, room: room, user: user}).save fn
 
-mongoose.model 'Chat', Chat
+mongoose.model 'UserEnteredEmptyRoomEvent', UserEnteredEmptyRoomEvent
 
 db = mongoose.connect mongo_uri, (err) ->
   console.log "Trying to connect to mongo"
@@ -174,4 +177,5 @@ module.exports.User = mongoose.model('User')
 module.exports.Chat = mongoose.model('Chat')
 module.exports.School = mongoose.model('School')
 module.exports.SpecialEmail = mongoose.model('SpecialEmail')
+module.exports.UserEnteredEmptyRoomEvent  = mongoose.model('UserEnteredEmptyRoomEvent')
 
