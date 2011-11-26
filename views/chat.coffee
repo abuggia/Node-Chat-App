@@ -1,7 +1,43 @@
 nowjs = require("now")
 _ = require("underscore")
 Chat = require('../models/models.coffee').Chat
-NUM_CHATS = 100
+NUM_CHATS = 150
+
+filteredAccumulatorGenerator = (filter) ->
+  acc = []
+  ret = ->
+    if arguments.length is 0
+      acc
+    else
+      acc.push arguments[0] if not filter arguments[0]
+      ret
+
+roomsWithCountsAcc = -> filteredAccumulatorGenerator (data) -> data.numUsers is 0
+
+_.mixin {
+  indexBy: (col, prop) ->
+    ret = {}
+    ret[item[prop]] = item for item in col
+    ret
+
+  sortReverse: (arr, fn) ->
+    _.sortBy(arr, fn).reverse()
+}
+
+withRoomCounts = (org, acc, callback) -> 
+  Chat.distinct 'room', { org: org }, (err, rooms) ->
+    return callback(err) if err
+    withRoomCountsRecur rooms, acc, callback
+
+withRoomCountsRecur = (rooms, acc, callback) -> 
+  if rooms.length > 0
+    room = rooms.pop()
+    nowjs.getGroup(room).count (count) -> withRoomCountsRecur(rooms, acc({ name: room, numUsers: count }), callback)
+  else
+    callback acc()
+
+roomsWithCounts = (org, fn) -> withRoomCounts org, roomsWithCountsAcc(), fn
+
 
 class ChatView
   constructor: (app) ->
@@ -44,6 +80,7 @@ class ChatView
         withLoadedUsers clientIds, [], (users) ->
           fn(users)
 
+
   processMessage: (org, room, email, handle, msg) ->
     tags = []
     ret = msg.replace(/&/g, '&amp;')
@@ -75,20 +112,26 @@ class ChatView
   getChats: (req, res) ->
     Chat.forRoom(req.params.org, req.params.room, NUM_CHATS).run (err, doc) -> res.json doc
 
-  getRooms: (req, res) ->
-    loadRoomCounts = (rooms, data, callback) ->
-      if rooms.length > 0
-        room = rooms.pop()
-        nowjs.getGroup(room).count (count) ->
-          data.push { name: room, numUsers: count }
-          loadRoomCounts(rooms, data, callback)
-      else
-        callback _.sortBy(data, (d) -> -1 * d.numUsers)
+  getTopRooms: (req, res) ->
+    roomsWithCounts req.params.org, (rooms) ->
+      rooms = _.sortReverse rooms, (room) -> room.numUsers
+      num = _.min [rooms.length, req.params.num]
+      res.json rooms[0..(num-1)]
 
-    Chat.distinct 'room', {org: req.params.org}, (err, rooms) ->
-      return next(err) if err
-      loadRoomCounts rooms, [], (data) -> res.json data
+  getRoomsByNewest: (req, res) ->
+    roomsWithCounts req.params.org, (rooms) ->
+      UserEnteredEmptyRoomEvent.forOrg(req.params.org).run (err, events) ->
+        if err
+          res.send 500
+        else
+          events = _.indexBy events, 'room'
+          room.openedAt = events[room.name] for room in rooms
+
+          longTimeAgo = new Date 1977, 5, 17
+          res.json _.sortReverse rooms, (room) -> room.openedAt or longTimeAgo
 
 
 module.exports = (app) -> new ChatView(app)
+
+
 

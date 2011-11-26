@@ -193,19 +193,26 @@ table#body {
   height:100%;
 }
 
-ul#users {
-  width:84%;
-  margin-top:20px;
-  margin-left:10px;
-  padding-top:6px;
-  padding-right:4px;
-  padding-bottom:6px;
-  padding-left:9px;
-  background:#fff;
-  border:1px solid #ccc;
+#side-panel h4 {
+  margin-left:12px;
+  margin-top:15px;
+  margin-bottom:0;
+  font-size:14px;
+  color:#444;
 }
 
-ul#users li {
+#side-panel ul {
+  width:90%;
+  margin-top:1px;
+  margin-left:10px;
+  padding:1px 2px 1px 2px;
+  background:#fff;
+  border:1px solid #ccc;
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+
+#side-panel ul li {
   list-style-type:none;
   font-family:Arial;
   font-weight:bold;
@@ -213,17 +220,41 @@ ul#users li {
   padding:4px;
 }
 
-ul#users li a {
+#side-panel ul li a {
   display:inline-block;
   text-decoration:none;
-  color:#666;
+  color:#444;
   width:95%;
-  padding:4px;
+  padding:4px 4px 3px 8px;
+  border-radius:5px;
+}
+
+#side-panel ul li a .time-ago {
+  font-weight:normal;
+}
+
+ul#users {
+  height:150px;
+
+}
+
+ul#top-rooms {
+  height:160px;
+}
+
+ul#all-rooms {
+  height:150px;
+}
+
+ul#top-rooms li a:hover, ul#all-rooms li a:hover {
+  color:#333;
+  background:#eee;
 }
 
 ul#users li a:hover {
-  /* color:#999; */
+  cursor:default;
 }
+
 
 #bottom {
   position:absolute;

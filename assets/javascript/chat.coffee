@@ -172,10 +172,10 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room .name").text()
   $tabs.dclick 'li a.room', ($this) -> goToRoom $this.find('.name').text()
   $('a#logout').clickWithoutDefault -> api.logout()
-  $$('#users').dclick '.user', ($this) -> goToRoom $this.text() if $this.text() != user.handle
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
   $$('#modal-dialogue-message').dclick 'button.cancel', hideModalDialogue
+  $$('#users').dclick 'li a', (e) -> e.preventDefault()
   $('a#change-name').clickWithoutDefault -> 
     changeNameDialogue()
     $$('#top-right .options').toggle()
@@ -196,7 +196,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   $$('#tabs .new a').clickWithoutDefault ($this) ->
     roomListOpen = true
-    api.rooms org, (list) ->
+    api.topRooms org, 10, (list) ->
       $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room.name) }))
       $$('#rooms-list').show()
       $$('#rooms-list input').focus()
@@ -231,12 +231,17 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     rooms.removeUser(room, user)
     updateUserList() if room is rooms.current
       
+  updateRooms = ->
+    api.topRooms org, 5, (rooms) ->
+      $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
+
   init = false
   now.ready -> 
     if not init
       addRoom(r, true) for r in roomsList
       goToRoom currentRoom
       resizeChat()
+      updateRooms()
       init = true
  
   $$("#enter textarea").focus()

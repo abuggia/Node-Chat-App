@@ -127,10 +127,11 @@ User.pre 'save', (next) ->
 
 mongoose.model 'User', User
 
+# TODO: db.chats.ensureIndex({org:1, room:1})
 Chat = new mongoose.Schema {
   user: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: false, sparse: true } }
   handle:  { type: String, required: true }
-  org:  { type: String, required: true, index: { unique: false, sparse: true } }
+  org:  { type: String, required: true }
   type: { type: String, required: true }
   text: { type: String, required: true }
   tags: { type: Array, index: { unique: false } }
@@ -143,6 +144,24 @@ Chat.statics.forOrg = (org, numRecords) ->
 
 Chat.statics.forRoom = (org, room, numRecords) -> 
   this.forOrg(org, numRecords).where('room', room)
+
+UserEnteredEmptyRoomEvent = new mongoose.Schema {
+  user: { type: mongoose.SchemaTypes.Email, required: true }
+  org:  { type: String, required: true, index: { unique: false, sparse: true } }
+  room:  { type: String, required: true }
+  occured_at: { type: Date, default: Date.now }
+}
+
+UserEnteredEmptyRoomEvent.statics.forOrg = (org) ->
+  this.find({}).select('room', 'occured_at').where('org', org)
+
+UserEnteredEmptyRoomEvent.statics.addOrUpdate = (org, room, user, fn) ->
+  this.findOne { org: org, room: room }, (err, event) ->
+    if event and not err
+      event.occured_at = Date.now
+      event.save fn
+    else if not event
+      new UserEnteredEmptyRoomEvent({org: org, room: room, user: user}).save fn
 
 mongoose.model 'Chat', Chat
 

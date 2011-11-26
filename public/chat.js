@@ -113,7 +113,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, updateUserList, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, updateRooms, updateUserList, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -296,16 +296,14 @@
     $('a#logout').clickWithoutDefault(function() {
       return api.logout();
     });
-    $$('#users').dclick('.user', function($this) {
-      if ($this.text() !== user.handle) {
-        return goToRoom($this.text());
-      }
-    });
     $(window).resize(resizeChat);
     $$('#top-right a.avatar').clickWithoutDefault(function($this) {
       return $$('#top-right .options').toggle();
     });
     $$('#modal-dialogue-message').dclick('button.cancel', hideModalDialogue);
+    $$('#users').dclick('li a', function(e) {
+      return e.preventDefault();
+    });
     $('a#change-name').clickWithoutDefault(function() {
       changeNameDialogue();
       return $$('#top-right .options').toggle();
@@ -334,7 +332,7 @@
     });
     $$('#tabs .new a').clickWithoutDefault(function($this) {
       roomListOpen = true;
-      return api.rooms(org, function(list) {
+      return api.topRooms(org, 10, function(list) {
         $$('#rooms-list').html(render('rooms-list-items', {
           list: _.reject(list, function(room) {
             return rooms.has(room.name);
@@ -381,6 +379,13 @@
         return updateUserList();
       }
     };
+    updateRooms = function() {
+      return api.topRooms(org, 5, function(rooms) {
+        return $$('#top-rooms').html(render('top-rooms-items', {
+          rooms: rooms
+        }));
+      });
+    };
     init = false;
     now.ready(function() {
       var r, _i, _len;
@@ -391,6 +396,7 @@
         }
         goToRoom(currentRoom);
         resizeChat();
+        updateRooms();
         return init = true;
       }
     });
