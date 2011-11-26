@@ -113,7 +113,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, updateRooms, updateUserList, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRooms, updateUserList, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -278,9 +278,12 @@
         return e.preventDefault();
       }
     };
-    _ref = [33, 56, 22], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2];
+    _ref = [33, 56, 22, 290], headerHeight = _ref[0], footerHeight = _ref[1], margin = _ref[2], sidePanelOffset = _ref[3];
     resizeChat = function() {
-      return $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop(1000000);
+      var height;
+      height = $$("body").height() - headerHeight - footerHeight - margin;
+      $$("#chat").height(height).scrollTop(1000000);
+      return $$("#side-panel .flex-container").height(Math.round((height - sidePanelOffset) / 2));
     };
     $$('#enter textarea').enter(pub);
     $('#enter button').clickWithoutDefault(pub);

@@ -158,10 +158,11 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     if !codeIsLetter(code) and !codeIsNumber(code) and code != 8
       e.preventDefault();
 
-  [headerHeight, footerHeight, margin] = [33, 56, 22] #px
+  [headerHeight, footerHeight, margin, sidePanelOffset] = [33, 56, 22, 290] #px
   resizeChat = ->
-    $$("#chat").height($$("body").height() - headerHeight - footerHeight - margin).scrollTop 1000000
-    #$$("#side-panel .container").height $$("body").height() - headerHeight - margin
+    height = $$("body").height() - headerHeight - footerHeight - margin
+    $$("#chat").height(height).scrollTop 1000000
+    $$("#side-panel .flex-container").height Math.round (height - sidePanelOffset) / 2
 
   # Set handlers
   # ------------
