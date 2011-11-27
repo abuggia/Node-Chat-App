@@ -22,15 +22,18 @@ app.configure ->
   app.use express.cookieParser()
   #app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
   app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
-  app.use app.router
   app.use express.static(__dirname + "/public")
+  app.use app.router
   app.set("view engine", "html");
   app.set("view options", { layout: false });
   app.register(".html", require("jqtpl").express);
 
 app.error (err, req, res, next) -> 
   if errors.defined err 
-    res.send err.code
+    if err instanceof errors.NotFound
+      res.render '../public/404.html'
+    else
+      res.send err.code
   else
     console.error "CC ERROR: #{err}"
     console.error err.stack
@@ -65,8 +68,9 @@ app.get '/api/org/:org/roomsbynewest', ChatView.getRoomsByNewest
 app.post '/api/org/:org/useropenedroom', ChatView.userOpenedRoom
 
 app.get '/', UserView.welcome
-app.get '/terms', (req, res) -> res.render "../public/terms.html"
-app.get '/privacy', (req, res) -> res.render "../public/privacy.html"
+app.get '/terms', (req, res) -> res.render '../public/terms.html'
+app.get '/privacy', (req, res) -> res.render '../public/privacy.html'
+app.get '*', (req, res) -> res.render '../public/404.html' 
 
 module.exports = app
 
