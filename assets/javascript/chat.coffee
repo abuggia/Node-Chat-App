@@ -161,7 +161,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     if newName.length < 1
       $$('#modal-dialogue-message').addError 'New name cannot be blank'
     else
-      api.changeHandle user.email, newName, ->
+      api.changeHandle user.email, newName, (->
         now.name = newName
         hideModalDialogue()
         user.handle = newName
@@ -169,6 +169,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
         rooms.removeUserFromAll(user)
         rooms.addUserToAll(user)
         updateUserList()
+      ), (->
+        alert "Handle exists, please choose another." 
+      )
 
   preventSpaces = (e) ->
     code = keyCode(e)

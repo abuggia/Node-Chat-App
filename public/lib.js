@@ -177,7 +177,7 @@ var render = (function() {
 var $render = function(id, data) { return $(render(id, data)) };
 
 var api = function() {
-  var eu = window.encodeURIComponent
+  var eu = window.encodeURIComponent, errFn = function(msg) { return function(e) { console.log(msg + "\n" + JSON.stringify(e)); } };
 
   return {
     chats: function(org, room, fn) {
@@ -193,22 +193,26 @@ var api = function() {
       $.get("/api/org/" + org + "/roomsbynewest", fn);
     },
     userOpenedRoom: function(org, room, email, handle) {
-      $.post("/api/org/" + org + "/useropenedroom", { room:room, user:email, handle: handle }).error(function(e) { console.log("Can't send update that user opened room: \n" + e) } );
+      $.post("/api/org/" + org + "/useropenedroom", { room:room, user:email, handle: handle }).error(errFn("Can't send update that user opened room"));
     },
     addRoomToSession: function(room) {
-      $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );
+      $.post("/api/session/room", {room: room}).error(errFn("Can't save room to session"));
     },
-    changeHandle: function(email, handle, fn) {
-      $.post("/api/handle/" + email + "/change_handle", {handle: handle})
-        .success(function() { fn() })
-        .error(function(e) { console.log("Can't update user name: \n" + e) } );
+    changeHandle: function(email, handle, fn, handleExistsFn) {
+      $.post("/api/handle/" + email + "/change_handle", {handle: handle}).success(fn).error(function(e) {
+        if (e.status === 409) {
+          handleExistsFn()
+        } else {
+          errFn("Can't update user name")(e)
+        }
+      });
     },
     removeRoomFromSession: function(room) {
       $.ajax({
         type: 'DELETE',
         data: {room: room},
         url: "/api/session/room",
-        error: function() { console.log("Can't save room to session: \n" + e) }
+        error: errFn("Can't save room to session")
       });
     },
     logout: function() {

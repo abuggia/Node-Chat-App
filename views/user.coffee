@@ -60,7 +60,7 @@ class UserView
     user.setPassword req.body.user.password
 
     unless user.agreed_to_tos
-      console.log "User did not agree to tos but test is #{}"
+      console.log "User did not agree to tos.  The UI should not allow that."
       return res.send(500)
 
     user.save (err) ->
@@ -68,7 +68,13 @@ class UserView
 
   changeHandle: (req, res) ->
     User.update req.user.email, { handle: req.body.handle }, (err) -> 
-      res.send(err ? 500 : 200)
+      if User.isDupeKeyError(err)
+        console.log "Conflict on handle: '#{req.body.handle}'"
+        res.send new errors.Conflict().code
+      else if err
+        res.send 500
+      else
+        res.send 200
 
   vote: (req, res) ->
     user = req.user

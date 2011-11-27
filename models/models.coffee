@@ -33,7 +33,7 @@ mongoose.model 'SpecialEmail', SpecialEmail
 
 User = new mongoose.Schema {
   email: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: true, sparse: true } }
-  handle: String
+  handle: { type: String, required: true, index: { unique: true, sparse: true } }
   salt: String
   password: String
   activation_code: String
@@ -75,6 +75,9 @@ User.statics.authenticate = (email, password, fn) ->
 
 User.methods.isEmailExistsError = (err) ->
   err and /E11000/.test(err.message) and /email/.test(err.message)
+
+User.statics.isDupeKeyError = (err) ->
+  err and /E11001 duplicate key/.test(err.message)
 
 User.methods.domain = ->
   (this.email.split '@')[1]

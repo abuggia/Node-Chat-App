@@ -280,14 +280,16 @@
       if (newName.length < 1) {
         return $$('#modal-dialogue-message').addError('New name cannot be blank');
       } else {
-        return api.changeHandle(user.email, newName, function() {
+        return api.changeHandle(user.email, newName, (function() {
           now.name = newName;
           hideModalDialogue();
           user.handle = newName;
           rooms.removeUserFromAll(user);
           rooms.addUserToAll(user);
           return updateUserList();
-        });
+        }), (function() {
+          return alert("Handle exists, please choose another.");
+        }));
       }
     };
     preventSpaces = function(e) {
