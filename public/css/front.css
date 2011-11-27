@@ -20,6 +20,10 @@ html {
  */
 }
 
+input:-moz-placeholder {
+  color:#b4b4b4;
+}
+
 body {
   background-image:;
   width:100%;
