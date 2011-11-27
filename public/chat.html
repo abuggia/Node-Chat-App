@@ -107,7 +107,19 @@
     </tr>
   </table>
 </div>
+ </script>
 
+ <script id="bot-chat-item" type="text/html">
+<div class="bot chat-item">
+  <table>
+    <tr>
+      <td class="main">
+        <span class="time"><%= time %></span>
+        <p class="text"><%= text %></p>
+      </td>
+    </tr>
+  </table>
+</div>
  </script>
 
  <script id="room-tab" type="text/html">
@@ -148,13 +160,13 @@
 
  <script id="top-rooms-items" type="text/html">
   <% for (var i=0, room = rooms[i]; i < rooms.length; room = rooms[++i]) { %>
-    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp; <span class="user-count"><%= room.numUsers > 1 ? room.numUsers + " people" : "1 person" %></span></a></li>
+    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp;<span class="user-count"><%= room.numUsers > 1 ? room.numUsers + " people" : "1 person" %></span></a></li>
   <% } %>
  </script>
 
  <script id="all-rooms-items" type="text/html">
   <% for (var i=0, room = rooms[i]; i < rooms.length; room = rooms[++i]) { %>
-    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp; <span class="time-ago">opened <%= prettyDate(room.openedAt, 'a while ago') %></span></a></li>
+    <li class="room-choice"><a href="#"><span class="roomName"><%= room.name %></span> &nbsp;<span class="time-ago">opened <%= prettyDate(room.openedAt, 'a while ago') %></span></a></li>
   <% } %>
  </script>
 

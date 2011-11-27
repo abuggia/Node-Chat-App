@@ -117,9 +117,6 @@ class UserView
   addRoomToSession: (req, res) ->
     room = req.body.room
     req.session.rooms = _.union((req.session.rooms || []), [room]) 
-
-    log "room is #{room} and rooms is now #{JSON.stringify(req.session.rooms)}"
-
     res.send 200
 
   removeRoomFromSession: (req, res) ->

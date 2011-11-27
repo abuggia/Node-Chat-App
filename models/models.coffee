@@ -161,10 +161,10 @@ UserEnteredEmptyRoomEvent.statics.forOrg = (org) ->
 UserEnteredEmptyRoomEvent.statics.addOrUpdate = (org, room, user, fn) ->
   this.findOne { org: org, room: room }, (err, event) ->
     if event and not err
-      event.occured_at = Date.now
+      event.occured_at = Date.now()
       event.save fn
     else if not event
-      new UserEnteredEmptyRoomEvent({org: org, room: room, user: user}).save fn
+      new module.exports.UserEnteredEmptyRoomEvent({org: org, room: room, user: user}).save fn
 
 mongoose.model 'UserEnteredEmptyRoomEvent', UserEnteredEmptyRoomEvent
 
@@ -177,5 +177,5 @@ module.exports.User = mongoose.model('User')
 module.exports.Chat = mongoose.model('Chat')
 module.exports.School = mongoose.model('School')
 module.exports.SpecialEmail = mongoose.model('SpecialEmail')
-module.exports.UserEnteredEmptyRoomEvent  = mongoose.model('UserEnteredEmptyRoomEvent')
+module.exports.UserEnteredEmptyRoomEvent = mongoose.model('UserEnteredEmptyRoomEvent')
 

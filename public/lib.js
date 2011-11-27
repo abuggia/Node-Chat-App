@@ -181,16 +181,19 @@ var api = function() {
 
   return {
     chats: function(org, room, fn) {
-      $.get("/api/org/" + eu(org) + "/room/" + eu(room) + "/chats", function(data) { fn(data); });
+      $.get("/api/org/" + eu(org) + "/room/" + eu(room) + "/chats", fn);
     },
     rooms: function(org, fn) {
-      $.get("/api/org/" + org + "/rooms", function(data) { fn(data); });
+      $.get("/api/org/" + org + "/rooms", fn);
     },
     topRooms: function(org, num, fn) {
-      $.get("/api/org/" + org + "/toprooms/" + num, function(data) { fn(data); });
+      $.get("/api/org/" + org + "/toprooms/" + num, fn);
     },
     roomsByNewest: function(org, fn) {
-      $.get("/api/org/" + org + "/roomsbynewest", function(data) { fn(data); });
+      $.get("/api/org/" + org + "/roomsbynewest", fn);
+    },
+    userOpenedRoom: function(org, room, email, handle) {
+      $.post("/api/org/" + org + "/useropenedroom", { room:room, user:email, handle: handle }).error(function(e) { console.log("Can't send update that user opened room: \n" + e) } );
     },
     addRoomToSession: function(room) {
       $.post("/api/session/room", {room: room}).error(function(e) { console.log("Can't save room to session: \n" + e) } );

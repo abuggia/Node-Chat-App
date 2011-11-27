@@ -124,28 +124,38 @@
     $roomTab = function() {
       return $$("#tabs " + (rooms.currentSelector()));
     };
-    addChat = function(room, name, email, text, time, trackMentions) {
+    addChat = function(room, name, email, text, time, trackMentions, bot) {
       var $c;
-      if (!rooms.has(room)) {
-        return;
-      }
-      if (!rooms.isSameAuthor(room, name) || !rooms.$lastCell(rooms.current)) {
-        $c = $render('single-chat', {
-          name: name,
-          text: text,
-          time: time,
-          email: email,
-          yours: email === user.email
-        });
-        $c.appendTo($$("#chat " + (rooms.selector(room))));
-        rooms.setCell(room, $c.find('td.main'));
+      if (bot) {
+        if (!(bot.type === 'roomopened' && bot.room === rooms.current)) {
+          $$("#chat " + (rooms.currentSelector())).append(render('bot-chat-item', {
+            text: text,
+            time: time
+          }));
+          rooms.setCell(room, void 0);
+        }
       } else {
-        rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
-      }
-      if (trackMentions && room !== rooms.current) {
-        increment($$("#tabs " + (rooms.selector(room)) + " .num-unread"));
-        if ((new RegExp('\\b' + user.handle + '\\b')).test(text)) {
-          increment($$("#tabs " + (rooms.selector(room)) + " .num-mentions"));
+        if (!rooms.has(room)) {
+          return;
+        }
+        if (!rooms.isSameAuthor(room, name) || !rooms.$lastCell(rooms.current)) {
+          $c = $render('single-chat', {
+            name: name,
+            text: text,
+            time: time,
+            email: email,
+            yours: email === user.email
+          });
+          $c.appendTo($$("#chat " + (rooms.selector(room))));
+          rooms.setCell(room, $c.find('td.main'));
+        } else {
+          rooms.$lastCell(room).append('<p class="text">' + text + '</p>');
+        }
+        if (trackMentions && room !== rooms.current) {
+          increment($$("#tabs " + (rooms.selector(room)) + " .num-unread"));
+          if ((new RegExp('\\b' + user.handle + '\\b')).test(text)) {
+            increment($$("#tabs " + (rooms.selector(room)) + " .num-mentions"));
+          }
         }
       }
       return $chat.scrollTop(1000000);
@@ -174,7 +184,7 @@
       _results = [];
       for (_i = 0, _len = chats.length; _i < _len; _i++) {
         c = chats[_i];
-        _results.push(addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false));
+        _results.push(addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false, void 0));
       }
       return _results;
     };
@@ -199,6 +209,9 @@
         api.addRoomToSession(room);
       }
       return now.withUsersInRoom(room, function(users) {
+        if (users.length === 0) {
+          api.userOpenedRoom(org, room, user.email, user.handle);
+        }
         rooms.setUsers(room, users);
         return now.joinRoom(room);
       });
@@ -280,9 +293,7 @@
       }
     };
     updateRoomLists = function() {
-      console.log("hello");
       api.topRooms(org, 5, function(rooms) {
-        console.log("top rooms?");
         return $$('#top-rooms').html(render('top-rooms-items', {
           rooms: rooms
         }));
@@ -382,8 +393,8 @@
     });
     now.name = user.handle;
     now.email = user.email;
-    now.sub = function(room, name, email, text) {
-      return addChat(room, name, email, text, formattedTime(), true);
+    now.sub = function(room, name, email, text, bot) {
+      return addChat(room, name, email, text, formattedTime(), true, bot);
     };
     now.addUser = function(room, user) {
       rooms.addUser(room, user);

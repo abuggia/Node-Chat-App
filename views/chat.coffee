@@ -39,6 +39,7 @@ withRoomCountsRecur = (rooms, acc, callback) ->
 
 roomsWithCounts = (org, fn) -> withRoomCounts org, roomsWithCountsAcc(), fn
 
+everyone = undefined
 
 class ChatView
   constructor: (app) ->
@@ -59,14 +60,15 @@ class ChatView
       else
         callback(acc)
 
+
+    everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
+
     userFromNowContext = (now) -> { name: now.name, email: now.email, handle: now.name }
 
-    @everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
+    everyone.now.pub = (org, room, email, handle, msg) -> everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
+    everyone.now.leaveRoom = (room) -> leaveRoom this.user, nowjs.getGroup(room)
 
-    @everyone.now.pub = (org, room, email, handle, msg) -> that.everyone.now.sub room, handle, email, that.processMessage(org, room, email, handle, msg)
-    @everyone.now.leaveRoom = (room) -> leaveRoom this.user, nowjs.getGroup(room)
-
-    @everyone.now.joinRoom = (room) ->
+    everyone.now.joinRoom = (room) ->
       group = nowjs.getGroup(room)
       clientId = this.user.clientId
       group.hasClient clientId, (seriously) -> group.addUser(clientId) unless seriously
@@ -76,11 +78,10 @@ class ChatView
       nowjs.getClient this.user.clientId, (user) ->
         leaveRooms(user) if user
 
-    @everyone.now.withUsersInRoom = (room, fn) ->
+    everyone.now.withUsersInRoom = (room, fn) ->
       nowjs.getGroup(room).getUsers (clientIds) -> 
         withLoadedUsers clientIds, [], (users) ->
           fn(users)
-
 
   processMessage: (org, room, email, handle, msg) ->
     tags = []
@@ -103,8 +104,6 @@ class ChatView
     if room isnt user?.start_room
       res.redirect '/'
     else
-      console.log " sending rooms #{JSON.stringify(req.session.rooms)}"
-
       req.session.rooms or= [room]
       req.session.currentRoom or= room
 
@@ -123,13 +122,24 @@ class ChatView
     roomsWithCounts req.params.org, (rooms) ->
       UserEnteredEmptyRoomEvent.forOrg(req.params.org).run (err, events) ->
         if err
+          console.error err
+          console.error err.stack
           res.send 500
         else
           events = _.indexBy events, 'room'
-          room.openedAt = events[room.name] for room in rooms
+          room.openedAt = events[room.name].occured_at for room in rooms
 
           longTimeAgo = new Date 1977, 5, 17
           res.json _.sortReverse rooms, (room) -> room.openedAt or longTimeAgo
+
+  userOpenedRoom: (req, res) ->
+    UserEnteredEmptyRoomEvent.addOrUpdate req.params.org, req.body.room, req.body.user, (err, event) ->
+      if err
+        console.error err
+        console.error err.stack
+        res.send 500
+      else
+        everyone.now.sub 'current', 'bot', 'bot@campusch.at', "#{req.body.handle} has just opened <a href=\"#\">#{req.body.room}</a>", { type:'roomopened', room: req.body.room }
 
 
 module.exports = (app) -> new ChatView(app)

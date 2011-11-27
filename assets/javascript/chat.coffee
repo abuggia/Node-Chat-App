@@ -54,21 +54,28 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $roomDialogue = -> $$ "#chat #{rooms.currentSelector()}"
   $roomTab = -> $$ "#tabs #{rooms.currentSelector()}"
 
-  addChat = (room, name, email, text, time, trackMentions) -> 
-    return unless rooms.has room
+  addChat = (room, name, email, text, time, trackMentions, bot) -> 
 
-    if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
-      $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
-      $c.appendTo $$ "#chat #{rooms.selector room}"
-      rooms.setCell room, $c.find('td.main')
+    if bot
+      unless bot.type is 'roomopened' and bot.room is rooms.current
+        $$("#chat #{rooms.currentSelector()}").append render 'bot-chat-item', {text: text, time: time}
+        rooms.setCell room, undefined
+
     else
-      rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
+      return unless rooms.has room
 
-    if trackMentions and room isnt rooms.current
-      increment $$("#tabs #{rooms.selector room} .num-unread")
+      if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
+        $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
+        $c.appendTo $$ "#chat #{rooms.selector room}"
+        rooms.setCell room, $c.find('td.main')
+      else
+        rooms.$lastCell(room).append('<p class="text">' + text + '</p>')
 
-      if (new RegExp('\\b' + user.handle + '\\b')).test(text)
-        increment $$("#tabs #{rooms.selector room} .num-mentions")
+      if trackMentions and room isnt rooms.current
+        increment $$("#tabs #{rooms.selector room} .num-unread")
+
+        if (new RegExp('\\b' + user.handle + '\\b')).test(text)
+          increment $$("#tabs #{rooms.selector room} .num-mentions")
 
     $chat.scrollTop(1000000)
 
@@ -84,7 +91,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   addChats = (room, chats) -> 
     chats.reverse()
-    addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false) for c in chats
+    addChat(room, c.handle, c.user, c.text, formatTime(c.created_at), false, undefined) for c in chats
 
   addRoom = (room, loadingFromSession = false) ->
     rooms.add room
@@ -95,6 +102,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     api.chats org, room, (chats) -> addChats(room, chats)
     api.addRoomToSession room if not loadingFromSession 
     now.withUsersInRoom room, (users) ->
+      if users.length is 0
+        api.userOpenedRoom org, room, user.email, user.handle
+
       rooms.setUsers room, users
       now.joinRoom room
 
@@ -160,14 +170,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       e.preventDefault();
 
   updateRoomLists = ->
-    console.log "hello"
-    api.topRooms org, 5, (rooms) ->
-      console.log "top rooms?"
-      $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
-
-    api.roomsByNewest org, (rooms) ->
-      $$('#all-rooms').html render 'all-rooms-items', { rooms: rooms }
-
+    api.topRooms org, 5, (rooms) -> $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
+    api.roomsByNewest org, (rooms) -> $$('#all-rooms').html render 'all-rooms-items', { rooms: rooms }
 
   [headerHeight, footerHeight, margin, sidePanelOffset] = [33, 56, 22, 290] #px
   resizeChat = ->
@@ -234,7 +238,9 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   # ----------
   now.name = user.handle
   now.email = user.email
-  now.sub = (room, name, email, text) -> addChat(room, name, email, text, formattedTime(), true)
+  now.sub = (room, name, email, text, bot) ->
+    addChat(room, name, email, text, formattedTime(), true, bot)
+
   now.addUser = (room, user) ->
     rooms.addUser(room, user)
     updateUserList() if room is rooms.current

@@ -62,6 +62,8 @@ app.get '/api/org/:org/room/:room/chats', ChatView.getChats
 app.get '/api/org/:org/rooms', ChatView.getRooms
 app.get '/api/org/:org/toprooms/:num', ChatView.getTopRooms
 app.get '/api/org/:org/roomsbynewest', ChatView.getRoomsByNewest
+app.post '/api/org/:org/useropenedroom', ChatView.userOpenedRoom
+
 app.get '/', UserView.welcome
 
 module.exports = app
