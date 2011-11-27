@@ -44,6 +44,7 @@ User = new mongoose.Schema {
   voted: Boolean
   school: String
   start_room: String
+  agreed_to_tos: {type: Boolean, default: false}
 }
 
 User.statics.findByEmail = (email, fn) ->

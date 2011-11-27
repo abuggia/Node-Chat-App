@@ -30,12 +30,15 @@
       user = {
         email: $$("#registration-info-email").val(),
         handle: $("#registration-info-handle").val(),
-        password: $("#registration-info-password").val()
+        password: $("#registration-info-password").val(),
+        agreed_to_tos: $('#agree-to-terms-of-service').is(':checked')
       };
       if (user.handle.length < 2) {
         return alert('chat username must be at least 2 characters');
       } else if (user.password.length < 5) {
         return alert('Password must be at least 5 characters');
+      } else if (!user.agreed_to_tos) {
+        return alert('To use CampusChat, you must agree to our terms of service');
       } else {
         return $.post('/api/users/' + user.email, {
           user: user

@@ -56,7 +56,12 @@ class UserView
   update: (req, res) ->
     user = req.user
     user.handle = req.body.user.handle
+    user.agreed_to_tos = (req.body.user.agreed_to_tos is 'true')
     user.setPassword req.body.user.password
+
+    unless user.agreed_to_tos
+      console.log "User did not agree to tos but test is #{}"
+      return res.send(500)
 
     user.save (err) ->
       res.send(err ? 500 : 200)

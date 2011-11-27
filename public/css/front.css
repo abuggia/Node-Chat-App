@@ -216,6 +216,14 @@ fieldset button:hover {
   color:#00c7d3;
 }
 
+#registration-info input {
+  margin-top:12px;
+}
+
+#registration-info .agree {
+  color:#666;
+}
+
 .legal-bullets li {
   list-style-type: disc;
   margin:5px 0 5px 25px;

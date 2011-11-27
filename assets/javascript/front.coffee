@@ -17,18 +17,20 @@ $ ->
       $("#enter-password").showError "Incorrect Password"
 
   saveRegistration = ->
-    user = { email: $$("#registration-info-email").val(), handle: $("#registration-info-handle").val(), password: $("#registration-info-password").val() }
+    user = { email: $$("#registration-info-email").val(), handle: $("#registration-info-handle").val(), password: $("#registration-info-password").val(), agreed_to_tos: $('#agree-to-terms-of-service').is(':checked') }
+ 
 
     if user.handle.length < 2
       alert('chat username must be at least 2 characters')
     else if user.password.length < 5
       alert('Password must be at least 5 characters')
+    else if not user.agreed_to_tos
+      alert('To use CampusChat, you must agree to our terms of service')
     else
       $.post '/api/users/' + user.email, { user: user }, ->
         chat user.email, user.password
       .error ->
         doError "there was an error saving registration info"
-
 
   signUpOrSignIn = (user) ->
     if user.active
