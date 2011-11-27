@@ -216,6 +216,10 @@ fieldset button:hover {
   color:#00c7d3;
 }
 
+.legal-bullets li {
+  list-style-type: disc;
+  margin:5px 0 5px 25px;
+}
 
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.

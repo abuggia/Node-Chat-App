@@ -65,6 +65,10 @@ app.get '/api/org/:org/roomsbynewest', ChatView.getRoomsByNewest
 app.post '/api/org/:org/useropenedroom', ChatView.userOpenedRoom
 
 app.get '/', UserView.welcome
+app.get '/terms', (req, res) -> res.render "../public/terms.html"
+app.get '/privacy', (req, res) -> res.render "public/privacy.html"
 
 module.exports = app
+
+
 
