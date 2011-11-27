@@ -490,6 +490,12 @@ a.hashtag {
   background:#FFF373;
 }
 
+.error {
+  font-weight:bold;
+  color:red;
+  margin:0 0 10px 0;
+}
+
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
    These override the primary ('mobile first') styles

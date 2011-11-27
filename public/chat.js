@@ -288,7 +288,7 @@
           rooms.addUserToAll(user);
           return updateUserList();
         }), (function() {
-          return alert("Handle exists, please choose another.");
+          return $$('#modal-dialogue-message').addError('Sorry.  This username has been taken.');
         }));
       }
     };
@@ -337,9 +337,7 @@
       return $$('#top-right .options').toggle();
     });
     $$('#modal-dialogue-message').dclick('button.cancel', hideModalDialogue);
-    $$('#users').dclick('li a', function(e) {
-      return e.preventDefault();
-    });
+    $$('#users').dclick('li a', function() {});
     $('a#change-name').clickWithoutDefault(function() {
       changeNameDialogue();
       return $$('#top-right .options').toggle();

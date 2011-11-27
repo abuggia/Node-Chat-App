@@ -170,7 +170,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
         rooms.addUserToAll(user)
         updateUserList()
       ), (->
-        alert "Handle exists, please choose another." 
+        $$('#modal-dialogue-message').addError 'Sorry.  This username has been taken.'
       )
 
   preventSpaces = (e) ->
@@ -200,7 +200,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()
   $$('#modal-dialogue-message').dclick 'button.cancel', hideModalDialogue
-  $$('#users').dclick 'li a', (e) -> e.preventDefault()
+  $$('#users').dclick 'li a', ->
   $('a#change-name').clickWithoutDefault -> 
     changeNameDialogue()
     $$('#top-right .options').toggle()
