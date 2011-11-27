@@ -486,6 +486,10 @@ a.hashtag {
   background:#F9F1ED;
 }
 
+.handle-mention {
+  background:#FFF373;
+}
+
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
    These override the primary ('mobile first') styles

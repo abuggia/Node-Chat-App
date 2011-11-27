@@ -64,6 +64,12 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     else
       return unless rooms.has room
 
+      mentioned = false
+      text = text.replace(new RegExp('\\b(' + user.handle + ')\\b', 'g'), (match) ->
+        mentioned = true
+        "<span class=\"handle-mention\">#{match}</span>"
+      )
+ 
       if not rooms.isSameAuthor(room, name) or not rooms.$lastCell(rooms.current)
         $c = $render('single-chat', {name: name, text: text, time: time, email: email, yours: (email is user.email)})
         $c.appendTo $$ "#chat #{rooms.selector room}"
@@ -74,7 +80,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       if trackMentions and room isnt rooms.current
         increment $$("#tabs #{rooms.selector room} .num-unread")
 
-        if (new RegExp('\\b' + user.handle + '\\b')).test(text)
+        if mentioned
           increment $$("#tabs #{rooms.selector room} .num-mentions")
 
     $chat.scrollTop(1000000)

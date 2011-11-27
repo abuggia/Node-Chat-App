@@ -125,7 +125,7 @@
       return $$("#tabs " + (rooms.currentSelector()));
     };
     addChat = function(room, name, email, text, time, trackMentions, bot) {
-      var $c;
+      var $c, mentioned;
       if (bot) {
         if (!(bot.type === 'roomopened' && bot.room === rooms.current)) {
           $$("#chat " + (rooms.currentSelector())).append(render('bot-chat-item', {
@@ -138,6 +138,11 @@
         if (!rooms.has(room)) {
           return;
         }
+        mentioned = false;
+        text = text.replace(new RegExp('\\b(' + user.handle + ')\\b', 'g'), function(match) {
+          mentioned = true;
+          return "<span class=\"handle-mention\">" + match + "</span>";
+        });
         if (!rooms.isSameAuthor(room, name) || !rooms.$lastCell(rooms.current)) {
           $c = $render('single-chat', {
             name: name,
@@ -153,7 +158,7 @@
         }
         if (trackMentions && room !== rooms.current) {
           increment($$("#tabs " + (rooms.selector(room)) + " .num-unread"));
-          if ((new RegExp('\\b' + user.handle + '\\b')).test(text)) {
+          if (mentioned) {
             increment($$("#tabs " + (rooms.selector(room)) + " .num-mentions"));
           }
         }
