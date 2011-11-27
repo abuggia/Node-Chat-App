@@ -384,7 +384,17 @@ ul#users li a:hover {
 .chat-item td.main {
   background:#F0F5FB;
   vertical-align:top;
-  padding: 5px;
+  padding: 5px 5px 5px 20px;
+}
+
+.bot.chat-item td {
+  background:#EAFBDE;
+  color:#488F16;
+  border-top:1px solid #73A550;
+}
+
+.bot.chat-item td.main span.time {
+  color:#488F16;
 }
 
 .chat-item td.main p.text {
@@ -465,6 +475,15 @@ ul#users li a:hover {
   padding:5px 10px;
   color:#666;
   margin-top:2px;
+}
+
+a.hashtag {
+  display:inline-block;
+  padding: 0 3px 0 3px;
+  border:1px solid #E4CCC0;
+  border-radius:8px;
+  color:#956046 ! important;
+  background:#F9F1ED;
 }
 
 /* ==|== media queries ======================================================
