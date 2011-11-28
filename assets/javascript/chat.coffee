@@ -10,7 +10,9 @@ class Rooms
 
   has: (name) -> @ids[name]? # use _.include 
   add: (name) -> @ids[name] = ++@last
-  remove: (name) -> delete @ids[name]
+  remove: (name) -> 
+    delete @ids[name]
+    @setCell name, undefined
   switch: (name) -> @current = name
   currentSelector: -> this.selector(@current) 
   selector: (room) -> '.' + this.domClass(room)
@@ -182,6 +184,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     api.topRooms org, 5, (rooms) -> $$('#top-rooms').html render 'top-rooms-items', { rooms: rooms }
     api.roomsByNewest org, (rooms) -> $$('#all-rooms').html render 'all-rooms-items', { rooms: rooms }
 
+
   [headerHeight, footerHeight, margin, sidePanelOffset] = [33, 56, 22, 290] #px
   resizeChat = ->
     height = $$("body").height() - headerHeight - footerHeight - margin
@@ -257,6 +260,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   now.removeUser = (room, user) ->
     rooms.removeUser(room, user)
     updateUserList() if room is rooms.current
+
+  now.newRoomOpened = -> updateRoomLists()
       
   init = false
   now.ready -> 

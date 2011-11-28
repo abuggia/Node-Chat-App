@@ -17,7 +17,8 @@
       return this.ids[name] = ++this.last;
     };
     Rooms.prototype.remove = function(name) {
-      return delete this.ids[name];
+      delete this.ids[name];
+      return this.setCell(name, void 0);
     };
     Rooms.prototype["switch"] = function(name) {
       return this.current = name;
@@ -412,6 +413,9 @@
       if (room === rooms.current) {
         return updateUserList();
       }
+    };
+    now.newRoomOpened = function() {
+      return updateRoomLists();
     };
     init = false;
     now.ready(function() {

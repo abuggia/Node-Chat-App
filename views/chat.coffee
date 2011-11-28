@@ -140,6 +140,7 @@ class ChatView
         res.send 500
       else
         everyone.now.sub 'current', 'bot', 'bot@campusch.at', "#{req.body.handle} has just opened room <a href=\"#\" class=\"hashtag\">#{req.body.room}</a>", { type:'roomopened', room: req.body.room }
+        everyone.now.newRoomOpened()
 
 
 module.exports = (app) -> new ChatView(app)
