@@ -44,8 +44,12 @@
           user: user
         }, function() {
           return chat(user.email, user.password);
-        }).error(function() {
-          return doError("there was an error saving registration info");
+        }).error(function(e) {
+          if (e.status === 409) {
+            return alert('This username has been taken.  Please choose a different one.');
+          } else {
+            return doError("there was an error saving registration info");
+          }
         });
       }
     };

@@ -30,10 +30,7 @@ app.configure ->
 
 app.error (err, req, res, next) -> 
   if errors.defined err 
-    if err instanceof errors.NotFound
-      res.render '../public/404.html'
-    else
-      res.send err.code
+    res.send err.code
   else
     console.error "CC ERROR: #{err}"
     console.error err.stack

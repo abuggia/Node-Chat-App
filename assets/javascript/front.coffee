@@ -21,16 +21,19 @@ $ ->
  
 
     if user.handle.length < 2
-      alert('chat username must be at least 2 characters')
+      alert 'chat username must be at least 2 characters'
     else if user.password.length < 5
-      alert('Password must be at least 5 characters')
+      alert 'Password must be at least 5 characters'
     else if not user.agreed_to_tos
-      alert('To use CampusChat, you must agree to our terms of service')
+      alert 'To use CampusChat, you must agree to our terms of service'
     else
       $.post '/api/users/' + user.email, { user: user }, ->
         chat user.email, user.password
-      .error ->
-        doError "there was an error saving registration info"
+      .error (e) ->
+        if e.status is 409
+          alert 'This username has been taken.  Please choose a different one.'
+        else
+          doError "there was an error saving registration info"
 
   signUpOrSignIn = (user) ->
     if user.active

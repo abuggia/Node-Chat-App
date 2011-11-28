@@ -63,18 +63,22 @@ class UserView
       console.log "User did not agree to tos.  The UI should not allow that."
       return res.send(500)
 
-    user.save (err) ->
-      res.send(err ? 500 : 200)
+    User.findOne { handle: user.handle }, (err, dupe) ->
+      if dupe
+        console.log "Existing handle: '#{user.handle}'"
+        res.send new errors.Conflict().code
+      else
+        user.save (err) -> res.send(err ? 500 : 200)
 
   changeHandle: (req, res) ->
-    User.update req.user.email, { handle: req.body.handle }, (err) -> 
-      if User.isDupeKeyError(err)
-        console.log "Conflict on handle: '#{req.body.handle}'"
+    handle = req.body.handle
+
+    User.findOne { handle: handle }, (err, user) ->
+      if user
+        console.log "Existing handle: '#{handle}'"
         res.send new errors.Conflict().code
-      else if err
-        res.send 500
       else
-        res.send 200
+        User.update req.user.email, { handle: handle }, (err) -> res.send(err ? 500 : 200)
 
   vote: (req, res) ->
     user = req.user

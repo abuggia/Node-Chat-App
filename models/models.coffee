@@ -33,7 +33,7 @@ mongoose.model 'SpecialEmail', SpecialEmail
 
 User = new mongoose.Schema {
   email: { type: mongoose.SchemaTypes.Email, required: true, index: { unique: true, sparse: true } }
-  handle: { type: String, required: true, index: { unique: true, sparse: true } }
+  handle: { type: String }
   salt: String
   password: String
   activation_code: String
