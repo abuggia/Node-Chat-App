@@ -169,6 +169,8 @@ UserEnteredEmptyRoomEvent.statics.addOrUpdate = (org, room, user, fn) ->
       event.save fn
     else if not event
       new module.exports.UserEnteredEmptyRoomEvent({org: org, room: room, user: user}).save fn
+    else if err
+      fn(err)
 
 mongoose.model 'UserEnteredEmptyRoomEvent', UserEnteredEmptyRoomEvent
 
