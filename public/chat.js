@@ -330,6 +330,9 @@
     $tabs.dclick('li a.room', function($this) {
       return goToRoom($this.find('.name').text());
     });
+    $$('#side-panel').dclick('li.room-choice a', function($this) {
+      return goToRoom($this.find('.roomName').text());
+    });
     $('a#logout').clickWithoutDefault(function() {
       return api.logout();
     });

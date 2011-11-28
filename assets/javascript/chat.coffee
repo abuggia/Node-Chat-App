@@ -199,6 +199,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   #$chat.dclick '.name a', ($this) -> goToRoom $this.text()
   $tabs.dclick 'li a.close', ($this) -> closeRoom $this.closest('li').find(".room .name").text()
   $tabs.dclick 'li a.room', ($this) -> goToRoom $this.find('.name').text()
+  $$('#side-panel').dclick 'li.room-choice a', ($this) -> goToRoom $this.find('.roomName').text()
   $('a#logout').clickWithoutDefault -> api.logout()
   $(window).resize resizeChat
   $$('#top-right a.avatar').clickWithoutDefault ($this) -> $$('#top-right .options').toggle()

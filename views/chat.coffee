@@ -130,7 +130,7 @@ class ChatView
           room.openedAt = events[room.name].occured_at for room in rooms
 
           longTimeAgo = new Date 1977, 5, 17
-          res.json _.sortReverse rooms, (room) -> room.openedAt or longTimeAgo
+          res.json _.sortReverse rooms, (room) -> room.openedAt?.getTime() or longTimeAgo.getTime()
 
   userOpenedRoom: (req, res) ->
     UserEnteredEmptyRoomEvent.addOrUpdate req.params.org, req.body.room, req.body.user, (err, event) ->
