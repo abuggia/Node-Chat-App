@@ -59,7 +59,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
   addChat = (room, name, email, text, time, trackMentions, bot) -> 
 
     if bot
-      unless bot.type is 'roomopened' and bot.room is rooms.current
+      unless bot.type is 'roomopened' and (bot.room is rooms.current or bot.openedby is user.handle)
         $$("#chat #{rooms.currentSelector()}").append render 'bot-chat-item', {text: text, time: time}
         rooms.setCell room, undefined
 
