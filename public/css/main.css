@@ -63,7 +63,6 @@ ul#tabs li a {
   
 ul#tabs .new {
   width: 47px; 
-  /* width: 180px; when open */
   overflow: hidden;
   display: inline-block;
 }

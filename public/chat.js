@@ -128,7 +128,7 @@
     addChat = function(room, name, email, text, time, trackMentions, bot) {
       var $c, mentioned;
       if (bot) {
-        if (!(bot.type === 'roomopened' && bot.room === rooms.current)) {
+        if (!(bot.type === 'roomopened' && (bot.room === rooms.current || bot.openedby === user.handle))) {
           $$("#chat " + (rooms.currentSelector())).append(render('bot-chat-item', {
             text: text,
             time: time
@@ -357,7 +357,7 @@
     });
     roomListOpen = false;
     $$('#tabs .new a').hover(function() {
-      return $$('#tabs .rooms-list input').slideOut(110);
+      return $$('#tabs .rooms-list input').slideOut(80);
     }, function() {
       if (!roomListOpen) {
         return $$('#tabs .rooms-list input').animate({
@@ -370,15 +370,7 @@
     });
     $$('#tabs .new a').clickWithoutDefault(function($this) {
       roomListOpen = true;
-      return api.topRooms(org, 10, function(list) {
-        $$('#rooms-list').html(render('rooms-list-items', {
-          list: _.reject(list, function(room) {
-            return rooms.has(room.name);
-          })
-        }));
-        $$('#rooms-list').show();
-        return $$('#rooms-list input').focus();
-      });
+      return $$('#rooms-list').show();
     });
     $$('#tabs .new').bind("mouseleave", function() {
       $roomsList.hide();

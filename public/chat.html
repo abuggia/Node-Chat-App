@@ -25,9 +25,11 @@
     <ul id="tabs">
       <li class="new">
         <a href="#" class='join' style="white-space:nowrap">
-          <span class="plus">+<span class="slide-out" style="margin-left:18px;">Create or Join Room</span></span>
+          <span class="plus">+<span class="slide-out" style="margin-left:18px;">Create Room</span></span>
         </a>
-        <ul id="rooms-list"></ul>
+        <ul id="rooms-list">
+          <li class="input"><span class="prepend">#</span><input placeholder="Create New Room" style="width:180px"></li>
+        </ul>
       </li>
       <li class='clear'></li>
     </ul>
@@ -148,7 +150,6 @@
  </script>
 
  <script id="rooms-list-items" type="text/html">
-  <li class="input"><span class="prepend">#</span><input placeholder="Create New Room" style="width:180px"></li>
   <% if (list.length > 0) { %>
     <li class="label-item">Top <%= list.length %> Rooms</li>
     <% for (var i=0, room = list[i]; i < list.length; room = list[++i]) { %>

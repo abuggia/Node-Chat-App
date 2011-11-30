@@ -218,17 +218,14 @@ window.initChat = (org, user, roomsList, currentRoom) ->
  
   roomListOpen = false
   $$('#tabs .new a').hover ->
-    $$('#tabs .rooms-list input').slideOut(110)
+    $$('#tabs .rooms-list input').slideOut(80)
   , -> 
     if not roomListOpen 
       $$('#tabs .rooms-list input').animate({width: 0}, {queue:false, duration:450 }) 
 
   $$('#tabs .new a').clickWithoutDefault ($this) ->
     roomListOpen = true
-    api.topRooms org, 10, (list) ->
-      $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room.name) }))
-      $$('#rooms-list').show()
-      $$('#rooms-list input').focus()
+    $$('#rooms-list').show()
 
   $$('#tabs .new').bind "mouseleave", ->
     $roomsList.hide()
