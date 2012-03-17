@@ -114,7 +114,11 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
+<<<<<<< HEAD
     var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, reloadUsers, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
+=======
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -128,7 +132,11 @@
     addChat = function(room, name, email, text, time, trackMentions, bot) {
       var $c, mentioned;
       if (bot) {
+<<<<<<< HEAD
         if (!(bot.type === 'roomopened' && (bot.room === rooms.current || bot.openedby === user.handle))) {
+=======
+        if (!(bot.type === 'roomopened' && bot.room === rooms.current)) {
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
           $$("#chat " + (rooms.currentSelector())).append(render('bot-chat-item', {
             text: text,
             time: time
@@ -222,12 +230,15 @@
         return now.joinRoom(room);
       });
     };
+<<<<<<< HEAD
     reloadUsers = function() {
       return now.withUsersInRoom(room, function(users) {
         rooms.setUsers(room, users);
         return updateUserList();
       });
     };
+=======
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     goToRoom = function(room) {
       $roomDialogue().hide();
       $roomTab().removeClass("active");
@@ -363,7 +374,11 @@
     });
     roomListOpen = false;
     $$('#tabs .new a').hover(function() {
+<<<<<<< HEAD
       return $$('#tabs .rooms-list input').slideOut(80);
+=======
+      return $$('#tabs .rooms-list input').slideOut(110);
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     }, function() {
       if (!roomListOpen) {
         return $$('#tabs .rooms-list input').animate({
@@ -376,7 +391,19 @@
     });
     $$('#tabs .new a').clickWithoutDefault(function($this) {
       roomListOpen = true;
+<<<<<<< HEAD
       return $$('#rooms-list').show();
+=======
+      return api.topRooms(org, 10, function(list) {
+        $$('#rooms-list').html(render('rooms-list-items', {
+          list: _.reject(list, function(room) {
+            return rooms.has(room.name);
+          })
+        }));
+        $$('#rooms-list').show();
+        return $$('#rooms-list input').focus();
+      });
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     });
     $$('#tabs .new').bind("mouseleave", function() {
       $roomsList.hide();
@@ -418,7 +445,10 @@
     now.newRoomOpened = function() {
       return updateRoomLists();
     };
+<<<<<<< HEAD
     now.reloadUsers = reloadUsers;
+=======
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     init = false;
     now.ready(function() {
       var r, _i, _len;

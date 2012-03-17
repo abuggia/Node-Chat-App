@@ -121,7 +121,6 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       rooms.setUsers room, users
       updateUserList()
 
-
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
@@ -231,7 +230,10 @@ window.initChat = (org, user, roomsList, currentRoom) ->
 
   $$('#tabs .new a').clickWithoutDefault ($this) ->
     roomListOpen = true
-    $$('#rooms-list').show()
+    api.topRooms org, 10, (list) ->
+      $$('#rooms-list').html(render('rooms-list-items', { list: _.reject(list, (room) -> rooms.has room.name) }))
+      $$('#rooms-list').show()
+      $$('#rooms-list input').focus()
 
   $$('#tabs .new').bind "mouseleave", ->
     $roomsList.hide()
@@ -266,7 +268,6 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     updateUserList() if room is rooms.current
 
   now.newRoomOpened = -> updateRoomLists()
-
   now.reloadUsers = reloadUsers
       
   init = false

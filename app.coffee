@@ -5,6 +5,7 @@ ChatView = require('./views/chat.coffee')(app)
 errors = require('./errors.coffee')
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
+<<<<<<< HEAD
 useSessionStore = true
 
 
@@ -20,11 +21,26 @@ if useSessionStore
       console.log "Authenticated"
   mongoStore = require('connect-mongodb');
 
+=======
+Db = require('mongodb').Db
+Server = require('mongodb').Server
+
+###
+server_config = new Server(process.env.MONGO_SERVER, process.env.MONGO_PORT, {auto_reconnect: true, native_parser: true})
+db = new Db('db', server_config, {})
+if process.env.MONGO_USER
+  console.log "Authenticating ..."
+  db.authenticate process.env.MONGO_USER, process.env.MONGO_PASSWORD, ->
+    console.log "Authenticated"
+mongoStore = require('connect-mongodb');
+###
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
 
 app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
+<<<<<<< HEAD
 
 
   if useSessionStore
@@ -32,6 +48,10 @@ app.configure ->
   else
     app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
     
+=======
+  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
+  #app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
+>>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
   app.use express.static(__dirname + "/public")
   app.use app.router
   app.set("view engine", "html");
