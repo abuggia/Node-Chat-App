@@ -114,7 +114,7 @@
     return Rooms;
   })();
   window.initChat = function(org, user, roomsList, currentRoom) {
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
+    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, reloadUsers, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -220,6 +220,12 @@
         }
         rooms.setUsers(room, users);
         return now.joinRoom(room);
+      });
+    };
+    reloadUsers = function() {
+      return now.withUsersInRoom(room, function(users) {
+        rooms.setUsers(room, users);
+        return updateUserList();
       });
     };
     goToRoom = function(room) {
@@ -412,6 +418,7 @@
     now.newRoomOpened = function() {
       return updateRoomLists();
     };
+    now.reloadUsers = reloadUsers;
     init = false;
     now.ready(function() {
       var r, _i, _len;

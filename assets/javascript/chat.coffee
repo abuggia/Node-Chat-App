@@ -116,6 +116,12 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       rooms.setUsers room, users
       now.joinRoom room
 
+  reloadUsers = ->
+    now.withUsersInRoom room, (users) ->
+      rooms.setUsers room, users
+      updateUserList()
+
+
   goToRoom = (room) ->
     $roomDialogue().hide() 
     $roomTab().removeClass("active")
@@ -260,6 +266,8 @@ window.initChat = (org, user, roomsList, currentRoom) ->
     updateUserList() if room is rooms.current
 
   now.newRoomOpened = -> updateRoomLists()
+
+  now.reloadUsers = reloadUsers
       
   init = false
   now.ready -> 

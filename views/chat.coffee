@@ -73,6 +73,7 @@ class ChatView
       clientId = this.user.clientId
       group.hasClient clientId, (seriously) -> group.addUser(clientId) unless seriously
       group.now.addUser room, userFromNowContext(this.now)
+      everyone.now.reloadUsers()
 
     nowjs.on 'disconnect', -> 
       nowjs.getClient this.user.clientId, (user) ->
