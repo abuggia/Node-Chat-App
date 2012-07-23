@@ -5,9 +5,7 @@ ChatView = require('./views/chat.coffee')(app)
 errors = require('./errors.coffee')
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
-<<<<<<< HEAD
-useSessionStore = true
-
+useSessionStore = false
 
 if useSessionStore
   Db = require('mongodb').Db
@@ -21,9 +19,8 @@ if useSessionStore
       console.log "Authenticated"
   mongoStore = require('connect-mongodb');
 
-=======
-Db = require('mongodb').Db
-Server = require('mongodb').Server
+#Db = require('mongodb').Db
+#Server = require('mongodb').Server
 
 ###
 server_config = new Server(process.env.MONGO_SERVER, process.env.MONGO_PORT, {auto_reconnect: true, native_parser: true})
@@ -34,13 +31,11 @@ if process.env.MONGO_USER
     console.log "Authenticated"
 mongoStore = require('connect-mongodb');
 ###
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
 
 app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-<<<<<<< HEAD
 
 
   if useSessionStore
@@ -48,15 +43,11 @@ app.configure ->
   else
     app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
     
-=======
-  app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34" }
-  #app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
   app.use express.static(__dirname + "/public")
   app.use app.router
-  app.set("view engine", "html");
-  app.set("view options", { layout: false });
-  app.register(".html", require("jqtpl").express);
+  app.set("view engine", "html")
+  app.set("view options", { layout: false })
+  app.register(".html", require("jqtpl").express)
 
 app.error (err, req, res, next) -> 
   if errors.defined err 
@@ -68,11 +59,14 @@ app.error (err, req, res, next) ->
 
 # Redirect subdomains to root for SEO
 app.all "*", (req, res, next) -> 
+  console.log " in *?"
   if subdomainPattern.test req.headers.host
     res.writeHead 302, { 'Location': 'http://' + process.env.ROOT_URL }
     res.end()
   else
     next()
+
+console.log " definin routes."
 
 app.param 'email', UserView.load
 app.get '/api/user/:email', UserView.get
@@ -100,6 +94,4 @@ app.get '/privacy', (req, res) -> res.render '../public/privacy.html'
 app.get '*', (req, res) -> res.render '../public/404.html' 
 
 module.exports = app
-
-
 

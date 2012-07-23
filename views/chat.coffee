@@ -140,11 +140,7 @@ class ChatView
         console.error err.stack
         res.send 500
       else
-<<<<<<< HEAD
         everyone.now.sub 'current', 'bot', 'bot@campusch.at', "#{req.body.handle} has just opened room <a href=\"#\" class=\"hashtag\">#{req.body.room}</a>", { type:'roomopened', room: req.body.room, openedby: req.body.handle }
-=======
-        everyone.now.sub 'current', 'bot', 'bot@campusch.at', "#{req.body.handle} has just opened room <a href=\"#\" class=\"hashtag\">#{req.body.room}</a>", { type:'roomopened', room: req.body.room }
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
         everyone.now.newRoomOpened()
 
 

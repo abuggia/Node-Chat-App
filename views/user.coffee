@@ -110,6 +110,7 @@ class UserView
         res.send 404
 
   welcome: (req, res) ->
+    console.log " adam "
     if req.session?.user?.start_room
       res.redirect "/#{req.session.user.start_room}"
     else
