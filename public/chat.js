@@ -1,6 +1,8 @@
 (function() {
   var Rooms;
+
   Rooms = (function() {
+
     function Rooms() {
       this.ids = {};
       this._ids = _(this.ids).chain();
@@ -10,28 +12,36 @@
       this.lastChatCell = {};
       this.users = {};
     }
+
     Rooms.prototype.has = function(name) {
       return this.ids[name] != null;
     };
+
     Rooms.prototype.add = function(name) {
       return this.ids[name] = ++this.last;
     };
+
     Rooms.prototype.remove = function(name) {
       delete this.ids[name];
       return this.setCell(name, void 0);
     };
+
     Rooms.prototype["switch"] = function(name) {
       return this.current = name;
     };
+
     Rooms.prototype.currentSelector = function() {
       return this.selector(this.current);
     };
+
     Rooms.prototype.selector = function(room) {
       return '.' + this.domClass(room);
     };
+
     Rooms.prototype.domClass = function(room) {
       return "room-" + this.ids[room];
     };
+
     Rooms.prototype.roomFromNum = function(num) {
       var ids;
       ids = this.ids;
@@ -39,55 +49,64 @@
         return ids[name] === num;
       }).value();
     };
+
     Rooms.prototype.maxPrev = function(num) {
       return this._ids.values().reject(function(n) {
         return n >= num;
       }).max().value();
     };
+
     Rooms.prototype.minNext = function(num) {
       return this._ids.values().reject(function(n) {
         return n <= num;
       }).min().value();
     };
+
     Rooms.prototype.closest = function(room) {
       var newNum, num;
       num = this.ids[room];
       newNum = this.maxPrev(num) || this.minNext(num);
       return this.roomFromNum(newNum);
     };
+
     Rooms.prototype.setAuthor = function(room, author) {
       return this.lastChatAuthor[room] = author;
     };
+
     Rooms.prototype.isSameAuthor = function(room, author) {
       var last;
       last = this.lastChatAuthor[room];
       this.setAuthor(room, author);
       return author === last;
     };
+
     Rooms.prototype.setCell = function(room, $cell) {
       return this.lastChatCell[room] = $cell;
     };
+
     Rooms.prototype.$lastCell = function(room) {
       return this.lastChatCell[room];
     };
+
     Rooms.prototype.usersInCurrent = function() {
       return this.users[this.current] || [];
     };
+
     Rooms.prototype.addUser = function(room, user) {
-      if (!this.users[room]) {
-        this.users[room] = [];
-      }
+      if (!this.users[room]) this.users[room] = [];
       if (!_.find(this.users[room], function(u) {
         return u.email === user.email;
       })) {
         return this.users[room].push(user);
       }
     };
+
     Rooms.prototype.removeUser = function(room, user) {
       return this.users[room] = _.reject(this.users[room], function(u) {
         return u.email === user.email;
       });
     };
+
     Rooms.prototype.removeUserFromAll = function(user) {
       var room, _i, _len, _ref, _results;
       _ref = _.keys(this.users);
@@ -98,6 +117,7 @@
       }
       return _results;
     };
+
     Rooms.prototype.addUserToAll = function(user) {
       var room, _i, _len, _ref, _results;
       _ref = _.keys(this.users);
@@ -108,17 +128,17 @@
       }
       return _results;
     };
+
     Rooms.prototype.setUsers = function(room, users) {
       return this.users[room] = users;
     };
+
     return Rooms;
+
   })();
+
   window.initChat = function(org, user, roomsList, currentRoom) {
-<<<<<<< HEAD
     var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, reloadUsers, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
-=======
-    var $chat, $roomDialogue, $roomTab, $roomsList, $tabs, addChat, addChats, addRoom, changeName, changeNameDialogue, closeRoom, footerHeight, goToRoom, headerHeight, hideModalDialogue, increment, init, margin, modalDialogue, preventSpaces, pub, resizeChat, roomListOpen, rooms, sidePanelOffset, updateRoomLists, updateUserList, _ref;
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     $chat = $('#chat');
     $tabs = $('#tabs');
     $roomsList = $('#rooms-list');
@@ -132,11 +152,7 @@
     addChat = function(room, name, email, text, time, trackMentions, bot) {
       var $c, mentioned;
       if (bot) {
-<<<<<<< HEAD
         if (!(bot.type === 'roomopened' && (bot.room === rooms.current || bot.openedby === user.handle))) {
-=======
-        if (!(bot.type === 'roomopened' && bot.room === rooms.current)) {
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
           $$("#chat " + (rooms.currentSelector())).append(render('bot-chat-item', {
             text: text,
             time: time
@@ -144,9 +160,7 @@
           rooms.setCell(room, void 0);
         }
       } else {
-        if (!rooms.has(room)) {
-          return;
-        }
+        if (!rooms.has(room)) return;
         mentioned = false;
         text = text.replace(new RegExp('\\b(' + user.handle + ')\\b', 'g'), function(match) {
           mentioned = true;
@@ -177,9 +191,7 @@
     increment = function($e) {
       var v;
       v = $e.text();
-      if (/\D/.test(v) || !v) {
-        v = 0;
-      }
+      if (/\D/.test(v) || !v) v = 0;
       return $e.text(1 + parseInt(v));
     };
     updateUserList = function() {
@@ -204,9 +216,7 @@
     };
     addRoom = function(room, loadingFromSession) {
       var $tab, data;
-      if (loadingFromSession == null) {
-        loadingFromSession = false;
-      }
+      if (loadingFromSession == null) loadingFromSession = false;
       rooms.add(room);
       data = {
         room: room,
@@ -219,9 +229,7 @@
       api.chats(org, room, function(chats) {
         return addChats(room, chats);
       });
-      if (!loadingFromSession) {
-        api.addRoomToSession(room);
-      }
+      if (!loadingFromSession) api.addRoomToSession(room);
       return now.withUsersInRoom(room, function(users) {
         if (users.length === 0) {
           api.userOpenedRoom(org, room, user.email, user.handle);
@@ -230,21 +238,16 @@
         return now.joinRoom(room);
       });
     };
-<<<<<<< HEAD
-    reloadUsers = function() {
+    reloadUsers = function(room) {
       return now.withUsersInRoom(room, function(users) {
         rooms.setUsers(room, users);
         return updateUserList();
       });
     };
-=======
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     goToRoom = function(room) {
       $roomDialogue().hide();
       $roomTab().removeClass("active");
-      if (!rooms.has(room)) {
-        addRoom(room);
-      }
+      if (!rooms.has(room)) addRoom(room);
       rooms["switch"](room);
       $roomTab().addClass("active");
       $roomDialogue().show();
@@ -374,11 +377,7 @@
     });
     roomListOpen = false;
     $$('#tabs .new a').hover(function() {
-<<<<<<< HEAD
       return $$('#tabs .rooms-list input').slideOut(80);
-=======
-      return $$('#tabs .rooms-list input').slideOut(110);
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     }, function() {
       if (!roomListOpen) {
         return $$('#tabs .rooms-list input').animate({
@@ -391,9 +390,6 @@
     });
     $$('#tabs .new a').clickWithoutDefault(function($this) {
       roomListOpen = true;
-<<<<<<< HEAD
-      return $$('#rooms-list').show();
-=======
       return api.topRooms(org, 10, function(list) {
         $$('#rooms-list').html(render('rooms-list-items', {
           list: _.reject(list, function(room) {
@@ -403,7 +399,6 @@
         $$('#rooms-list').show();
         return $$('#rooms-list input').focus();
       });
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     });
     $$('#tabs .new').bind("mouseleave", function() {
       $roomsList.hide();
@@ -432,23 +427,16 @@
     };
     now.addUser = function(room, user) {
       rooms.addUser(room, user);
-      if (room === rooms.current) {
-        return updateUserList();
-      }
+      if (room === rooms.current) return updateUserList();
     };
     now.removeUser = function(room, user) {
       rooms.removeUser(room, user);
-      if (room === rooms.current) {
-        return updateUserList();
-      }
+      if (room === rooms.current) return updateUserList();
     };
     now.newRoomOpened = function() {
       return updateRoomLists();
     };
-<<<<<<< HEAD
     now.reloadUsers = reloadUsers;
-=======
->>>>>>> fa207a94be1940af394e3e1acd8c93e7994ca2c5
     init = false;
     now.ready(function() {
       var r, _i, _len;
@@ -465,4 +453,5 @@
     });
     return $$("#enter textarea").focus();
   };
+
 }).call(this);

@@ -116,7 +116,7 @@ window.initChat = (org, user, roomsList, currentRoom) ->
       rooms.setUsers room, users
       now.joinRoom room
 
-  reloadUsers = ->
+  reloadUsers = (room) ->
     now.withUsersInRoom room, (users) ->
       rooms.setUsers room, users
       updateUserList()

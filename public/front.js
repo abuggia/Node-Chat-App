@@ -1,4 +1,5 @@
 (function() {
+
   $(function() {
     var $emailInput, $loginButton, $passwordInput, chat, doError, emailPattern, invites_template, m, main, render_invites_template, s, saveRegistration, sendEmail, show, signUpOrSignIn;
     show = ShowMe("#loading");
@@ -171,4 +172,5 @@
     }
     return main();
   });
+
 }).call(this);

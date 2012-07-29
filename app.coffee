@@ -1,7 +1,8 @@
 express = require("express") 
 app = express.createServer() 
-UserView = require('./views/user.coffee')
-ChatView = require('./views/chat.coffee')(app)
+
+port = (process.env.PORT || 8080)
+server = app.listen(port);
 errors = require('./errors.coffee')
 subdomainPattern = new RegExp("\w+\." + process.env.ROOT_URL)
 
@@ -19,24 +20,10 @@ if useSessionStore
       console.log "Authenticated"
   mongoStore = require('connect-mongodb');
 
-#Db = require('mongodb').Db
-#Server = require('mongodb').Server
-
-###
-server_config = new Server(process.env.MONGO_SERVER, process.env.MONGO_PORT, {auto_reconnect: true, native_parser: true})
-db = new Db('db', server_config, {})
-if process.env.MONGO_USER
-  console.log "Authenticating ..."
-  db.authenticate process.env.MONGO_USER, process.env.MONGO_PASSWORD, ->
-    console.log "Authenticated"
-mongoStore = require('connect-mongodb');
-###
-
 app.configure ->
   app.use express.methodOverride()
   app.use express.bodyParser()
   app.use express.cookieParser()
-
 
   if useSessionStore
     app.use express.session { secret : "H26DFuLKfgde5DFklkRD347BG34", store: new mongoStore({db: db}) }
@@ -66,7 +53,9 @@ app.all "*", (req, res, next) ->
   else
     next()
 
-console.log " definin routes."
+
+UserView = require('./views/user.coffee')
+ChatView = require('./views/chat.coffee')(server)
 
 app.param 'email', UserView.load
 app.get '/api/user/:email', UserView.get
@@ -94,4 +83,3 @@ app.get '/privacy', (req, res) -> res.render '../public/privacy.html'
 app.get '*', (req, res) -> res.render '../public/404.html' 
 
 module.exports = app
-

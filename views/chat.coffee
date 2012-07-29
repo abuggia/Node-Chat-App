@@ -1,3 +1,4 @@
+
 nowjs = require("now")
 _ = require("underscore")
 Chat = require('../models/models.coffee').Chat
@@ -42,7 +43,7 @@ roomsWithCounts = (org, fn) -> withRoomCounts org, roomsWithCountsAcc(), fn
 everyone = undefined
 
 class ChatView
-  constructor: (app) ->
+  constructor: (server) ->
     that = this
     leaveRoom = (user, group) -> 
       group.removeUser user.clientId
@@ -61,7 +62,7 @@ class ChatView
         callback(acc)
 
 
-    everyone = nowjs.initialize app, { "socketio": { "transports": ["xhr-polling"] } }
+    everyone = nowjs.initialize server, { "socketio": { "transports": ["xhr-polling"] } }
 
     userFromNowContext = (now) -> { name: now.name, email: now.email, handle: now.name }
 
@@ -73,7 +74,7 @@ class ChatView
       clientId = this.user.clientId
       group.hasClient clientId, (seriously) -> group.addUser(clientId) unless seriously
       group.now.addUser room, userFromNowContext(this.now)
-      everyone.now.reloadUsers()
+      everyone.now.reloadUsers(room)
 
     nowjs.on 'disconnect', -> 
       nowjs.getClient this.user.clientId, (user) ->
@@ -143,8 +144,5 @@ class ChatView
         everyone.now.sub 'current', 'bot', 'bot@campusch.at', "#{req.body.handle} has just opened room <a href=\"#\" class=\"hashtag\">#{req.body.room}</a>", { type:'roomopened', room: req.body.room, openedby: req.body.handle }
         everyone.now.newRoomOpened()
 
-
-module.exports = (app) -> new ChatView(app)
-
-
+module.exports = (server) -> new ChatView(server)
 
